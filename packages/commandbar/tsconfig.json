@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig",
+  "files": [
+    "src/CommandBar.tsx"
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "typeRoots": [
+      "./src/typings"
+    ]
+  }
+}

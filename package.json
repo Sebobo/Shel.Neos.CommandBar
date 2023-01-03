@@ -1,0 +1,38 @@
+{
+  "name": "neos-commandbar",
+  "packageManager": "yarn@3.3.1",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "@neos-commandbar/dev-server": "workspace:*",
+    "@neos-commandbar/main": "workspace:*"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "2.8.2",
+    "@types/react": "^18.0.26",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.8.1",
+    "process": "^0.11.10",
+    "typescript-plugin-css-modules": "^4.1.1"
+  },
+  "scripts": {
+    "build": "yarn workspaces foreach run build",
+    "watch": "yarn workspaces foreach run watch",
+    "test": "yarn workspaces foreach run test"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 4
+  },
+  "browserslist": "> 0.5%, last 2 versions, not dead"
+}

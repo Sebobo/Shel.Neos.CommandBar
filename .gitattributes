@@ -1,0 +1,17 @@
+*.map binary
+Plugin.js binary
+Plugin.css binary
+
+.yarn export-ignore
+.github export-ignore
+.babelrc export-ignore
+.eslintignore export-ignore
+.eslintrc export-ignore
+.nvmrc export-ignore
+.prettierrc export-ignore
+.yarnrc export-ignore
+.github export-ignore
+patches export-ignore
+tsconfig.json export-ignore
+yarn.lock export-ignore
+package.json export-ignore

@@ -1,0 +1,18 @@
+{
+  "name": "@neos-commandbar/main",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^16.14.0"
+  },
+  "devDependencies": {
+    "react-dom": "^16.14.0",
+    "typescript": "^4.9.4"
+  },
+  "main": "src/CommandBar.tsx",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "watch": "tsc -w --project tsconfig.json",
+    "build-tests": "tsc --project tsconfig.test.json",
+    "watch-tests": "tsc -w --project tsconfig.test.json"
+  }
+}

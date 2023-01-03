@@ -1,0 +1,27 @@
+{
+  "name": "shel/neos-commandbar",
+  "description": "A commandbar (CMD+K) for Neos CMS",
+  "type": "neos-plugin",
+  "keywords": [
+    "neos",
+    "cms",
+    "commandbar",
+    "cmdk"
+  ],
+  "require": {
+    "php": ">= 8.0",
+    "neos/neos": "^7.3 || ^8.0"
+  },
+  "authors": [
+    {
+      "name": "Sebastian Helzle",
+      "email": "sebastian@helzle.it",
+      "homepage": "https://www.helzle.it"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Shel\\Neos\\Commandbar\\": "Classes/"
+    }
+  }
+}
