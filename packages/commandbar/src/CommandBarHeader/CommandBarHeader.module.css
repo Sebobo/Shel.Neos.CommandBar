@@ -1,0 +1,21 @@
+.commandBarHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+}
+
+.backButton {
+    padding: 0.3rem;
+    background-color: var(--color-icon-bg);
+    border-radius: 50%;
+    appearance: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.1s ease-in-out;
+}
+
+.backButton:hover {
+    background-color: var(--color-icon-bg-hover);
+}

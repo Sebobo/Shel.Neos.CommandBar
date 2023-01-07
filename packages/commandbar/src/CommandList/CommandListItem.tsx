@@ -1,5 +1,6 @@
 import React from 'react';
-import * as styles from './CommandListItem.module.scss';
+
+import * as styles from './CommandListItem.module.css';
 import Icon from '../Presentationals/Icon';
 
 type CommandListItemProps = {

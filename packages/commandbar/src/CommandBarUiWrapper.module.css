@@ -1,0 +1,14 @@
+.fullScreenLayer {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+}
+
+.open {
+    display: block;
+}

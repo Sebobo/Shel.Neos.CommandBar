@@ -1,0 +1,13 @@
+.commandBarFooter {
+    border-top: 1px solid var(--color-border);
+    background-color: var(--footer-background);
+    padding: 0.8rem 1rem;
+    display: flex;
+    gap: 1rem;
+    user-select: none;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 1rem;
+}

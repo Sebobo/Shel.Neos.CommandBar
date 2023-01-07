@@ -1,11 +1,11 @@
 import * as React from 'react';
-
-import * as styles from './CommandBar.module.scss';
 import { useCallback, useEffect, useReducer } from 'react';
+
+import * as styles from './CommandBar.module.css';
 import CommandListItem from './CommandList/CommandListItem';
-import Icon from './Presentationals/Icon';
-import SearchBox from './SearchBox/SearchBox';
 import { commandBarReducer, ACTIONS } from './state/commandBarReducer';
+import CommandBarFooter from './CommandBarFooter/CommandBarFooter';
+import CommandBarHeader from './CommandBarHeader/CommandBarHeader';
 
 type CommandBarProps = {
     commands: CommandList;
@@ -84,20 +84,14 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
 
     return (
         <dialog className={styles.commandBar} open={open}>
-            <header>
-                {state.selectedGroup && (
-                    <button
-                        type="button"
-                        onClick={() => dispatch({ type: ACTIONS.GO_TO_PARENT_GROUP })}
-                        className={styles.backButton}
-                    >
-                        <Icon icon="arrow-left" />
-                    </button>
-                )}
-                <SearchBox searchWord={state.searchWord} onChange={handleSearch} onKeyUp={handleKeyEntered} />
-            </header>
+            <CommandBarHeader
+                state={state}
+                dispatch={dispatch}
+                handleSearch={handleSearch}
+                handleKeyEntered={handleKeyEntered}
+            />
             <div className={[styles.resultsWrap, state.expanded && styles.expanded].join(' ')}>
-                <div className={styles.results}>
+                <nav className={styles.results}>
                     <h6>Commands</h6>
                     {state.availableCommandNames.length > 0 ? (
                         <ul>
@@ -115,20 +109,9 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     ) : (
                         <small className={styles.noResults}>No matching commands found</small>
                     )}
-                </div>
+                </nav>
             </div>
-            {state.expanded && (
-                <footer>
-                    {state.selectedGroup ? (
-                        <span className={styles.breadcrumb}>
-                            <Icon icon={state.selectedGroup.icon} />
-                            <small>{state.selectedGroup.name}</small>
-                        </span>
-                    ) : (
-                        <Icon icon="neos" type="fab" />
-                    )}
-                </footer>
-            )}
+            {state.expanded && <CommandBarFooter state={state} />}
         </dialog>
     );
 };

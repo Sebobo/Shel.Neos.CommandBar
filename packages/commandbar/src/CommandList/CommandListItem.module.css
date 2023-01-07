@@ -1,6 +1,6 @@
 .commandListItem {
     cursor: pointer;
-    display: flex;
+    display: flex !important; /* Necessary due to the neos header bar styling */
     gap: 1em;
     padding: 0.4rem 0.6rem;
     align-items: baseline;
@@ -8,10 +8,10 @@
     transition: background-color 0.1s ease-in-out;
     background-color: transparent;
     user-select: none;
+}
 
-    &:hover {
-        background-color: var(--color-item-hover);
-    }
+.commandListItem:hover {
+    background-color: var(--color-item-hover);
 }
 
 .highlighted {

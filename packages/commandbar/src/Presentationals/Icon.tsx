@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { Icon as NeosIcon } from '@neos-project/react-ui-components';
 
-import * as styles from './Icon.module.scss';
+import * as styles from './Icon.module.css';
 
 type IconProps = {
     icon: string;
-    type?: string;
 };
 
-const Icon: React.FC<IconProps> = ({ icon, type = 'fas' }) => {
+const Icon: React.FC<IconProps> = ({ icon }) => {
     return (
         <span className={styles.iconWrap}>
-            <span className={`${type} fa-${icon || 'question'}`}></span>
+            <NeosIcon icon={icon} />
         </span>
     );
 };

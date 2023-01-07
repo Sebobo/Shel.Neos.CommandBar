@@ -1,6 +1,16 @@
 declare module '*.module.css';
 declare module '*.module.scss';
 
+type I18nRegistry = {
+    translate: (
+        id?: string,
+        fallback?: string,
+        params?: Record<string, unknown> | string[],
+        packageKey?: string,
+        sourceName?: string
+    ) => string;
+};
+
 type CommandList = Record<name, CommandItem>;
 
 type AbstractCommandItem = {

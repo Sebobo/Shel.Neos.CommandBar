@@ -1,0 +1,17 @@
+Neos:
+  Neos:
+    Ui:
+      resources:
+        javascript:
+          Shel.Neos.CommandBar:CommandBar:
+            resource: resource://Shel.Neos.CommandBar/Public/Plugin.js
+        stylesheets:
+          Shel.Neos.CommandBar:CommandBar:
+            resource: resource://Shel.Neos.CommandBar/Public/Plugin.css
+
+      frontendConfiguration:
+        'Shel.Neos.CommandBar:CommandBar':
+          enabled: true
+        hotkeys:
+          Shel.Neos.Terminal:
+            toggle: ['command+k', 'ctrl+k']

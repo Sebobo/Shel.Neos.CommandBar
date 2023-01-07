@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import * as styles from './SearchBox.module.css';
+
 type SearchBoxProps = {
     searchWord: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -9,9 +11,10 @@ type SearchBoxProps = {
 const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange, onKeyUp }) => {
     return (
         <input
+            className={styles.searchBox}
             type="search"
             placeholder="Search for commands…"
-            autoFocus={true}
+            autoFocus
             onChange={onChange}
             onKeyUp={onKeyUp}
             value={searchWord}
