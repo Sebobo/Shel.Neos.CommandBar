@@ -2,13 +2,12 @@
   "name": "@neos-commandbar/dev-server",
   "version": "1.0.0",
   "dependencies": {
-    "react": "^16.14.0"
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.0",
-    "parcel": "^2.8.2",
-    "react-dom": "^16.14.0",
-    "typescript": "^4.9.4"
+    "parcel": "^2.8.2"
   },
   "source": "src/index.html",
   "scripts": {

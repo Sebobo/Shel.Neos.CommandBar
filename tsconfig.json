@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "skipLibCheck": true,
-    "target": "ES2020",
+    "target": "ES2019",
     "module": "ES2020",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -11,7 +11,8 @@
       {
         "name": "typescript-plugin-css-modules"
       }
-    ]
+    ],
+    "typeRoots": ["./packages/commandbar/src/typings"]
   },
   "exclude": [
     "node_modules"

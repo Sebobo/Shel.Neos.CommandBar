@@ -2,6 +2,10 @@
   "name": "neos-commandbar",
   "packageManager": "yarn@3.3.1",
   "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=16"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -10,7 +14,6 @@
     "@neos-commandbar/main": "workspace:*"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "2.8.2",
     "@types/react": "^18.0.26",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
@@ -20,13 +23,14 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.8.1",
-    "process": "^0.11.10",
+    "typescript": "^4.9.4",
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "scripts": {
-    "build": "yarn workspaces foreach run build",
-    "watch": "yarn workspaces foreach run watch",
-    "test": "yarn workspaces foreach run test"
+    "build": "yarn workspace @neos-commandbar/main build",
+    "watch": "yarn workspace @neos-commandbar/main watch",
+    "dev": "yarn workspace @neos-commandbar/dev-server start",
+    "test": "yarn workspace @neos-commandbar/main test"
   },
   "prettier": {
     "printWidth": 120,
@@ -34,5 +38,15 @@
     "singleQuote": true,
     "tabWidth": 4
   },
-  "browserslist": "> 0.5%, last 2 versions, not dead"
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "flat": true,
+  "resolutions": {
+    "@neos-project/neos-ui-extensibility/@neos-project/build-essentials": "patch:@neos-project/build-essentials@npm%3A7.3.10#./.yarn/patches/@neos-project-build-essentials-npm-7.3.10-d9fe30a4f4.patch",
+    "@neos-project/build-essentials@^7.3.10": "patch:@neos-project/build-essentials@npm%3A7.3.10#./.yarn/patches/@neos-project-build-essentials-npm-7.3.10-d9fe30a4f4.patch",
+    "@neos-project/build-essentials@5.2.5": "patch:@neos-project/build-essentials@npm%3A7.3.10#./.yarn/patches/@neos-project-build-essentials-npm-7.3.10-d9fe30a4f4.patch"
+  }
 }

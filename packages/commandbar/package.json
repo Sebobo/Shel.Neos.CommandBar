@@ -2,17 +2,22 @@
   "name": "@neos-commandbar/main",
   "version": "1.0.0",
   "dependencies": {
-    "react": "^16.14.0"
+    "react": "^16.14.0",
+    "react-redux": "^7.2.9",
+    "redux-actions": "^0.12.0"
   },
   "devDependencies": {
-    "react-dom": "^16.14.0",
-    "typescript": "^4.9.4"
+    "@neos-project/build-essentials": "^7.3.10",
+    "@neos-project/neos-ui-extensibility": "^7.3.10",
+    "@neos-project/react-ui-components": "^7.3.10"
   },
   "main": "src/CommandBar.tsx",
   "scripts": {
-    "build": "tsc --project tsconfig.json",
-    "watch": "tsc -w --project tsconfig.json",
-    "build-tests": "tsc --project tsconfig.test.json",
-    "watch-tests": "tsc -w --project tsconfig.test.json"
+    "build": "NODE_ENV=production neos-react-scripts build",
+    "watch": "neos-react-scripts watch",
+    "test": "echo 'not implemented' exit 1"
+  },
+  "neos": {
+    "buildTargetDirectory": "../../Resources/Public"
   }
 }
