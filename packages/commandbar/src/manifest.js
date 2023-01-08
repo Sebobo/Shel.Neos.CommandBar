@@ -17,10 +17,10 @@ manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { frontendConfi
     if (frontendConfiguration.hotkeys !== null && frontendConfiguration.hotkeys.length !== 0) {
         hotkeyRegistry.set('Shel.Neos.CommandBar.toggle', {
             description: 'Toggle command bar',
-            action: actions.toggleNeosTerminal,
+            action: actions.toggleCommandBar,
         });
 
-        reducersRegistry.set('Shel.Neos.Terminal', { reducer });
+        reducersRegistry.set('Shel.Neos.CommandBar', { reducer });
     }
 
     containersRegistry.set('PrimaryToolbar/Middle/CommandBar', CommandBarUiWrapper);

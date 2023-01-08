@@ -13,5 +13,5 @@ Neos:
         'Shel.Neos.CommandBar:CommandBar':
           enabled: true
         hotkeys:
-          Shel.Neos.Terminal:
+          Shel.Neos.CommandBar:
             toggle: ['command+k', 'ctrl+k']
