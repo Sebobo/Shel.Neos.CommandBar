@@ -12,6 +12,24 @@ Neos:
       frontendConfiguration:
         'Shel.Neos.CommandBar:CommandBar':
           enabled: true
+          hotkeys:
+            filter:
+              # Hide the command bar hotkeys
+              - 'Shel.Neos.CommandBar.toggle.CMD'
+              - 'Shel.Neos.CommandBar.toggle.CTRL'
+              # Hide Neos hotkeys which are not relevant in the command bar
+              - 'UI.AddNodeModal.close'
+              - 'UI.InsertionModeModal.cancel'
+              - 'UI.InsertionModeModal.apply'
+              - 'UI.Inspector.escape'
+              - 'UI.Inspector.resume'
+              - 'UI.NodeCreationDialog.back'
+              - 'UI.NodeCreationDialog.apply'
+              - 'UI.NodeCreationDialog.cancel'
+              - 'UI.NodeVariantCreationDialog.cancel'
+              - 'UI.NodeVariantCreationDialog.createEmpty'
+              - 'UI.NodeVariantCreationDialog.createAndCopy'
+              - 'CR.Nodes.unfocus'
         hotkeys:
           # MacOS
           'Shel.Neos.CommandBar.toggle.CMD': 'command+k'

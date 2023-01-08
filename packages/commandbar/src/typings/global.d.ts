@@ -11,6 +11,13 @@ type I18nRegistry = {
     ) => string;
 };
 
+type CommandBarConfig = {
+    enabled: boolean;
+    hotkeys: {
+        filter: string[];
+    };
+};
+
 type CommandList = Record<name, CommandItem>;
 
 type AbstractCommandItem = {

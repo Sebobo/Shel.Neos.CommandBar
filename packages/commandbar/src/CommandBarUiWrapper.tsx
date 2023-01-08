@@ -14,6 +14,7 @@ import { actions as commandBarActions, selectors as commandBarSelectors } from '
 import * as styles from './CommandBarUiWrapper.module.css';
 
 type CommandBarUiWrapperProps = {
+    config: CommandBarConfig;
     siteNode: Node;
     documentNode: Node;
     focusedNodes: string[];
@@ -26,6 +27,7 @@ type CommandBarUiWrapperProps = {
 
 class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps> {
     static propTypes = {
+        config: PropTypes.object.isRequired,
         i18nRegistry: PropTypes.object.isRequired,
         siteNode: PropTypes.object,
         documentNode: PropTypes.object,
@@ -59,16 +61,17 @@ class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps> 
     }
 
     buildCommandsFromHotkeys = (): CommandList => {
-        const { hotkeyRegistry, handleHotkeyAction } = this.props;
+        const { hotkeyRegistry, handleHotkeyAction, config } = this.props;
         const hotkeys: NeosHotKey[] = hotkeyRegistry.getAllAsList();
-        // TODO: Allow filtering of hotkeys by context/settings as some hotkeys are not relevant in the command bar
         return hotkeys.reduce((carry, { id, description, action }) => {
-            carry[id] = {
-                name: description,
-                description: id,
-                icon: this.mapHotkeyIdToIcon(id),
-                action: () => handleHotkeyAction(action()),
-            };
+            if (!config.hotkeys.filter.includes(id)) {
+                carry[id] = {
+                    name: description,
+                    description: id,
+                    icon: this.mapHotkeyIdToIcon(id),
+                    action: () => handleHotkeyAction(action()),
+                };
+            }
             return carry;
         }, {});
     };
