@@ -63,6 +63,8 @@
     transition: 1s;
     opacity: 0;
     padding: 0 0.5rem;
+    overflow-y: auto;
+    max-height: 60vh;
 }
 
 .results h6 {
