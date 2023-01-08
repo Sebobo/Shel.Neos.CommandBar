@@ -16,7 +16,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange, onKeyUp }) 
             placeholder="Search for commands…"
             autoFocus
             onChange={onChange}
-            onKeyUp={onKeyUp}
+            onKeyDown={onKeyUp}
             value={searchWord}
         />
     );
