@@ -81,7 +81,7 @@ import CommandBar from '@neos-commandbar/main';
                     action: () => setSideBarRightOpen((prev) => !prev),
                 },
                 publishAll: {
-                    icon: '',
+                    icon: 'newspaper',
                     name: 'Publish all',
                     description: 'to current Workspace',
                     action: publishAll,
@@ -145,6 +145,30 @@ import CommandBar from '@neos-commandbar/main';
                             action: () => console.debug('Opened the redirects module'),
                         },
                     },
+                },
+                dummyA: {
+                    icon: 'question',
+                    name: 'Dummy A',
+                    description: 'Just a dummy for layout testing',
+                    action: '#',
+                },
+                dummyB: {
+                    icon: 'question',
+                    name: 'Dummy B',
+                    description: 'Just a dummy for layout testing',
+                    action: '#',
+                },
+                dummyC: {
+                    icon: 'question',
+                    name: 'Dummy C',
+                    description: 'Just a dummy for layout testing',
+                    action: '#',
+                },
+                dummyD: {
+                    icon: 'question',
+                    name: 'Dummy D',
+                    description: 'Just a dummy for layout testing',
+                    action: '#',
                 },
             }),
             []
