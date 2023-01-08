@@ -28,12 +28,17 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         commands,
         availableCommandNames: Object.keys(commands),
     });
+    const selectedElementRef = React.useRef(null);
 
     const handleKeyEntered = useCallback(
         (e: KeyboardEvent | React.KeyboardEvent<HTMLInputElement>) => {
-            console.log('event', e);
+            if (!open) {
+                return;
+            }
+            // console.debug('event', e, e.key, e.type);
             if (e.key === 'Escape') {
                 dispatch({ type: ACTIONS.CANCEL });
+                // TODO: Close command bar if cancel is noop
                 e.preventDefault();
             } else if (e.key === 'ArrowDown') {
                 dispatch({ type: ACTIONS.HIGHLIGHT_NEXT_ITEM });
@@ -44,12 +49,11 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
             } else if (e.key === 'Enter' && state.availableCommandNames.length > 0) {
                 const commandName = state.availableCommandNames[state.highlightedItem];
                 const command = (state.selectedGroup ? state.selectedGroup.children : commands)[commandName];
-                console.debug(commandName, state.availableCommandNames, state.selectedGroup, 'entering');
                 handleSelectItem(command);
                 e.stopPropagation();
             }
         },
-        [state.availableCommandNames, state.selectedGroup, state.highlightedItem]
+        [state.availableCommandNames, state.selectedGroup, state.highlightedItem, open]
     );
 
     const handleSearch = useCallback((e) => {
@@ -72,11 +76,15 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
 
     useEffect(() => {
         console.debug('Setting up event listener');
-        document.addEventListener('keypress', handleKeyEntered, true);
+        document.addEventListener('keydown', handleKeyEntered, true);
         return () => {
-            document.removeEventListener('keypress', handleKeyEntered, true);
+            document.removeEventListener('keydown', handleKeyEntered, true);
         };
     }, []);
+
+    useEffect(() => {
+        selectedElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [selectedElementRef.current]);
 
     if (!open) {
         return null;
@@ -85,7 +93,8 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     return (
         <dialog className={styles.commandBar} open={open}>
             <CommandBarHeader
-                state={state}
+                selectedGroup={state.selectedGroup}
+                searchWord={state.searchWord}
                 dispatch={dispatch}
                 handleSearch={handleSearch}
                 handleKeyEntered={handleKeyEntered}
@@ -98,6 +107,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                             {state.availableCommandNames.map((commandName, index) => (
                                 <CommandListItem
                                     key={commandName}
+                                    ref={state.highlightedItem === index ? selectedElementRef : null}
                                     command={
                                         (state.selectedGroup ? state.selectedGroup.children : commands)[commandName]
                                     }
@@ -111,7 +121,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     )}
                 </nav>
             </div>
-            {state.expanded && <CommandBarFooter state={state} />}
+            {state.expanded && <CommandBarFooter selectedGroup={state.selectedGroup} />}
         </dialog>
     );
 };

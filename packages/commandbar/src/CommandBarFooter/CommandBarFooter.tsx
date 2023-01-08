@@ -5,16 +5,16 @@ import Icon from '../Presentationals/Icon';
 import * as styles from './CommandBarFooter.module.css';
 
 type FooterProps = {
-    state: CommandBarState;
+    selectedGroup: CommandGroup;
 };
 
-const CommandBarFooter: React.FC<FooterProps> = ({ state }) => {
+const CommandBarFooter: React.FC<FooterProps> = ({ selectedGroup }) => {
     return (
         <footer className={styles.commandBarFooter}>
-            {state.selectedGroup ? (
+            {selectedGroup ? (
                 <span className={styles.breadcrumb}>
-                    <Icon icon={state.selectedGroup.icon} />
-                    <small>{state.selectedGroup.name}</small>
+                    <Icon icon={selectedGroup.icon} />
+                    <small>{selectedGroup.name}</small>
                 </span>
             ) : (
                 <Icon icon="neos" />
