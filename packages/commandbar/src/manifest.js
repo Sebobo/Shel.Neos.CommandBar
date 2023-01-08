@@ -10,18 +10,18 @@ manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { frontendConfi
         return;
     }
 
-    const containersRegistry = globalRegistry.get('containers');
-    const hotkeyRegistry = globalRegistry.get('hotkeys');
-    const reducersRegistry = globalRegistry.get('reducers');
+    globalRegistry.get('containers').set('PrimaryToolbar/Middle/CommandBar', CommandBarUiWrapper);
+    globalRegistry.get('reducers').set('Shel.Neos.CommandBar', { reducer });
 
     if (frontendConfiguration.hotkeys !== null && frontendConfiguration.hotkeys.length !== 0) {
-        hotkeyRegistry.set('Shel.Neos.CommandBar.toggle', {
+        const hotkeyRegistry = globalRegistry.get('hotkeys');
+        hotkeyRegistry.set('Shel.Neos.CommandBar.toggle.CMD', {
             description: 'Toggle command bar',
             action: actions.toggleCommandBar,
         });
-
-        reducersRegistry.set('Shel.Neos.CommandBar', { reducer });
+        hotkeyRegistry.set('Shel.Neos.CommandBar.toggle.CTRL', {
+            description: 'Toggle command bar',
+            action: actions.toggleCommandBar,
+        });
     }
-
-    containersRegistry.set('PrimaryToolbar/Middle/CommandBar', CommandBarUiWrapper);
 });
