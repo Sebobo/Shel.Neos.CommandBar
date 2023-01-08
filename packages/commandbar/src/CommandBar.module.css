@@ -19,7 +19,7 @@
     backdrop-filter: blur(10px);
     background: var(--bar-background);
     border-radius: var(--border-radius-bar, 5);
-    border: 1px solid var(--color-shadow);
+    border: 1px solid var(--color-border);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
     color: white;
     display: flex;
@@ -45,7 +45,7 @@
     display: grid;
     grid-template-rows: 0fr;
     transform-origin: top center;
-    transition: 0.2s ease-in;
+    transition: grid-template-rows 0.2s ease-in;
 }
 
 .resultsWrap.expanded {
