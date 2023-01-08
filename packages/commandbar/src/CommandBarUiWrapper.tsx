@@ -20,6 +20,8 @@ type CommandBarUiWrapperProps = {
     i18nRegistry: I18nRegistry;
     commandBarOpen: boolean;
     toggleCommandBar: () => void;
+    hotkeyRegistry: any;
+    handleHotkeyAction: (action: () => any) => void;
 };
 
 class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps> {
@@ -30,17 +32,62 @@ class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps> 
         focusedNodes: PropTypes.array,
         commandBarOpen: PropTypes.bool,
         toggleCommandBar: PropTypes.func,
+        handleHotkeyAction: PropTypes.func,
+        hotkeyRegistry: PropTypes.object,
+    };
+
+    mapHotkeyIdToIcon(id: string) {
+        let actionName = id.split('.').pop();
+
+        // Some actions have the name 'toggle' with a suffix, e.g. 'toggleFullScreen'
+        if (actionName.indexOf('toggle') >= 0) {
+            actionName = 'toggle';
+        }
+
+        switch (actionName) {
+            case 'toggle':
+                return 'toggle-on';
+            case 'reload':
+                return 'redo';
+            case 'cancel':
+            case 'close':
+                return 'window-close';
+            case 'apply':
+                return 'check';
+        }
+        return 'neos';
+    }
+
+    buildCommandsFromHotkeys = (): CommandList => {
+        const { hotkeyRegistry, handleHotkeyAction } = this.props;
+        const hotkeys: NeosHotKey[] = hotkeyRegistry.getAllAsList();
+        // TODO: Allow filtering of hotkeys by context/settings as some hotkeys are not relevant in the command bar
+        return hotkeys.reduce((carry, { id, description, action }) => {
+            carry[id] = {
+                name: description,
+                description: id,
+                icon: this.mapHotkeyIdToIcon(id),
+                action: () => handleHotkeyAction(action()),
+            };
+            return carry;
+        }, {});
     };
 
     render() {
         const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiWrapperProps;
 
         const commands = {
-            home: {
-                icon: 'home',
-                name: 'Home',
-                description: 'Sends you home',
-                action: () => console.debug('Go home'),
+            debug: {
+                name: 'Debug',
+                icon: 'vial',
+                description: 'Write a debug message',
+                action: () => console.debug('Debug debug'),
+            },
+            quickActions: {
+                name: 'Quick actions',
+                icon: 'neos',
+                description: 'Execute configured hotkeys',
+                children: this.buildCommandsFromHotkeys(),
             },
         };
 
@@ -73,11 +120,15 @@ const mapStateToProps = (state: NeosRootState) => ({
     commandBarOpen: commandBarSelectors.commandBarOpen(state),
 });
 
-const mapDispatchToProps = () => ({ handleServerFeedback: actions.ServerFeedback.handleServerFeedback });
+const mapDispatchToProps = (dispatch) => ({
+    handleServerFeedback: actions.ServerFeedback.handleServerFeedback,
+    handleHotkeyAction: dispatch,
+});
 
 const mapGlobalRegistryToProps = neos((globalRegistry: any) => ({
     i18nRegistry: globalRegistry.get('i18n'),
-    config: globalRegistry.get('frontendConfiguration').get('Shel.Neos.Terminal:Terminal'),
+    hotkeyRegistry: globalRegistry.get('hotkeys'),
+    config: globalRegistry.get('frontendConfiguration').get('Shel.Neos.CommandBar:CommandBar'),
 }));
 
 export default connect(() => ({}), { toggleCommandBar: commandBarActions.toggleCommandBar })(

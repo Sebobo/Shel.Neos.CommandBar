@@ -44,3 +44,9 @@ type CommandBarAction = {
     searchWord?: string;
     command?: CommandGroup;
 };
+
+type NeosHotKey = {
+    id: string;
+    description: string;
+    action: () => any;
+};

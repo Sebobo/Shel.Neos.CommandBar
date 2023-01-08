@@ -9,7 +9,8 @@
   "devDependencies": {
     "@neos-project/build-essentials": "^7.3.10",
     "@neos-project/neos-ui-extensibility": "^7.3.10",
-    "@neos-project/react-ui-components": "^7.3.10"
+    "@neos-project/react-ui-components": "^7.3.10",
+    "@types/react-redux": "^7.1.25"
   },
   "main": "src/CommandBar.tsx",
   "scripts": {
