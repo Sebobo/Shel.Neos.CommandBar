@@ -11,6 +11,13 @@ type I18nRegistry = {
     ) => string;
 };
 
+type CRNode = {
+    identifier: string;
+    contextPath: string;
+    name: string;
+    nodeType: string;
+};
+
 type CommandBarConfig = {
     enabled: boolean;
     hotkeys: {
@@ -56,4 +63,9 @@ type NeosHotKey = {
     id: string;
     description: string;
     action: () => any;
+};
+
+type ModuleCommands = {
+    sites: CommandGroup;
+    modules: CommandGroup;
 };

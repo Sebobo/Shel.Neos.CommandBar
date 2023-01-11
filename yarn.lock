@@ -530,6 +530,7 @@ __metadata:
     "@neos-project/build-essentials": ^7.3.10
     "@neos-project/neos-ui-extensibility": ^7.3.10
     "@neos-project/react-ui-components": ^7.3.10
+    "@types/react-redux": ^7.1.25
     react: ^16.14.0
     react-redux: ^7.2.9
     redux-actions: ^0.12.0
@@ -1558,7 +1559,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-redux@npm:^7.1.20":
+"@types/react-redux@npm:^7.1.20, @types/react-redux@npm:^7.1.25":
   version: 7.1.25
   resolution: "@types/react-redux@npm:7.1.25"
   dependencies:

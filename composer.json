@@ -2,6 +2,7 @@
   "name": "shel/neos-commandbar",
   "description": "A commandbar (CMD+K) for Neos CMS",
   "type": "neos-plugin",
+  "license": "MIT",
   "keywords": [
     "neos",
     "cms",
@@ -9,7 +10,7 @@
     "cmdk"
   ],
   "require": {
-    "php": ">= 8.0",
+    "php": ">= 8.1",
     "neos/neos": "^7.3 || ^8.0"
   },
   "authors": [
@@ -22,6 +23,11 @@
   "autoload": {
     "psr-4": {
       "Shel\\Neos\\Commandbar\\": "Classes/"
+    }
+  },
+  "extra": {
+    "neos": {
+      "package-key": "Shel.Neos.CommandBar"
     }
   }
 }
