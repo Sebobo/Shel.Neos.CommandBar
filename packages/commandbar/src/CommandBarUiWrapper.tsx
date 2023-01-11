@@ -30,6 +30,9 @@ type CommandBarUiWrapperProps = {
         preferredMode: string,
         nodeType?: string
     ) => void;
+    editPreviewMode: string;
+    setEditPreviewMode: (mode: string) => void;
+    editPreviewModes: EditPreviewModes;
 };
 
 type CommandBarUiWrapperState = {
@@ -49,6 +52,9 @@ class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps, 
         handleHotkeyAction: PropTypes.func.isRequired,
         hotkeyRegistry: PropTypes.object.isRequired,
         addNode: PropTypes.func.isRequired,
+        editPreviewMode: PropTypes.string.isRequired,
+        setEditPreviewMode: PropTypes.func.isRequired,
+        editPreviewModes: PropTypes.object.isRequired,
     };
 
     constructor(props) {
@@ -73,6 +79,12 @@ class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps, 
                     icon: 'neos',
                     description: 'Execute configured hotkeys',
                     children: this.buildCommandsFromHotkeys(),
+                },
+                switchEditPreviewMode: {
+                    name: 'Switch edit/preview mode',
+                    icon: 'pencil',
+                    description: 'Switch between edit and preview modes',
+                    children: this.buildCommandsFromEditPreviewModes(),
                 },
             },
         };
@@ -112,7 +124,12 @@ class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps, 
             });
 
         window.addEventListener('keypress', (e) => {
-            console.debug('keypress', e);
+            console.debug('keypress on window', e);
+        });
+
+        const guestFrame = document.getElementsByName('neos-content-main')[0];
+        guestFrame.addEventListener('keypress', (e) => {
+            console.debug('keypress in guestframe', e);
         });
     }
 
@@ -128,6 +145,21 @@ class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps, 
                     action: () => handleHotkeyAction(action()),
                 };
             }
+            return carry;
+        }, {});
+    };
+
+    buildCommandsFromEditPreviewModes = (): CommandList => {
+        const { editPreviewMode, setEditPreviewMode, editPreviewModes, i18nRegistry } = this.props;
+
+        return Object.keys(editPreviewModes).reduce((carry, mode) => {
+            const { title, isEditingMode } = editPreviewModes[mode];
+            carry[mode] = {
+                name: i18nRegistry.translate(title),
+                description: editPreviewMode === mode ? 'Currently active' : '',
+                icon: isEditingMode ? 'pencil' : 'eye',
+                action: () => setEditPreviewMode(mode),
+            };
             return carry;
         }, {});
     };
@@ -172,6 +204,7 @@ const mapStateToProps = (state: NeosRootState) => ({
     documentNode: selectors.CR.Nodes.documentNodeSelector(state),
     focusedNodeContextPath: selectors.CR.Nodes.focusedNodePathSelector(state),
     commandBarOpen: commandBarSelectors.commandBarOpen(state),
+    editPreviewMode: selectors.UI.EditPreviewMode.currentEditPreviewMode(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -183,9 +216,11 @@ const mapGlobalRegistryToProps = neos((globalRegistry: any) => ({
     hotkeyRegistry: globalRegistry.get('hotkeys'),
     config: globalRegistry.get('frontendConfiguration').get('Shel.Neos.CommandBar:CommandBar'),
     nodeTypesRegistry: globalRegistry.get('@neos-project/neos-ui-contentrepository'),
+    editPreviewModes: globalRegistry.get('frontendConfiguration').get('editPreviewModes'),
 }));
 
 export default connect(() => ({}), {
     toggleCommandBar: commandBarActions.toggleCommandBar,
     addNode: actions.CR.Nodes.commenceCreation,
+    setEditPreviewMode: actions.UI.EditPreviewMode.set,
 })(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiWrapper)));

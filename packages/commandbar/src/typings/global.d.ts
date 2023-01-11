@@ -69,3 +69,13 @@ type ModuleCommands = {
     sites: CommandGroup;
     modules: CommandGroup;
 };
+
+type EditPreviewMode = {
+    isEditingMode: boolean;
+    isPreviewMode: boolean;
+    title: string;
+    position: number;
+    fusionRenderingPath: string;
+};
+
+type EditPreviewModes = Record<string, EditPreviewMode>;
