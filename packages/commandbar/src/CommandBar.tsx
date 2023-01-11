@@ -35,10 +35,13 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
             if (!open) {
                 return;
             }
-            // console.debug('event', e, e.key, e.type);
             if (e.key === 'Escape') {
-                dispatch({ type: ACTIONS.CANCEL });
-                // TODO: Close command bar if cancel is noop
+                if (state.selectedGroup || state.searchWord) {
+                    dispatch({ type: ACTIONS.CANCEL });
+                } else {
+                    // Close command bar if cancel is noop
+                    toggleOpen();
+                }
                 e.preventDefault();
             } else if (e.key === 'ArrowDown') {
                 dispatch({ type: ACTIONS.HIGHLIGHT_NEXT_ITEM });
@@ -53,7 +56,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 e.stopPropagation();
             }
         },
-        [state.availableCommandNames, state.selectedGroup, state.highlightedItem, open]
+        [state.availableCommandNames, state.selectedGroup, state.highlightedItem, state.searchWord, open]
     );
 
     const handleSearch = useCallback((e) => {
