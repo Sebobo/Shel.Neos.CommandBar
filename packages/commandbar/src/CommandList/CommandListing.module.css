@@ -1,0 +1,28 @@
+.results {
+    min-height: 0;
+    transition: opacity 0.3s ease-in;
+    opacity: 0;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.results h6 {
+    color: var(--color-light-text);
+    margin: 0.5rem;
+    font-size: 0.9em;
+    font-weight: normal;
+    user-select: none;
+}
+
+.results ul {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin: 0;
+}
+
+.noResults {
+    padding: 0.5rem;
+}

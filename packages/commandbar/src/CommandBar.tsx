@@ -6,6 +6,7 @@ import CommandListItem from './CommandList/CommandListItem';
 import { commandBarReducer, ACTIONS } from './state/commandBarReducer';
 import CommandBarFooter from './CommandBarFooter/CommandBarFooter';
 import CommandBarHeader from './CommandBarHeader/CommandBarHeader';
+import CommandListing from './CommandList/CommandListing';
 
 type CommandBarProps = {
     commands: CommandList;
@@ -28,7 +29,6 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         commands,
         availableCommandNames: Object.keys(commands),
     });
-    const selectedElementRef = React.useRef(null);
 
     const handleKeyEntered = useCallback(
         (e: KeyboardEvent | React.KeyboardEvent<HTMLInputElement>) => {
@@ -63,31 +63,29 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         dispatch({ type: ACTIONS.UPDATE_SEARCH, searchWord: e.target.value.toLowerCase() });
     }, []);
 
-    const handleSelectItem = useCallback((command: CommandItem) => {
-        if ((command as Command).action) {
-            const { action } = command as Command;
-            if (typeof action == 'string') {
-                window.location.href = action;
+    const handleSelectItem = useCallback(
+        (command: CommandItem) => {
+            if ((command as Command).action) {
+                const { action, canHandleQueries } = command as Command;
+                if (typeof action == 'string') {
+                    window.location.href = action;
+                } else {
+                    // TODO: Add check if action is (safely) callable
+                    action(canHandleQueries ? state.searchWord : undefined);
+                }
             } else {
-                // TODO: Add check if action is (safely) callable
-                (action as () => void)();
+                dispatch({ type: ACTIONS.SELECT_GROUP, command: command as CommandGroup });
             }
-        } else {
-            dispatch({ type: ACTIONS.SELECT_GROUP, command: command as CommandGroup });
-        }
-    }, []);
+        },
+        [state.searchWord]
+    );
 
     useEffect(() => {
-        console.debug('Setting up event listener');
         document.addEventListener('keydown', handleKeyEntered, true);
         return () => {
             document.removeEventListener('keydown', handleKeyEntered, true);
         };
     }, []);
-
-    useEffect(() => {
-        selectedElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, [selectedElementRef.current]);
 
     if (!open) {
         return null;
@@ -103,26 +101,13 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 handleKeyEntered={handleKeyEntered}
             />
             <div className={[styles.resultsWrap, state.expanded && styles.expanded].join(' ')}>
-                <nav className={styles.results}>
-                    <h6>Commands</h6>
-                    {state.availableCommandNames.length > 0 ? (
-                        <ul>
-                            {state.availableCommandNames.map((commandName, index) => (
-                                <CommandListItem
-                                    key={commandName}
-                                    ref={state.highlightedItem === index ? selectedElementRef : null}
-                                    command={
-                                        (state.selectedGroup ? state.selectedGroup.children : commands)[commandName]
-                                    }
-                                    onItemSelect={handleSelectItem}
-                                    highlighted={state.highlightedItem === index}
-                                />
-                            ))}
-                        </ul>
-                    ) : (
-                        <small className={styles.noResults}>No matching commands found</small>
-                    )}
-                </nav>
+                <CommandListing
+                    commands={state.commands}
+                    availableCommandNames={state.availableCommandNames}
+                    selectedGroup={state.selectedGroup}
+                    highlightedItem={state.highlightedItem}
+                    handleSelectItem={handleSelectItem}
+                />
             </div>
             {state.expanded && <CommandBarFooter selectedGroup={state.selectedGroup} />}
         </dialog>

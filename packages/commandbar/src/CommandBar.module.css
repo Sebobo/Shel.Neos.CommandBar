@@ -1,7 +1,7 @@
 :root {
-    --bar-min-width: 300px;
+    --bar-min-width: 400px;
     --bar-max-width: 600px;
-    --bar-width: 30vw;
+    --bar-width: 40vw;
     --bar-background: rgba(0, 0, 0, 0.8);
     --footer-background: rgba(0, 0, 0, 0.8);
     --color-shadow: rgba(255, 255, 255, 0.7);
@@ -52,38 +52,7 @@
     grid-template-rows: 1fr;
 }
 
-.resultsWrap.expanded .results {
+.resultsWrap.expanded > * {
     opacity: 1;
-    padding: 0.5rem;
-}
-
-.results {
-    border-top: 1px solid var(--color-border);
-    min-height: 0;
-    transition: 1s;
-    opacity: 0;
-    padding: 0 0.5rem;
-    overflow-y: auto;
-    max-height: 60vh;
-}
-
-.results h6 {
-    color: var(--color-light-text);
-    margin: 0.5rem;
-    font-size: 0.9em;
-    font-weight: normal;
-    user-select: none;
-}
-
-.results ul {
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    margin: 0;
-}
-
-.noResults {
     padding: 0.5rem;
 }
