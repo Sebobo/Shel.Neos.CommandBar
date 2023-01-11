@@ -1,7 +1,7 @@
 import manifest from '@neos-project/neos-ui-extensibility';
 
 import { reducer, actions } from './actions';
-import CommandBarUiWrapper from './CommandBarUiWrapper';
+import CommandBarUiPlugin from './CommandBarUiPlugin';
 
 manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { frontendConfiguration }) => {
     const { enabled } = frontendConfiguration['Shel.Neos.CommandBar:CommandBar'];
@@ -10,7 +10,7 @@ manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { frontendConfi
         return;
     }
 
-    globalRegistry.get('containers').set('PrimaryToolbar/Middle/CommandBar', CommandBarUiWrapper);
+    globalRegistry.get('containers').set('PrimaryToolbar/Middle/CommandBar', CommandBarUiPlugin);
     globalRegistry.get('reducers').set('Shel.Neos.CommandBar', { reducer });
 
     if (frontendConfiguration.hotkeys !== null && frontendConfiguration.hotkeys.length !== 0) {

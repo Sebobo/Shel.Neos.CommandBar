@@ -11,10 +11,10 @@ import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
 import CommandBar from './CommandBar';
 import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
-import * as styles from './CommandBarUiWrapper.module.css';
+import * as styles from './CommandBarUiPlugin.module.css';
 import fetchCommands from './helpers/fetchCommands';
 
-type CommandBarUiWrapperProps = {
+type CommandBarUiPluginProps = {
     config: CommandBarConfig;
     siteNode: CRNode;
     documentNode: CRNode;
@@ -35,12 +35,12 @@ type CommandBarUiWrapperProps = {
     editPreviewModes: EditPreviewModes;
 };
 
-type CommandBarUiWrapperState = {
+type CommandBarUiPluginState = {
     loaded: boolean;
     commands: CommandList;
 };
 
-class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps, CommandBarUiWrapperState> {
+class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
     static propTypes = {
         config: PropTypes.object.isRequired,
         i18nRegistry: PropTypes.object.isRequired,
@@ -171,7 +171,7 @@ class CommandBarUiWrapper extends React.PureComponent<CommandBarUiWrapperProps, 
     };
 
     render() {
-        const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiWrapperProps;
+        const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiPluginProps;
         const { commands, loaded } = this.state;
 
         return (
@@ -223,4 +223,4 @@ export default connect(() => ({}), {
     toggleCommandBar: commandBarActions.toggleCommandBar,
     addNode: actions.CR.Nodes.commenceCreation,
     setEditPreviewMode: actions.UI.EditPreviewMode.set,
-})(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiWrapper)));
+})(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiPlugin)));
