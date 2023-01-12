@@ -15,7 +15,8 @@ function clamp(value, min, max) {
 function filterAvailableCommands(selectedGroup: CommandGroup, searchWord: string, commands: CommandList) {
     const currentCommands = selectedGroup ? selectedGroup.children : commands;
     return Object.keys(currentCommands).filter((commandName) => {
-        return currentCommands[commandName].name.toLowerCase().indexOf(searchWord) >= 0;
+        const command = currentCommands[commandName];
+        return (command as Command).canHandleQueries || command.name.toLowerCase().indexOf(searchWord) >= 0;
     });
 }
 

@@ -74,6 +74,13 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     description: 'Add a new node',
                     action: this.handleAddNode,
                 },
+                searchDocument: {
+                    name: 'Search document',
+                    icon: 'search',
+                    description: 'Search for a document',
+                    action: this.handleSearchNode,
+                    canHandleQueries: true,
+                },
                 quickActions: {
                     name: 'Quick actions',
                     icon: 'neos',
@@ -127,10 +134,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             console.debug('keypress on window', e);
         });
 
-        const guestFrame = document.getElementsByName('neos-content-main')[0];
-        guestFrame.addEventListener('keypress', (e) => {
+        const guestFrame = document.getElementsByName('neos-content-main')[0] as HTMLIFrameElement;
+        guestFrame.contentWindow?.addEventListener('keypress', (e) => {
             console.debug('keypress in guestframe', e);
         });
+        console.debug('guestFrame', guestFrame.contentWindow);
     }
 
     buildCommandsFromHotkeys = (): CommandList => {
@@ -168,6 +176,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         const { addNode, documentNode, focusedNodeContextPath, toggleCommandBar } = this.props;
         toggleCommandBar();
         addNode(focusedNodeContextPath || documentNode.contextPath, undefined, 'after');
+    };
+
+    handleSearchNode = (searchQuery: string) => {
+        console.debug('Search for', searchQuery);
+        // TODO: Implement search and return results
     };
 
     render() {

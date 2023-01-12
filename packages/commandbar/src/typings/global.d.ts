@@ -33,8 +33,11 @@ type AbstractCommandItem = {
     description?: string;
 };
 
+type CommandAction = (argument?: string) => void;
+
 type Command = AbstractCommandItem & {
-    action: string | (() => void);
+    action: string | CommandAction;
+    canHandleQueries?: boolean;
 };
 
 type CommandGroup = AbstractCommandItem & {
