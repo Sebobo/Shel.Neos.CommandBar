@@ -33,6 +33,12 @@ type CommandBarUiPluginProps = {
     editPreviewMode: string;
     setEditPreviewMode: (mode: string) => void;
     editPreviewModes: EditPreviewModes;
+    publishableNodes: CRNode[];
+    publishableNodesInDocument: CRNode[];
+    isWorkspaceReadOnly: boolean;
+    publishAction: (contextPaths: string[], baseWorkspace: string) => void;
+    discardAction: (contextPaths: string[]) => void;
+    baseWorkspace: string;
 };
 
 type CommandBarUiPluginState = {
@@ -55,6 +61,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         editPreviewMode: PropTypes.string.isRequired,
         setEditPreviewMode: PropTypes.func.isRequired,
         editPreviewModes: PropTypes.object.isRequired,
+        publishableNodes: PropTypes.array,
+        publishableNodesInDocument: PropTypes.array,
+        isWorkspaceReadOnly: PropTypes.bool,
+        publishAction: PropTypes.func.isRequired,
+        discardAction: PropTypes.func.isRequired,
+        baseWorkspace: PropTypes.string.isRequired,
     };
 
     constructor(props) {
@@ -80,6 +92,37 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     description: 'Search for a document',
                     action: this.handleSearchNode,
                     canHandleQueries: true,
+                },
+                publicDiscard: {
+                    name: 'Publish or discard changes',
+                    description: 'Publish or discard changes',
+                    icon: 'check',
+                    children: {
+                        publish: {
+                            name: 'Publish',
+                            description: 'Publish changes on this document',
+                            icon: 'check',
+                            action: this.handlePublish,
+                        },
+                        publishAll: {
+                            name: 'Publish all',
+                            description: 'Publish all changes',
+                            icon: 'check-double',
+                            action: this.handlePublishAll,
+                        },
+                        discard: {
+                            name: 'Discard',
+                            description: 'Discard changes on this document',
+                            icon: 'ban',
+                            action: this.handleDiscard,
+                        },
+                        discardAll: {
+                            name: 'Discard all',
+                            description: 'Discard all changes',
+                            icon: 'ban',
+                            action: this.handleDiscardAll,
+                        },
+                    },
                 },
                 quickActions: {
                     name: 'Quick actions',
@@ -177,6 +220,32 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         // TODO: Implement search and return results
     };
 
+    handlePublish = () => {
+        const { publishableNodesInDocument, publishAction, baseWorkspace } = this.props;
+        publishAction(
+            publishableNodesInDocument.map((node) => node.contextPath),
+            baseWorkspace
+        );
+    };
+
+    handlePublishAll = () => {
+        const { publishableNodes, publishAction, baseWorkspace } = this.props;
+        publishAction(
+            publishableNodes.map((node) => node.contextPath),
+            baseWorkspace
+        );
+    };
+
+    handleDiscard = () => {
+        const { publishableNodesInDocument, discardAction } = this.props;
+        discardAction(publishableNodesInDocument.map((node) => node.contextPath));
+    };
+
+    handleDiscardAll = () => {
+        const { publishableNodes, discardAction } = this.props;
+        discardAction(publishableNodes.map((node) => node.contextPath));
+    };
+
     render() {
         const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiPluginProps;
         const { commands, loaded } = this.state;
@@ -210,6 +279,10 @@ const mapStateToProps = (state: NeosRootState) => ({
     siteNode: selectors.CR.Nodes.siteNodeSelector(state),
     documentNode: selectors.CR.Nodes.documentNodeSelector(state),
     focusedNodeContextPath: selectors.CR.Nodes.focusedNodePathSelector(state),
+    publishableNodes: selectors.CR.Workspaces.publishableNodesSelector(state),
+    publishableNodesInDocument: selectors.CR.Workspaces.publishableNodesInDocumentSelector(state),
+    isWorkspaceReadOnly: selectors.CR.Workspaces.isWorkspaceReadOnlySelector(state),
+    baseWorkspace: selectors.CR.Workspaces.baseWorkspaceSelector(state),
     commandBarOpen: commandBarSelectors.commandBarOpen(state),
     editPreviewMode: selectors.UI.EditPreviewMode.currentEditPreviewMode(state),
 });
@@ -230,4 +303,6 @@ export default connect(() => ({}), {
     toggleCommandBar: commandBarActions.toggleCommandBar,
     addNode: actions.CR.Nodes.commenceCreation,
     setEditPreviewMode: actions.UI.EditPreviewMode.set,
+    publishAction: actions.CR.Workspaces.publish,
+    discardAction: actions.CR.Workspaces.commenceDiscard,
 })(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiPlugin)));
