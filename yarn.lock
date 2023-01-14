@@ -531,6 +531,7 @@ __metadata:
     "@neos-project/neos-ui-extensibility": ^7.3.10
     "@neos-project/react-ui-components": ^7.3.10
     "@types/react-redux": ^7.1.25
+    fuzzy-search: ^3.2.1
     react: ^16.14.0
     react-redux: ^7.2.9
     redux-actions: ^0.12.0
@@ -6233,6 +6234,13 @@ __metadata:
   version: 1.2.3
   resolution: "functions-have-names@npm:1.2.3"
   checksum: c3f1f5ba20f4e962efb71344ce0a40722163e85bee2101ce25f88214e78182d2d2476aa85ef37950c579eb6cf6ee811c17b3101bb84004bb75655f3e33f3fdb5
+  languageName: node
+  linkType: hard
+
+"fuzzy-search@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "fuzzy-search@npm:3.2.1"
+  checksum: 65d50909e69216f830a6e88eade08df00662e2c081edb02063404cc922cc7319ef8958eff781aa4e3e64543a394a912cd8c80abb4c6b158c119e811364e7cfb9
   languageName: node
   linkType: hard
 

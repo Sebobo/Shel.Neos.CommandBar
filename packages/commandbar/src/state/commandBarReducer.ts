@@ -1,3 +1,5 @@
+import FuzzySearch from 'fuzzy-search';
+
 enum ACTIONS {
     RESET_SEARCH,
     HIGHLIGHT_NEXT_ITEM,
@@ -14,14 +16,30 @@ function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
 }
 
-function filterAvailableCommands(selectedCommandGroup: CommandId, searchWord: string, commands: FlatCommandList) {
-    const currentCommandIds = selectedCommandGroup
-        ? commands[selectedCommandGroup].subCommandIds
-        : Object.keys(commands).filter((commandId) => !commands[commandId].parentId);
-    return currentCommandIds.filter((commandName) => {
-        const command = commands[commandName];
-        return (command as Command).canHandleQueries || command.name.toLowerCase().indexOf(searchWord) >= 0;
+function filterAvailableCommands(
+    selectedCommandGroup: CommandId,
+    searchWord: string,
+    commands: FlatCommandList
+): CommandId[] {
+    // Filter available commands for the current context
+    const availableCommands = Object.values(commands).filter((command) => command.parentId === selectedCommandGroup);
+
+    if (!searchWord) {
+        return availableCommands.map((command) => command.id);
+    }
+
+    const searcher = new FuzzySearch(availableCommands, ['name'], {
+        sort: true,
     });
+    const matchingCommands = searcher.search(searchWord);
+
+    // Add all commands that can handle queries to the result
+    return [
+        ...new Set([
+            ...matchingCommands.map((command) => command.id),
+            ...availableCommands.filter((command) => command.canHandleQueries).map((command) => command.id),
+        ]),
+    ];
 }
 
 const commandBarReducer = (state: CommandBarState, action: CommandBarAction): CommandBarState => {

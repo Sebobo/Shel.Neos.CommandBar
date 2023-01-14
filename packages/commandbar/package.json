@@ -2,6 +2,7 @@
   "name": "@neos-commandbar/main",
   "version": "1.0.0",
   "dependencies": {
+    "fuzzy-search": "^3.2.1",
     "react": "^16.14.0",
     "react-redux": "^7.2.9",
     "redux-actions": "^0.12.0"
