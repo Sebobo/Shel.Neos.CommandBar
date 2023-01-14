@@ -43,7 +43,7 @@ type CommandBarUiPluginProps = {
 
 type CommandBarUiPluginState = {
     loaded: boolean;
-    commands: CommandList;
+    commands: HierarchicalCommandList;
 };
 
 class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
@@ -77,8 +77,14 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 debug: {
                     name: 'Debug',
                     icon: 'vial',
-                    description: 'Write a debug message',
-                    action: () => console.debug('Debug debug'),
+                    description: 'Wait and return a debug message',
+                    action: async () => {
+                        await new Promise((resolve) => setTimeout(resolve, 2000));
+                        return {
+                            success: true,
+                            message: 'Debug message',
+                        };
+                    },
                 },
                 addNode: {
                     name: 'Add node',
@@ -97,7 +103,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     name: 'Publish or discard changes',
                     description: 'Publish or discard changes',
                     icon: 'check',
-                    children: {
+                    subCommands: {
                         publish: {
                             name: 'Publish',
                             description: 'Publish changes on this document',
@@ -128,13 +134,13 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     name: 'Quick actions',
                     icon: 'neos',
                     description: 'Execute configured hotkeys',
-                    children: this.buildCommandsFromHotkeys(),
+                    subCommands: this.buildCommandsFromHotkeys(),
                 },
                 switchEditPreviewMode: {
                     name: 'Switch edit/preview mode',
                     icon: 'pencil',
                     description: 'Switch between edit and preview modes',
-                    children: this.buildCommandsFromEditPreviewModes(),
+                    subCommands: this.buildCommandsFromEditPreviewModes(),
                 },
             },
         };
@@ -176,9 +182,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         window.addEventListener('keypress', (e) => {
             console.debug('keypress on window', e);
         });
+
+        const guestFrame = document.getElementsByName('neos-content-main')[0] as HTMLIFrameElement;
+        guestFrame.contentWindow?.addEventListener('keypress', (e) => {
+            console.debug('keypress in guestframe', e);
+        });
+        console.debug('guestFrame', guestFrame.contentWindow);
     }
 
-    buildCommandsFromHotkeys = (): CommandList => {
+    buildCommandsFromHotkeys = (): HierarchicalCommandList => {
         const { hotkeyRegistry, handleHotkeyAction, config } = this.props;
         const hotkeys: NeosHotKey[] = hotkeyRegistry.getAllAsList();
         return hotkeys.reduce((carry, { id, description, action }) => {
@@ -194,7 +206,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }, {});
     };
 
-    buildCommandsFromEditPreviewModes = (): CommandList => {
+    buildCommandsFromEditPreviewModes = (): HierarchicalCommandList => {
         const { editPreviewMode, setEditPreviewMode, editPreviewModes, i18nRegistry } = this.props;
 
         return Object.keys(editPreviewModes).reduce((carry, mode) => {
@@ -209,41 +221,57 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }, {});
     };
 
-    handleAddNode = () => {
+    handleAddNode = async (): CommandResult => {
         const { addNode, documentNode, focusedNodeContextPath, toggleCommandBar } = this.props;
         toggleCommandBar();
         addNode(focusedNodeContextPath || documentNode.contextPath, undefined, 'after');
     };
 
-    handleSearchNode = (searchQuery: string) => {
+    handleSearchNode = async (searchQuery: string): CommandResult => {
         console.debug('Search for', searchQuery);
         // TODO: Implement search and return results
     };
 
-    handlePublish = () => {
+    handlePublish = async (): CommandResult => {
         const { publishableNodesInDocument, publishAction, baseWorkspace } = this.props;
         publishAction(
             publishableNodesInDocument.map((node) => node.contextPath),
             baseWorkspace
         );
+        return {
+            success: true,
+            message: `Published ${publishableNodesInDocument.length} changes`,
+        };
     };
 
-    handlePublishAll = () => {
+    handlePublishAll = async (): CommandResult => {
         const { publishableNodes, publishAction, baseWorkspace } = this.props;
         publishAction(
             publishableNodes.map((node) => node.contextPath),
             baseWorkspace
         );
+        return {
+            success: true,
+            message: `Published ${publishableNodes.length} changes`,
+        };
     };
 
-    handleDiscard = () => {
+    handleDiscard = async (): CommandResult => {
         const { publishableNodesInDocument, discardAction } = this.props;
         discardAction(publishableNodesInDocument.map((node) => node.contextPath));
+        return {
+            success: true,
+            message: `Discarded ${publishableNodesInDocument.length} changes`,
+        };
     };
 
-    handleDiscardAll = () => {
+    handleDiscardAll = async (): CommandResult => {
         const { publishableNodes, discardAction } = this.props;
         discardAction(publishableNodes.map((node) => node.contextPath));
+        return {
+            success: true,
+            message: `Discarded ${publishableNodes.length} changes`,
+        };
     };
 
     render() {

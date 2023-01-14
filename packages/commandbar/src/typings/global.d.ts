@@ -25,15 +25,25 @@ type CommandBarConfig = {
     };
 };
 
-type CommandList = Record<name, CommandItem>;
+type HierarchicalCommandList = Record<CommandId, CommandItem>;
+type FlatCommandList = Record<CommandId, ProcessedCommandItem>;
+
+type CommandName = string;
+type CommandId = string;
 
 type AbstractCommandItem = {
-    name: string;
+    name: CommandName;
     icon?: string;
     description?: string;
 };
 
-type CommandAction = (argument?: string) => void;
+type CommandResult = Promise<void | {
+    success: boolean;
+    message?: string;
+    // TODO: Allow json data or even html as response output
+}>;
+
+type CommandAction = (argument?: string) => CommandResult;
 
 type Command = AbstractCommandItem & {
     action: string | CommandAction;
@@ -41,25 +51,32 @@ type Command = AbstractCommandItem & {
 };
 
 type CommandGroup = AbstractCommandItem & {
-    children: CommandList;
+    subCommands: HierarchicalCommandList;
 };
 
 type CommandItem = Command | CommandGroup;
+type ProcessedCommandItem = Command & {
+    id: CommandId;
+    parentId: CommandId | null;
+    subCommandIds: CommandId[];
+};
 
 type CommandBarState = {
     expanded: boolean;
-    selectedGroup: CommandGroup;
+    selectedCommandGroup: CommandId;
+    availableCommandIds: CommandId[];
     searchWord: string;
     highlightedItem: number;
-    availableCommandNames: string[];
-    commands: CommandList;
+    commands: FlatCommandList;
+    runningCommandId: CommandId;
+    runningCommandMessage: string;
 };
 
 // FIXME: Define type safe action variants
 type CommandBarAction = {
     type: ACTIONS;
-    searchWord?: string;
-    command?: CommandGroup;
+    argument?: string;
+    commandId?: CommandId;
 };
 
 type NeosHotKey = {

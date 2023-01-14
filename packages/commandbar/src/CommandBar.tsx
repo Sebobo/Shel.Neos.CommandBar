@@ -2,32 +2,73 @@ import * as React from 'react';
 import { useCallback, useEffect, useReducer } from 'react';
 
 import * as styles from './CommandBar.module.css';
-import CommandListItem from './CommandList/CommandListItem';
 import { commandBarReducer, ACTIONS } from './state/commandBarReducer';
 import CommandBarFooter from './CommandBarFooter/CommandBarFooter';
 import CommandBarHeader from './CommandBarHeader/CommandBarHeader';
 import CommandListing from './CommandList/CommandListing';
 
 type CommandBarProps = {
-    commands: CommandList;
+    commands: HierarchicalCommandList;
     open: boolean;
     toggleOpen: () => void;
 };
 
 const initialState: CommandBarState = {
     expanded: false,
-    selectedGroup: null,
+    selectedCommandGroup: null,
+    availableCommandIds: [],
     searchWord: '',
     highlightedItem: 0,
     commands: {},
-    availableCommandNames: [],
+    runningCommandId: null,
+    runningCommandMessage: null,
 };
+
+/**
+ * This method converts the hierarchical command list into a flat list of commands which is more convenient
+ * for internal processing, whereas the hierarchical command list is more convenient for the user.
+ */
+function flattenCommands(commands: HierarchicalCommandList, parentId: CommandId = null): FlatCommandList {
+    return Object.keys(commands).reduce((commandList, commandId) => {
+        const { icon, description, name, subCommands, action, canHandleQueries } = commands[commandId] as Command &
+            CommandGroup;
+
+        // Create an uniquely identifiable command id for the flat command list
+        const absoluteCommandId = parentId ? `${parentId}.${commandId}` : commandId;
+
+        // Create list of available subcommand names
+        const subCommandIds = subCommands
+            ? Object.keys(subCommands).map((subCommandId) => `${absoluteCommandId}.${subCommandId}`)
+            : [];
+
+        // Insert the processed command into the flat command list
+        commandList[absoluteCommandId] = {
+            id: absoluteCommandId,
+            name,
+            icon,
+            description,
+            action,
+            canHandleQueries,
+            subCommandIds,
+            parentId,
+        };
+
+        // Insert subcommands into the list
+        if (subCommandIds.length > 0) {
+            return {
+                ...commandList,
+                ...flattenCommands(subCommands, absoluteCommandId),
+            };
+        }
+        return commandList;
+    }, {} as FlatCommandList);
+}
 
 const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
         ...initialState,
-        commands,
-        availableCommandNames: Object.keys(commands),
+        commands: flattenCommands(commands),
+        availableCommandIds: Object.keys(commands),
     });
 
     const handleKeyEntered = useCallback(
@@ -36,7 +77,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 return;
             }
             if (e.key === 'Escape') {
-                if (state.selectedGroup || state.searchWord) {
+                if (state.selectedCommandGroup || state.searchWord) {
                     dispatch({ type: ACTIONS.CANCEL });
                 } else {
                     // Close command bar if cancel is noop
@@ -49,35 +90,44 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
             } else if (e.key === 'ArrowUp') {
                 dispatch({ type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM });
                 e.stopPropagation();
-            } else if (e.key === 'Enter' && state.availableCommandNames.length > 0) {
-                const commandName = state.availableCommandNames[state.highlightedItem];
-                const command = (state.selectedGroup ? state.selectedGroup.children : commands)[commandName];
-                handleSelectItem(command);
+            } else if (e.key === 'Enter' && state.availableCommandIds.length > state.highlightedItem) {
+                const commandId = state.availableCommandIds[state.highlightedItem];
+                handleSelectItem(commandId);
                 e.stopPropagation();
             }
         },
-        [state.availableCommandNames, state.selectedGroup, state.highlightedItem, state.searchWord, open]
+        [state.availableCommandIds, state.highlightedItem, state.searchWord, open]
     );
 
     const handleSearch = useCallback((e) => {
-        dispatch({ type: ACTIONS.UPDATE_SEARCH, searchWord: e.target.value.toLowerCase() });
+        dispatch({ type: ACTIONS.UPDATE_SEARCH, argument: e.target.value.toLowerCase() });
     }, []);
 
     const handleSelectItem = useCallback(
-        (command: CommandItem) => {
-            if ((command as Command).action) {
-                const { action, canHandleQueries } = command as Command;
+        (commandId: CommandId) => {
+            const { action, canHandleQueries } = state.commands[commandId];
+            if (action) {
                 if (typeof action == 'string') {
                     window.location.href = action;
                 } else {
-                    // TODO: Add check if action is (safely) callable
-                    action(canHandleQueries ? state.searchWord : undefined);
+                    dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: 'Running command' });
+                    action(canHandleQueries ? state.searchWord : undefined)
+                        .then((result) => {
+                            console.debug('Command result', result);
+                        })
+                        .catch((error) => {
+                            // TODO: Show error message
+                            console.error('Command error', error);
+                        })
+                        .finally(() => {
+                            dispatch({ type: ACTIONS.FINISHED_COMMAND });
+                        });
                 }
             } else {
-                dispatch({ type: ACTIONS.SELECT_GROUP, command: command as CommandGroup });
+                dispatch({ type: ACTIONS.SELECT_GROUP, commandId });
             }
         },
-        [state.searchWord]
+        [state.searchWord, state.commands]
     );
 
     useEffect(() => {
@@ -94,7 +144,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     return (
         <dialog className={styles.commandBar} open={open}>
             <CommandBarHeader
-                selectedGroup={state.selectedGroup}
+                selectedCommandGroup={state.selectedCommandGroup}
                 searchWord={state.searchWord}
                 dispatch={dispatch}
                 handleSearch={handleSearch}
@@ -103,13 +153,18 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
             <div className={[styles.resultsWrap, state.expanded && styles.expanded].join(' ')}>
                 <CommandListing
                     commands={state.commands}
-                    availableCommandNames={state.availableCommandNames}
-                    selectedGroup={state.selectedGroup}
+                    availableCommandIds={state.availableCommandIds}
                     highlightedItem={state.highlightedItem}
                     handleSelectItem={handleSelectItem}
                 />
             </div>
-            {state.expanded && <CommandBarFooter selectedGroup={state.selectedGroup} />}
+            {state.expanded && (
+                <CommandBarFooter
+                    selectedGroup={state.selectedCommandGroup ? state.commands[state.selectedCommandGroup] : null}
+                    runningCommand={state.runningCommandId ? state.commands[state.runningCommandId] : null}
+                    runningCommandMessage={state.runningCommandMessage}
+                />
+            )}
         </dialog>
     );
 };

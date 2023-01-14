@@ -4,8 +4,8 @@ import * as styles from './CommandListItem.module.css';
 import Icon from '../Presentationals/Icon';
 
 type CommandListItemProps = {
-    command: CommandItem;
-    onItemSelect: (command: CommandItem) => void;
+    command: ProcessedCommandItem;
+    onItemSelect: (commandId: CommandId) => void;
     highlighted: boolean;
     ref?: React.Ref<HTMLLIElement>;
 };
@@ -13,12 +13,12 @@ type CommandListItemProps = {
 // eslint-disable-next-line react/display-name
 const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
     ({ command, onItemSelect, highlighted }, ref) => {
-        const { name, description, icon } = command;
+        const { id, name, description, icon } = command;
 
         return (
             <li
                 className={[styles.commandListItem, highlighted && styles.highlighted].join(' ')}
-                onClick={() => onItemSelect(command)}
+                onClick={() => onItemSelect(id)}
                 ref={ref}
             >
                 <Icon icon={icon} />

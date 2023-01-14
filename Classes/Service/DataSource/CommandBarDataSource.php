@@ -55,7 +55,7 @@ class CommandBarDataSource extends AbstractDataSource
                     'name' => self::translateByShortHandString($module['label']),
                     'description' => self::translateByShortHandString($module['description']),
                     'icon' => $module['icon'],
-                    'children' => array_reduce($module['submodules'], static function (array $carry, array $submodule) {
+                    'subCommands' => array_reduce($module['submodules'], static function (array $carry, array $submodule) {
                         if ($submodule['hideInMenu']) {
                             return $carry;
                         }
@@ -76,13 +76,13 @@ class CommandBarDataSource extends AbstractDataSource
                 'name' => 'Sites',
                 'description' => 'Switch to another site',
                 'icon' => 'file',
-                'children' => $sitesForMenu,
+                'subCommands' => $sitesForMenu,
             ],
             'modules' => [
                 'name' => 'Modules',
                 'description' => 'Open a backend module',
                 'icon' => 'puzzle-piece',
-                'children' => $modulesForMenu,
+                'subCommands' => $modulesForMenu,
             ],
         ];
     }

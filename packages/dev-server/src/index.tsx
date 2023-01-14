@@ -34,12 +34,12 @@ import CommandBar from '@neos-commandbar/main';
         const [content, setContent] = useState(initialContent);
         const [currentWebsite, setCurrentWebsite] = useState('pageA');
 
-        const publishAll = useCallback(() => {
+        const publishAll: CommandAction = useCallback(async () => {
             console.debug('Publishing all');
             setPublished(true);
         }, []);
 
-        const addContentElement = useCallback((page: string, nodeType: string, text: string) => {
+        const addContentElement = useCallback(async (page: string, nodeType: string, text: string) => {
             console.debug('Adding more content to page ' + page);
             setContent((prev) => {
                 return {
@@ -56,29 +56,31 @@ import CommandBar from '@neos-commandbar/main';
             });
         }, []);
 
-        const findDocument = useCallback(() => {
+        const findDocument: CommandAction = useCallback(async () => {
             console.debug('Find document ist not implemented yet');
-            return false;
+            return {
+                success: false,
+            };
         }, []);
 
         // Create some fake commands for testing
-        const commands: CommandList = useMemo(
+        const commands: HierarchicalCommandList = useMemo(
             () => ({
                 home: {
                     icon: 'home',
                     name: 'Home',
                     description: 'Sends you home',
-                    action: () => console.debug('Go home'),
+                    action: async () => console.debug('Go home'),
                 },
                 toggleLeftSidebar: {
                     icon: 'toggle-on',
                     name: 'Toggle left sidebar',
-                    action: () => setSideBarLeftOpen((prev) => !prev),
+                    action: async () => setSideBarLeftOpen((prev) => !prev),
                 },
                 toggleRightSidebar: {
                     icon: 'toggle-on',
                     name: 'Toggle right sidebar',
-                    action: () => setSideBarRightOpen((prev) => !prev),
+                    action: async () => setSideBarRightOpen((prev) => !prev),
                 },
                 publishAll: {
                     icon: 'newspaper',
@@ -90,7 +92,7 @@ import CommandBar from '@neos-commandbar/main';
                     icon: 'plus',
                     name: 'Add content',
                     description: 'Add new content element to the current page',
-                    action: () => addContentElement(currentWebsite, 'text', 'Some more text'),
+                    action: async () => addContentElement(currentWebsite, 'text', 'Some more text'),
                 },
                 findDocument: {
                     icon: 'search',
@@ -102,16 +104,16 @@ import CommandBar from '@neos-commandbar/main';
                     name: 'Sites',
                     icon: 'file',
                     description: 'Open another website in this Neos instance',
-                    children: {
+                    subCommands: {
                         pageA: {
                             name: 'Website A',
                             icon: 'globe',
-                            action: () => setCurrentWebsite('pageA'),
+                            action: async () => setCurrentWebsite('pageA'),
                         },
                         pageB: {
                             name: 'Website B',
                             icon: 'globe',
-                            action: () => setCurrentWebsite('pageB'),
+                            action: async () => setCurrentWebsite('pageB'),
                         },
                     },
                 },
@@ -119,30 +121,30 @@ import CommandBar from '@neos-commandbar/main';
                     name: 'Modules',
                     icon: 'puzzle-piece',
                     description: 'Open a module',
-                    children: {
+                    subCommands: {
                         media: {
                             name: 'Media',
                             icon: 'camera',
                             description: 'Manage images and other assets',
-                            action: () => console.debug('Opened the media module'),
+                            action: async () => console.debug('Opened the media module'),
                         },
                         workspaces: {
                             name: 'Workspaces',
                             icon: 'th-large',
                             description: 'Publish or discard changes in workspaces',
-                            action: () => console.debug('Opened the workspaces module'),
+                            action: async () => console.debug('Opened the workspaces module'),
                         },
                         history: {
                             name: 'History',
                             icon: 'calendar',
                             description: 'View historic changes to content',
-                            action: () => console.debug('Opened the history module'),
+                            action: async () => console.debug('Opened the history module'),
                         },
                         redirects: {
                             name: 'Redirects',
                             icon: 'share',
                             description: 'Manage redirects for documents and assets',
-                            action: () => console.debug('Opened the redirects module'),
+                            action: async () => console.debug('Opened the redirects module'),
                         },
                     },
                 },

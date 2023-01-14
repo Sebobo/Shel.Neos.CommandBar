@@ -5,18 +5,16 @@ import * as styles from './CommandListing.module.css';
 import CommandListItem from './CommandListItem';
 
 type CommandListingProps = {
-    commands: CommandList;
-    availableCommandNames: string[];
+    commands: FlatCommandList;
+    availableCommandIds: CommandId[];
     highlightedItem: number;
-    selectedGroup: CommandGroup | null;
-    handleSelectItem: (command: CommandItem) => void;
+    handleSelectItem: (commandId: CommandId) => void;
 };
 
 const CommandListing: React.FC<CommandListingProps> = ({
     commands,
-    availableCommandNames,
+    availableCommandIds,
     highlightedItem,
-    selectedGroup,
     handleSelectItem,
 }) => {
     const selectedElementRef = React.useRef(null);
@@ -28,13 +26,13 @@ const CommandListing: React.FC<CommandListingProps> = ({
     return (
         <nav className={styles.results}>
             <h6>Commands</h6>
-            {availableCommandNames.length > 0 ? (
+            {availableCommandIds.length > 0 ? (
                 <ul>
-                    {availableCommandNames.map((commandName, index) => (
+                    {availableCommandIds.map((commandId, index) => (
                         <CommandListItem
-                            key={commandName}
+                            key={commandId}
                             ref={highlightedItem === index ? selectedElementRef : null}
-                            command={(selectedGroup ? selectedGroup.children : commands)[commandName]}
+                            command={commands[commandId]}
                             onItemSelect={handleSelectItem}
                             highlighted={highlightedItem === index}
                         />

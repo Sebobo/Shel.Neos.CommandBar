@@ -7,7 +7,7 @@ import SearchBox from '../SearchBox/SearchBox';
 import * as styles from './CommandBarHeader.module.css';
 
 type CommandBarHeaderProps = {
-    selectedGroup: CommandGroup;
+    selectedCommandGroup: CommandId;
     searchWord: string;
     handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleKeyEntered: (e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -15,7 +15,7 @@ type CommandBarHeaderProps = {
 };
 
 const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
-    selectedGroup,
+    selectedCommandGroup,
     searchWord,
     dispatch,
     handleKeyEntered,
@@ -23,7 +23,7 @@ const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
 }) => {
     return (
         <header className={styles.commandBarHeader}>
-            {selectedGroup && (
+            {selectedCommandGroup && (
                 <button
                     type="button"
                     onClick={() => dispatch({ type: ACTIONS.GO_TO_PARENT_GROUP })}
