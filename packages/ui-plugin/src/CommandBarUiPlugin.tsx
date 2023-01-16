@@ -153,7 +153,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 },
                 quickActions: {
                     name: 'Quick actions',
-                    icon: 'neos',
+                    icon: 'keyboard',
                     description: 'Execute configured hotkeys',
                     subCommands: this.buildCommandsFromHotkeys(),
                 },
