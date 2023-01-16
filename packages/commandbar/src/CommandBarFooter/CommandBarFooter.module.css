@@ -3,6 +3,8 @@
     background-color: var(--footer-background);
     padding: 0.8rem 1rem;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 1rem;
     user-select: none;
 }
@@ -15,4 +17,23 @@
 .activity {
     display: flex;
     gap: 1rem;
+}
+
+.madeWithLove {
+    display: flex;
+}
+
+.madeWithLove small {
+    transition: color 0.1s ease-in-out;
+}
+
+.madeWithLove:hover small {
+    color: var(--color-light-text-hover);
+}
+
+.madeWithLove svg {
+    display: inline-block;
+    width: var(--icon-size);
+    height: auto;
+    margin-left: 0.5em;
 }
