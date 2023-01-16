@@ -1,0 +1,19 @@
+{
+  "name": "@neos-commandbar/ui-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "@neos-commandbar/commandbar": "*"
+  },
+  "devDependencies": {
+    "@neos-project/build-essentials": "^8.2.3",
+    "@neos-project/neos-ui-extensibility": "^8.2.3"
+  },
+  "source": "src/index.html",
+  "scripts": {
+    "build": "NODE_ENV=production neos-react-scripts build",
+    "watch": "neos-react-scripts watch"
+  },
+  "neos": {
+    "buildTargetDirectory": "../../Resources/Public"
+  }
+}

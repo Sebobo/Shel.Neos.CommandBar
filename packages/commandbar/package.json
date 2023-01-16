@@ -1,25 +1,18 @@
 {
-  "name": "@neos-commandbar/main",
+  "name": "@neos-commandbar/commandbar",
   "version": "1.0.0",
   "dependencies": {
+    "@neos-project/react-ui-components": "^8.2.3",
     "fuzzy-search": "^3.2.1",
     "react": "^16.14.0",
     "react-redux": "^7.2.9",
     "redux-actions": "^0.12.0"
   },
   "devDependencies": {
-    "@neos-project/build-essentials": "^7.3.10",
-    "@neos-project/neos-ui-extensibility": "^7.3.10",
-    "@neos-project/react-ui-components": "^7.3.10",
     "@types/react-redux": "^7.1.25"
   },
   "main": "src/CommandBar.tsx",
   "scripts": {
-    "build": "NODE_ENV=production neos-react-scripts build",
-    "watch": "neos-react-scripts watch",
     "test": "echo 'not implemented' exit 1"
-  },
-  "neos": {
-    "buildTargetDirectory": "../../Resources/Public"
   }
 }

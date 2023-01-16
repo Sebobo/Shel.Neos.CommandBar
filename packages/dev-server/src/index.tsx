@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
-import CommandBar from '@neos-commandbar/main';
+import CommandBar from '@neos-commandbar/commandbar';
 
 (() => {
     const initialContent = {

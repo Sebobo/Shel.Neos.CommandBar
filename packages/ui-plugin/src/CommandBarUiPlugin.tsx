@@ -9,7 +9,7 @@ import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
-import CommandBar from './CommandBar';
+import CommandBar from '@neos-commandbar/commandbar';
 import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
 import * as styles from './CommandBarUiPlugin.module.css';
 import fetchCommands from './helpers/fetchCommands';

@@ -10,8 +10,9 @@
     "packages/*"
   ],
   "dependencies": {
+    "@neos-commandbar/commandbar": "workspace:*",
     "@neos-commandbar/dev-server": "workspace:*",
-    "@neos-commandbar/main": "workspace:*"
+    "@neos-commandbar/ui-plugin": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
@@ -27,10 +28,10 @@
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "scripts": {
-    "build": "yarn workspace @neos-commandbar/main build",
-    "watch": "yarn workspace @neos-commandbar/main watch",
+    "build": "yarn workspace @neos-commandbar/ui-plugin build",
+    "watch": "yarn workspace @neos-commandbar/ui-plugin watch",
     "dev": "yarn workspace @neos-commandbar/dev-server start",
-    "test": "yarn workspace @neos-commandbar/main test"
+    "test": "yarn workspace @neos-commandbar/commandbar test"
   },
   "prettier": {
     "printWidth": 120,
@@ -45,8 +46,6 @@
   ],
   "flat": true,
   "resolutions": {
-    "@neos-project/neos-ui-extensibility/@neos-project/build-essentials": "patch:@neos-project/build-essentials@npm%3A7.3.10#./.yarn/patches/@neos-project-build-essentials-npm-7.3.10-d9fe30a4f4.patch",
-    "@neos-project/build-essentials@^7.3.10": "patch:@neos-project/build-essentials@npm%3A7.3.10#./.yarn/patches/@neos-project-build-essentials-npm-7.3.10-d9fe30a4f4.patch",
-    "@neos-project/build-essentials@5.2.5": "patch:@neos-project/build-essentials@npm%3A7.3.10#./.yarn/patches/@neos-project-build-essentials-npm-7.3.10-d9fe30a4f4.patch"
+    "@neos-project/build-essentials@^8.2.3": "patch:@neos-project/build-essentials@npm%3A7.3.10#./.yarn/patches/@neos-project-build-essentials-npm-8.2.3-d9fe30a4f4.patch"
   }
 }

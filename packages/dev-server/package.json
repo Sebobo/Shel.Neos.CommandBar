@@ -2,6 +2,7 @@
   "name": "@neos-commandbar/dev-server",
   "version": "1.0.0",
   "dependencies": {
+    "@neos-commandbar/commandbar": "*",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"
   },
