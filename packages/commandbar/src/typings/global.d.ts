@@ -37,16 +37,19 @@ type AbstractCommandItem = {
     description?: string;
 };
 
-type CommandResult = Promise<void | {
+type CommandResult = {
     success: boolean;
     message?: string;
     // TODO: Allow json data or even html as response output
-}>;
+};
 
-type CommandAction = (argument?: string) => CommandResult;
+type AsyncCommandResult = Promise<void | CommandResult>;
+type CommandGeneratorResult = AsyncGenerator<CommandResult, CommandResult, CommandResult>;
+type CommandAction = (argument?: string) => AsyncCommandResult;
+type CommandGeneratorAction = (argument?: string) => CommandGeneratorResult;
 
 type Command = AbstractCommandItem & {
-    action: string | CommandAction;
+    action: string | CommandAction | CommandGeneratorAction;
     canHandleQueries?: boolean;
 };
 

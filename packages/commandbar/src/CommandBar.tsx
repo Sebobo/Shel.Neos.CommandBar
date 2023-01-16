@@ -104,27 +104,42 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     }, []);
 
     const handleSelectItem = useCallback(
-        (commandId: CommandId) => {
+        async (commandId: CommandId) => {
             const { action, canHandleQueries } = state.commands[commandId];
-            if (action) {
-                if (typeof action == 'string') {
-                    window.location.href = action;
-                } else {
-                    dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: 'Running command' });
-                    action(canHandleQueries ? state.searchWord : undefined)
-                        .then((result) => {
-                            console.debug('Command result', result);
-                        })
-                        .catch((error) => {
-                            // TODO: Show error message
-                            console.error('Command error', error);
-                        })
-                        .finally(() => {
-                            dispatch({ type: ACTIONS.FINISHED_COMMAND });
-                        });
+            if (!action) {
+                return dispatch({ type: ACTIONS.SELECT_GROUP, commandId });
+            }
+            // FIXME: Show loading indicator and block further actions while command is running or url is opened
+            if (typeof action == 'string') {
+                dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: 'Loading url' });
+                window.location.href = action;
+                return;
+            }
+            dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: 'Running command' });
+            const actionResult = action(canHandleQueries ? state.searchWord : undefined);
+            if ((actionResult as AsyncCommandResult).then) {
+                // Handle Promises
+                (actionResult as AsyncCommandResult)
+                    .then((result) => {
+                        // TODO: Handle success === false
+                        console.debug('Command result', result);
+                    })
+                    .catch((error) => {
+                        // TODO: Show error message
+                        console.error('Command error', error);
+                    })
+                    .finally(() => {
+                        dispatch({ type: ACTIONS.FINISHED_COMMAND });
+                    });
+            } else if ((actionResult as CommandGeneratorResult).next) {
+                // Handle generators
+                const generator = actionResult as CommandGeneratorResult;
+                // TODO: Handle errors / success === false
+                for await (const result of generator) {
+                    console.debug('next value', result);
+                    dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: result.message });
                 }
-            } else {
-                dispatch({ type: ACTIONS.SELECT_GROUP, commandId });
+                dispatch({ type: ACTIONS.FINISHED_COMMAND });
             }
         },
         [state.searchWord, state.commands]

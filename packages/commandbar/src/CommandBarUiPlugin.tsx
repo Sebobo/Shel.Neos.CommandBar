@@ -74,8 +74,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.state = {
             loaded: false,
             commands: {
-                debug: {
-                    name: 'Debug',
+                testAsync: {
+                    name: 'Test async',
                     icon: 'vial',
                     description: 'Wait and return a debug message',
                     action: async () => {
@@ -83,6 +83,27 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                         return {
                             success: true,
                             message: 'Debug message',
+                        };
+                    },
+                },
+                testGenerator: {
+                    name: 'Test generator',
+                    icon: 'vial',
+                    description: 'Wait and return iterate on command results',
+                    action: async function* () {
+                        yield {
+                            success: true,
+                            message: 'Doing some testing step 1',
+                        };
+                        await new Promise((resolve) => setTimeout(resolve, 2000));
+                        yield {
+                            success: true,
+                            message: 'Doing some more testing step 2',
+                        };
+                        await new Promise((resolve) => setTimeout(resolve, 2000));
+                        return {
+                            success: true,
+                            message: 'Finished testing',
                         };
                     },
                 },
@@ -99,7 +120,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     action: this.handleSearchNode,
                     canHandleQueries: true,
                 },
-                publicDiscard: {
+                publishDiscard: {
                     name: 'Publish or discard changes',
                     description: 'Publish or discard changes',
                     icon: 'check',
@@ -199,7 +220,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     name: description,
                     description: id,
                     icon: this.mapHotkeyIdToIcon(id),
-                    action: () => handleHotkeyAction(action()),
+                    action: async () => handleHotkeyAction(action()),
                 };
             }
             return carry;
@@ -221,18 +242,18 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }, {});
     };
 
-    handleAddNode = async (): CommandResult => {
+    handleAddNode = async (): AsyncCommandResult => {
         const { addNode, documentNode, focusedNodeContextPath, toggleCommandBar } = this.props;
         toggleCommandBar();
         addNode(focusedNodeContextPath || documentNode.contextPath, undefined, 'after');
     };
 
-    handleSearchNode = async (searchQuery: string): CommandResult => {
+    handleSearchNode = async (searchQuery: string): AsyncCommandResult => {
         console.debug('Search for', searchQuery);
         // TODO: Implement search and return results
     };
 
-    handlePublish = async (): CommandResult => {
+    handlePublish = async (): AsyncCommandResult => {
         const { publishableNodesInDocument, publishAction, baseWorkspace } = this.props;
         publishAction(
             publishableNodesInDocument.map((node) => node.contextPath),
@@ -244,7 +265,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         };
     };
 
-    handlePublishAll = async (): CommandResult => {
+    handlePublishAll = async (): AsyncCommandResult => {
         const { publishableNodes, publishAction, baseWorkspace } = this.props;
         publishAction(
             publishableNodes.map((node) => node.contextPath),
@@ -256,7 +277,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         };
     };
 
-    handleDiscard = async (): CommandResult => {
+    handleDiscard = async (): AsyncCommandResult => {
         const { publishableNodesInDocument, discardAction } = this.props;
         discardAction(publishableNodesInDocument.map((node) => node.contextPath));
         return {
@@ -265,7 +286,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         };
     };
 
-    handleDiscardAll = async (): CommandResult => {
+    handleDiscardAll = async (): AsyncCommandResult => {
         const { publishableNodes, discardAction } = this.props;
         discardAction(publishableNodes.map((node) => node.contextPath));
         return {
