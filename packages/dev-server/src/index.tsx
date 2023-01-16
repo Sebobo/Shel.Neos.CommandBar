@@ -52,7 +52,6 @@ import CommandBar from '@neos-commandbar/commandbar';
                         },
                     ],
                 };
-                return prev;
             });
         }, []);
 

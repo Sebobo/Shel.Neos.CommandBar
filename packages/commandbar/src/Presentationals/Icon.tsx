@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-// import iconMapper from '@neos-project/react-ui-components/src/Icon/mapper';
 import { Icon as NeosIcon } from '@neos-project/react-ui-components';
 
 import * as styles from './Icon.module.css';
