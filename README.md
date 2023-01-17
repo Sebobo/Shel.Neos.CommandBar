@@ -4,6 +4,27 @@
 
 This package provides a command bar plugin for Neos CMS.
 
+## Features
+
+* 🔍 Open commandbar via CMD+K or CTRL+K in the Neos content module
+* ⚡️ Quickly search for commands (fuzzy search enabled to handle spelling mistakes)
+* 🔥 Offer most registered hotkeys as selectable commands 
+  * some are excluded via configuration as they won't work in the context of the command bar
+  * automatically includes hotkeys from other packages
+* 🧭 Navigation commands
+  * Jump to module
+  * Jump to site
+  * Search and open document node
+* ➕ Open node creation dialog relative to the current node
+* 📝 Switch edit/preview mode
+* 📰 Publishing
+  * Publish / discard changes on current page
+  * Publish / discard all changes
+
+## Screenshot
+
+// TODO: Add screenshot
+
 ## Installation
 
 As the plugin is still in development, you need to add the package to your `composer.json` manually:
