@@ -1,11 +1,13 @@
 :root {
     --bar-min-width: 400px;
-    --bar-max-width: 600px;
+    --bar-max-width: 90vw;
     --bar-width: 40vw;
+    --bar-width-expanded: 60vw;
     --bar-background: rgba(0, 0, 0, 0.8);
     --footer-background: rgba(0, 0, 0, 0.8);
     --color-shadow: rgba(255, 255, 255, 0.7);
     --color-light-text: rgba(255, 255, 255, 0.6);
+    --color-light-text-hover: rgba(255, 255, 255, 0.8);
     --color-icon-bg: rgba(255, 255, 255, 0.2);
     --color-icon-bg-hover: rgba(255, 255, 255, 0.4);
     --color-border: rgba(255, 255, 255, 0.2);
@@ -13,9 +15,10 @@
     --color-item-hover: rgba(255, 255, 255, 0.1);
     --border-radius-bar: 0.6rem;
     --border-radius-item: 0.4rem;
+    --icon-size: 1.125em;
 }
 
-.CommandBar-module__commandBar___iIl8n {
+.CommandBar-module__commandBar___3t_V0 {
     backdrop-filter: blur(10px);
     background: var(--bar-background);
     border-radius: var(--border-radius-bar, 5);
@@ -35,49 +38,88 @@
     translate: -50% -50%;
     width: var(--bar-width);
     pointer-events: all;
+    transition: width 0.1s ease-out;
 }
 
-.CommandBar-module__commandBar___iIl8n small {
+.CommandBar-module__commandBar___3t_V0.CommandBar-module__hasResults___3NzEf {
+    width: var(--bar-width-expanded);
+}
+
+.CommandBar-module__commandBar___3t_V0 small {
     color: var(--color-light-text);
+    font-size: 90%;
 }
 
-.CommandBar-module__resultsWrap___2ZfKL {
+.CommandBar-module__resultsWrap___ceSal {
     display: grid;
     grid-template-rows: 0fr;
     transform-origin: top center;
     transition: grid-template-rows 0.2s ease-in;
 }
 
-.CommandBar-module__resultsWrap___2ZfKL.CommandBar-module__expanded___2L-st {
+.CommandBar-module__resultsWrap___ceSal > * {
+    opacity: 0;
+}
+
+.CommandBar-module__resultsWrap___ceSal.CommandBar-module__expanded___tNs3W {
     grid-template-rows: 1fr;
 }
 
-.CommandBar-module__resultsWrap___2ZfKL.CommandBar-module__expanded___2L-st > * {
+.CommandBar-module__resultsWrap___ceSal.CommandBar-module__expanded___tNs3W > * {
     opacity: 1;
     padding: 0.5rem;
 }
+.CommandBar-module__resultsWrap___ceSal.CommandBar-module__split___mpznN {
+    grid-template-columns: 1fr 1fr;
+}
 
-.Icon-module__iconWrap___3XtPO {
-    width: 1.125em;
+.Icon-module__iconWrap___1tIr6 {
+    width: var(--icon-size);
     display: inline-block;
     text-align: center;
 }
 
-.CommandBarFooter-module__commandBarFooter___2f1ZS {
+.CommandBarFooter-module__commandBarFooter___1mMGR {
     border-top: 1px solid var(--color-border);
     background-color: var(--footer-background);
     padding: 0.8rem 1rem;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 1rem;
     user-select: none;
 }
 
-.CommandBarFooter-module__breadcrumb___1X_QQ {
+.CommandBarFooter-module__breadcrumb___2xMga {
     display: flex;
     gap: 1rem;
 }
 
-.SearchBox-module__searchBox___2DE6G {
+.CommandBarFooter-module__activity___1YdE7 {
+    display: flex;
+    gap: 1rem;
+}
+
+.CommandBarFooter-module__madeWithLove___2_GKs {
+    display: flex;
+}
+
+.CommandBarFooter-module__madeWithLove___2_GKs small {
+    transition: color 0.1s ease-in-out;
+}
+
+.CommandBarFooter-module__madeWithLove___2_GKs:hover small {
+    color: var(--color-light-text-hover);
+}
+
+.CommandBarFooter-module__madeWithLove___2_GKs svg {
+    display: inline-block;
+    width: var(--icon-size);
+    height: auto;
+    margin-left: 0.5em;
+}
+
+.SearchBox-module__searchBox___3J8zU {
     appearance: none;
     background: none;
     border: none;
@@ -89,7 +131,7 @@
     flex: 1;
 }
 
-.CommandBarHeader-module__commandBarHeader___1vdLC {
+.CommandBarHeader-module__commandBarHeader___2UG9r {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -97,7 +139,7 @@
     border-bottom: 1px solid var(--color-border);
 }
 
-.CommandBarHeader-module__backButton___33Nr8 {
+.CommandBarHeader-module__backButton___3tZcE {
     padding: 0.3rem;
     background-color: var(--color-icon-bg);
     border-radius: 50%;
@@ -108,19 +150,18 @@
     transition: background-color 0.1s ease-in-out;
 }
 
-.CommandBarHeader-module__backButton___33Nr8:hover {
+.CommandBarHeader-module__backButton___3tZcE:hover {
     background-color: var(--color-icon-bg-hover);
 }
 
-.CommandListing-module__results___2Un0y {
+.CommandListing-module__results___ug-oG {
     min-height: 0;
     transition: opacity 0.3s ease-in;
-    opacity: 0;
     overflow-y: auto;
     max-height: 60vh;
 }
 
-.CommandListing-module__results___2Un0y h6 {
+.CommandListing-module__results___ug-oG h6 {
     color: var(--color-light-text);
     margin: 0.5rem;
     font-size: 0.9em;
@@ -128,7 +169,7 @@
     user-select: none;
 }
 
-.CommandListing-module__results___2Un0y ul {
+.CommandListing-module__results___ug-oG ul {
     padding: 0;
     list-style: none;
     display: flex;
@@ -137,11 +178,11 @@
     margin: 0;
 }
 
-.CommandListing-module__noResults___3WEjn {
+.CommandListing-module__noResults___2zw8Z {
     padding: 0.5rem;
 }
 
-.CommandListItem-module__commandListItem___uArdC {
+.CommandListItem-module__commandListItem___PbP5Z {
     cursor: pointer;
     display: flex !important; /* Necessary due to the neos header bar styling */
     gap: 1em;
@@ -153,12 +194,24 @@
     user-select: none;
 }
 
-.CommandListItem-module__commandListItem___uArdC:hover {
+.CommandListItem-module__commandListItem___PbP5Z:hover {
     background-color: var(--color-item-hover);
 }
 
-.CommandListItem-module__highlighted___2xHNL {
+.CommandListItem-module__highlighted___ww9c6 {
     background-color: var(--color-item-highlighted);
+}
+
+.CommandListItem-module__label___3g_nM {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1em;
+    align-items: baseline;
+}
+
+.CommandResultsView-module__commandResultsView___2_3i- {
+    max-width: 100%;
+    overflow: auto;
 }
 
 .CommandBarUiPlugin-module__fullScreenLayer___1cUx4 {
