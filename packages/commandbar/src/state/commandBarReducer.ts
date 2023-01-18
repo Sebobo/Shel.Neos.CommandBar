@@ -10,6 +10,7 @@ enum ACTIONS {
     UPDATE_SEARCH,
     RUNNING_COMMAND,
     FINISHED_COMMAND,
+    SET_RESULT,
 }
 
 function clamp(value, min, max) {
@@ -53,6 +54,7 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 searchWord: '',
                 highlightedItem: 0,
                 availableCommandIds: filterAvailableCommands(state.selectedCommandGroup, '', state.commands),
+                result: null,
             };
         case ACTIONS.HIGHLIGHT_NEXT_ITEM:
             return {
@@ -68,8 +70,13 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 highlightedItem: clamp(state.highlightedItem - 1, 0, state.availableCommandIds.length - 1),
             };
         case ACTIONS.CANCEL:
-            // Either cancel current search or traverse to parent group
-            return state.searchWord
+            // Either leave the result view, cancel current search,  or traverse to parent group
+            return state.result
+                ? {
+                      ...state,
+                      result: null,
+                  }
+                : state.searchWord
                 ? {
                       ...state,
                       searchWord: '',
@@ -87,6 +94,7 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 highlightedItem: 0,
                 selectedCommandGroup: null,
                 availableCommandIds: filterAvailableCommands(parentCommandGroup, '', state.commands),
+                result: null,
             };
         case ACTIONS.SELECT_GROUP:
             return {
@@ -95,6 +103,7 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 highlightedItem: 0,
                 selectedCommandGroup: action.commandId,
                 availableCommandIds: filterAvailableCommands(action.commandId, '', state.commands),
+                result: null,
             };
         case ACTIONS.UPDATE_SEARCH: {
             return {
@@ -121,6 +130,14 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 ...state,
                 runningCommandId: null,
                 runningCommandMessage: null,
+            };
+        }
+        case ACTIONS.SET_RESULT: {
+            return {
+                ...state,
+                result: {
+                    ...action.result,
+                },
             };
         }
         default:

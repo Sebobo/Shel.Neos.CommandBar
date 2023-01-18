@@ -1,7 +1,8 @@
 :root {
     --bar-min-width: 400px;
-    --bar-max-width: 600px;
+    --bar-max-width: 90vw;
     --bar-width: 40vw;
+    --bar-width-expanded: 60vw;
     --bar-background: rgba(0, 0, 0, 0.8);
     --footer-background: rgba(0, 0, 0, 0.8);
     --color-shadow: rgba(255, 255, 255, 0.7);
@@ -37,6 +38,11 @@
     translate: -50% -50%;
     width: var(--bar-width);
     pointer-events: all;
+    transition: width 0.1s ease-out;
+}
+
+.commandBar.hasResults {
+    width: var(--bar-width-expanded);
 }
 
 .commandBar small {
@@ -51,6 +57,10 @@
     transition: grid-template-rows 0.2s ease-in;
 }
 
+.resultsWrap > * {
+    opacity: 0;
+}
+
 .resultsWrap.expanded {
     grid-template-rows: 1fr;
 }
@@ -58,4 +68,7 @@
 .resultsWrap.expanded > * {
     opacity: 1;
     padding: 0.5rem;
+}
+.resultsWrap.split {
+    grid-template-columns: 1fr 1fr;
 }

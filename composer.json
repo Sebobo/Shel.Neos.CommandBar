@@ -22,7 +22,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Shel\\Neos\\Commandbar\\": "Classes/"
+      "Shel\\Neos\\Commandbar\\": "Classes"
     }
   },
   "extra": {

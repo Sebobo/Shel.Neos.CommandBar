@@ -22,8 +22,10 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                 ref={ref}
             >
                 <Icon icon={icon} />
-                <span>{name}</span>
-                <small>{description}</small>
+                <span className={styles.label}>
+                    <span>{name}</span>
+                    <small>{description}</small>
+                </span>
             </li>
         );
     }

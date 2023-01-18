@@ -7,6 +7,7 @@ import CommandBarFooter from './CommandBarFooter/CommandBarFooter';
 import CommandBarHeader from './CommandBarHeader/CommandBarHeader';
 import CommandListing from './CommandList/CommandListing';
 import { flattenCommands } from './helpers/flattenCommands';
+import CommandResultsView from './CommandResultsView/CommandResultsView';
 
 type CommandBarProps = {
     commands: HierarchicalCommandList;
@@ -23,6 +24,7 @@ const initialState: CommandBarState = {
     commands: {},
     runningCommandId: null,
     runningCommandMessage: null,
+    result: null,
 };
 
 const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) => {
@@ -99,6 +101,9 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 for await (const result of generator) {
                     console.debug('next value', result);
                     dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: result.message });
+                    if (result.options) {
+                        dispatch({ type: ACTIONS.SET_RESULT, result });
+                    }
                 }
                 dispatch({ type: ACTIONS.FINISHED_COMMAND });
             }
@@ -118,7 +123,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     }
 
     return (
-        <dialog className={styles.commandBar} open={open}>
+        <dialog className={[styles.commandBar, state.result && styles.hasResults].join(' ')} open={open}>
             <CommandBarHeader
                 selectedCommandGroup={state.selectedCommandGroup}
                 searchWord={state.searchWord}
@@ -126,13 +131,14 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 handleSearch={handleSearch}
                 handleKeyEntered={handleKeyEntered}
             />
-            <div className={[styles.resultsWrap, state.expanded && styles.expanded].join(' ')}>
+            <div className={[styles.resultsWrap, state.expanded && styles.expanded, state.result && styles.split].join(' ')}>
                 <CommandListing
                     commands={state.commands}
                     availableCommandIds={state.availableCommandIds}
                     highlightedItem={state.highlightedItem}
                     handleSelectItem={handleSelectItem}
                 />
+                {state.result && <CommandResultsView result={state.result} />}
             </div>
             {state.expanded && (
                 <CommandBarFooter

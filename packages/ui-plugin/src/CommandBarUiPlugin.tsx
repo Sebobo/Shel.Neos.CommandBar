@@ -12,7 +12,7 @@ import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 import CommandBar from '@neos-commandbar/commandbar';
 import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
 import * as styles from './CommandBarUiPlugin.module.css';
-import fetchCommands from './helpers/fetchCommands';
+import fetchData from './helpers/fetchData';
 
 type CommandBarUiPluginProps = {
     config: CommandBarConfig;
@@ -39,12 +39,17 @@ type CommandBarUiPluginProps = {
     publishAction: (contextPaths: string[], baseWorkspace: string) => void;
     discardAction: (contextPaths: string[]) => void;
     baseWorkspace: string;
+    setActiveContentCanvasContextPath: (contextPath: string) => void;
+    setActiveContentCanvasSrc: (uri: string) => void;
 };
 
 type CommandBarUiPluginState = {
     loaded: boolean;
     commands: HierarchicalCommandList;
 };
+
+const ENDPOINT_COMMANDS = 'service/data-source/shel-neos-commandbar-commands';
+const ENDPOINT_SEARCH_NODES = 'service/data-source/shel-neos-commandbar-search-nodes';
 
 class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
     static propTypes = {
@@ -67,6 +72,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         publishAction: PropTypes.func.isRequired,
         discardAction: PropTypes.func.isRequired,
         baseWorkspace: PropTypes.string.isRequired,
+        setActiveContentCanvasContextPath: PropTypes.func.isRequired,
+        setActiveContentCanvasSrc: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -113,11 +120,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     description: 'Add a new node',
                     action: this.handleAddNode,
                 },
-                searchDocument: {
-                    name: 'Search document',
+                searchDocuments: {
+                    name: 'Search documents',
                     icon: 'search',
-                    description: 'Search for a document',
-                    action: this.handleSearchNode,
+                    description: 'Search and navigate to documents',
+                    action: this.handleSearchNode.bind(this),
                     canHandleQueries: true,
                 },
                 publishDiscard: {
@@ -191,7 +198,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
 
     componentDidMount() {
         // TODO: Load additional commands from datasource
-        fetchCommands('service/data-source/shel-neos-commandbar')
+        fetchData(ENDPOINT_COMMANDS)
             .then((commands: ModuleCommands) => {
                 this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
                 console.debug('Loaded commands', commands, this.state.commands);
@@ -248,9 +255,47 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         addNode(focusedNodeContextPath || documentNode.contextPath, undefined, 'after');
     };
 
-    handleSearchNode = async (searchQuery: string): AsyncCommandResult => {
-        console.debug('Search for', searchQuery);
-        // TODO: Implement search and return results
+    handleSearchNode = async function* (query: string): CommandGeneratorResult {
+        const { siteNode, setActiveContentCanvasContextPath, setActiveContentCanvasSrc } = this.props as CommandBarUiPluginProps;
+        yield {
+            success: true,
+            message: `Searching for "${query}"`,
+        };
+        const results = (await fetchData(ENDPOINT_SEARCH_NODES, { query, node: siteNode.contextPath }).then(
+            (results) => {
+                // TODO: Check results
+                console.debug('Search result', results);
+                return results;
+            }
+        )) as SearchNodeResult[];
+        yield {
+            success: true,
+            message: `${results.length} results match your query`,
+            options: results.reduce((carry, { name, nodetype, icon, contextPath, uri }) => {
+                if (!uri) {
+                    // TODO: Show hint that document cannot be opened?
+                    return carry;
+                }
+
+                carry[contextPath] = {
+                    id: contextPath,
+                    name,
+                    description: nodetype,
+                    action: async () => {
+                        console.debug('Search result selected', contextPath, uri);
+                        setActiveContentCanvasSrc(uri);
+                        setActiveContentCanvasContextPath(contextPath);
+                    },
+                    icon,
+                };
+                return carry;
+            }, {} as FlatCommandList),
+        };
+        // TODO: Show selectable results
+        return {
+            success: true,
+            message: 'Finished searching',
+        };
     };
 
     handlePublish = async (): AsyncCommandResult => {
@@ -354,4 +399,6 @@ export default connect(() => ({}), {
     setEditPreviewMode: actions.UI.EditPreviewMode.set,
     publishAction: actions.CR.Workspaces.publish,
     discardAction: actions.CR.Workspaces.commenceDiscard,
+    setActiveContentCanvasContextPath: actions.CR.Nodes.setDocumentNode,
+    setActiveContentCanvasSrc: actions.UI.ContentCanvas.setSrc,
 })(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiPlugin)));

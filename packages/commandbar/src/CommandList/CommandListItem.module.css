@@ -17,3 +17,10 @@
 .highlighted {
     background-color: var(--color-item-highlighted);
 }
+
+.label {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1em;
+    align-items: baseline;
+}

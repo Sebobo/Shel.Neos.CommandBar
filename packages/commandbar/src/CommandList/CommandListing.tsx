@@ -9,6 +9,7 @@ type CommandListingProps = {
     availableCommandIds: CommandId[];
     highlightedItem: number;
     handleSelectItem: (commandId: CommandId) => void;
+    heading?: string;
 };
 
 const CommandListing: React.FC<CommandListingProps> = ({
@@ -16,6 +17,7 @@ const CommandListing: React.FC<CommandListingProps> = ({
     availableCommandIds,
     highlightedItem,
     handleSelectItem,
+    heading = 'Commands',
 }) => {
     const selectedElementRef = React.useRef(null);
 
@@ -25,7 +27,7 @@ const CommandListing: React.FC<CommandListingProps> = ({
 
     return (
         <nav className={styles.results}>
-            <h6>Commands</h6>
+            {heading && <h6>{heading}</h6>}
             {availableCommandIds.length > 0 ? (
                 <ul>
                     {availableCommandIds.map((commandId, index) => (

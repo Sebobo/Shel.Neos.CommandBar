@@ -41,6 +41,8 @@ type CommandResult = {
     success: boolean;
     message?: string;
     // TODO: Allow json data or even html as response output
+    options?: FlatCommandList;
+    view?: string | ReactElement;
 };
 
 type AsyncCommandResult = Promise<void | CommandResult>;
@@ -60,8 +62,8 @@ type CommandGroup = AbstractCommandItem & {
 type CommandItem = Command | CommandGroup;
 type ProcessedCommandItem = Command & {
     id: CommandId;
-    parentId: CommandId | null;
-    subCommandIds: CommandId[];
+    parentId?: CommandId;
+    subCommandIds?: CommandId[];
 };
 
 type CommandBarState = {
@@ -73,6 +75,7 @@ type CommandBarState = {
     commands: FlatCommandList;
     runningCommandId: CommandId;
     runningCommandMessage: string;
+    result: CommandResult | null;
 };
 
 // FIXME: Define type safe action variants
@@ -80,6 +83,7 @@ type CommandBarAction = {
     type: ACTIONS;
     argument?: string;
     commandId?: CommandId;
+    result?: CommandResult;
 };
 
 type NeosHotKey = {

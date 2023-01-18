@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Shel\Neos\CommandBar\Domain\Dto;
+
 /*
  * This script belongs to the Neos CMS package "Shel.Neos.CommandBar".
  *
@@ -9,8 +11,6 @@ declare(strict_types=1);
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-namespace Shel\Neos\CommandBar\Domain\Dto;
 
 use Neos\Flow\Annotations as Flow;
 

@@ -16,12 +16,11 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\I18n\EelHelper\TranslationParameterToken;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
-use Shel\Neos\CommandBar\Domain\Dto\CommandDto;
 
-class CommandBarDataSource extends AbstractDataSource
+class CommandsDataSource extends AbstractDataSource
 {
 
-    static protected $identifier = 'shel-neos-commandbar';
+    static protected $identifier = 'shel-neos-commandbar-commands';
 
     public function __construct(private readonly MenuHelper $menuHelper)
     {
@@ -46,27 +45,28 @@ class CommandBarDataSource extends AbstractDataSource
             }, []);
 
         $modulesForMenu = array_reduce($this->menuHelper->buildModuleList($this->controllerContext),
-            static function (array $carry, array $module) {
+            function (array $carry, array $module) {
                 // Skip hidden or modules without submodules
                 if (!$module['submodules'] || $module['hideInMenu']) {
                     return $carry;
                 }
                 $carry[$module['group']] = [
-                    'name' => self::translateByShortHandString($module['label']),
-                    'description' => self::translateByShortHandString($module['description']),
+                    'name' => $this->translateByShortHandString($module['label']),
+                    'description' => $this->translateByShortHandString($module['description']),
                     'icon' => $module['icon'],
-                    'subCommands' => array_reduce($module['submodules'], static function (array $carry, array $submodule) {
-                        if ($submodule['hideInMenu']) {
+                    'subCommands' => array_reduce($module['submodules'],
+                        function (array $carry, array $submodule) {
+                            if ($submodule['hideInMenu']) {
+                                return $carry;
+                            }
+                            $carry[$submodule['module']] = [
+                                'name' => $this->translateByShortHandString($submodule['label']),
+                                'description' => $this->translateByShortHandString($submodule['description']),
+                                'icon' => $submodule['icon'],
+                                'action' => $submodule['modulePath'],
+                            ];
                             return $carry;
-                        }
-                        $carry[$submodule['module']] = [
-                            'name' => self::translateByShortHandString($submodule['label']),
-                            'description' => self::translateByShortHandString($submodule['description']),
-                            'icon' => $submodule['icon'],
-                            'action' => $submodule['modulePath'],
-                        ];
-                        return $carry;
-                    }, []),
+                        }, []),
                 ];
                 return $carry;
             }, []);
@@ -87,7 +87,8 @@ class CommandBarDataSource extends AbstractDataSource
         ];
     }
 
-    protected static function translateByShortHandString(string $shortHandString): string
+    // FIXME: Using the TranslationHelper instead throws class not found error, why?
+    public function translateByShortHandString(string $shortHandString): string
     {
         $shortHandStringParts = explode(':', $shortHandString);
         if (count($shortHandStringParts) === 3) {
