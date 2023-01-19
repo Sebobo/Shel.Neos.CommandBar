@@ -1,6 +1,96 @@
 declare module '*.module.css';
 declare module '*.module.scss';
 
+// The settings read from the Setting.yaml file
+type CommandBarConfig = {
+    enabled: boolean;
+    hotkeys: {
+        filter: string[];
+    };
+};
+
+// Nested command list for simpler definition by the user
+type HierarchicalCommandList = Record<CommandId, CommandItem>;
+
+// Flat list of commands for simpler internal use
+type FlatCommandList = Record<CommandId, ProcessedCommandItem>;
+
+// Relative command name without parent path
+type CommandName = string;
+
+// Absolute command identifier including all parent paths
+type CommandId = string;
+
+type AbstractCommandItem = {
+    name: CommandName;
+    icon?: string;
+    description?: string;
+};
+
+// An executable command
+type Command = AbstractCommandItem & {
+    action: string | CommandAction | CommandGeneratorAction;
+    canHandleQueries?: boolean;
+    // TODO: Introduce a disabled state via a callback -> solve issue that react might not update the component
+};
+
+// Holds other commands but cannot be executed
+type CommandGroup = AbstractCommandItem & {
+    subCommands: HierarchicalCommandList;
+};
+
+// Executable commands and groups are allowed as items
+type CommandItem = Command | CommandGroup;
+
+// A command that has been processed for the FlatCommandList
+type ProcessedCommandItem = Command & {
+    id: CommandId;
+    parentId?: CommandId;
+    subCommandIds?: CommandId[];
+};
+
+// Command actions can be defined as promises or generators
+type CommandAction = (argument?: string) => AsyncCommandResult;
+type CommandGeneratorAction = (argument?: string) => CommandGeneratorResult;
+
+// Command results can be returned asynchronously or via a generator
+type AsyncCommandResult = Promise<void | CommandResult>;
+type CommandGeneratorResult = AsyncGenerator<CommandResult, CommandResult, CommandResult>;
+
+// If a command returns an optional response it has to at least contain the success state
+type CommandResult = {
+    success: boolean;
+    message?: string;
+    // TODO: Allow json data or even html as response output
+    options?: FlatCommandList;
+    view?: string | ReactElement;
+};
+
+// The core state of the command bar
+type CommandBarState = {
+    expanded: boolean;
+    selectedCommandGroup: CommandId;
+    availableCommandIds: CommandId[];
+    searchWord: string;
+    highlightedItem: number;
+    commands: FlatCommandList;
+    runningCommandId: CommandId;
+    runningCommandMessage: string;
+    result: CommandResult | null;
+};
+
+// FIXME: Define type safe action variants
+// Dispatch-able actions for the command bar reducer
+type CommandBarAction = {
+    type: ACTIONS;
+    argument?: string;
+    commandId?: CommandId;
+    result?: CommandResult;
+};
+
+// ---------------------------
+// Types from the Neos UI core
+// ---------------------------
 type I18nRegistry = {
     translate: (
         id?: string,
@@ -16,74 +106,6 @@ type CRNode = {
     contextPath: string;
     name: string;
     nodeType: string;
-};
-
-type CommandBarConfig = {
-    enabled: boolean;
-    hotkeys: {
-        filter: string[];
-    };
-};
-
-type HierarchicalCommandList = Record<CommandId, CommandItem>;
-type FlatCommandList = Record<CommandId, ProcessedCommandItem>;
-
-type CommandName = string;
-type CommandId = string;
-
-type AbstractCommandItem = {
-    name: CommandName;
-    icon?: string;
-    description?: string;
-};
-
-type CommandResult = {
-    success: boolean;
-    message?: string;
-    // TODO: Allow json data or even html as response output
-    options?: FlatCommandList;
-    view?: string | ReactElement;
-};
-
-type AsyncCommandResult = Promise<void | CommandResult>;
-type CommandGeneratorResult = AsyncGenerator<CommandResult, CommandResult, CommandResult>;
-type CommandAction = (argument?: string) => AsyncCommandResult;
-type CommandGeneratorAction = (argument?: string) => CommandGeneratorResult;
-
-type Command = AbstractCommandItem & {
-    action: string | CommandAction | CommandGeneratorAction;
-    canHandleQueries?: boolean;
-};
-
-type CommandGroup = AbstractCommandItem & {
-    subCommands: HierarchicalCommandList;
-};
-
-type CommandItem = Command | CommandGroup;
-type ProcessedCommandItem = Command & {
-    id: CommandId;
-    parentId?: CommandId;
-    subCommandIds?: CommandId[];
-};
-
-type CommandBarState = {
-    expanded: boolean;
-    selectedCommandGroup: CommandId;
-    availableCommandIds: CommandId[];
-    searchWord: string;
-    highlightedItem: number;
-    commands: FlatCommandList;
-    runningCommandId: CommandId;
-    runningCommandMessage: string;
-    result: CommandResult | null;
-};
-
-// FIXME: Define type safe action variants
-type CommandBarAction = {
-    type: ACTIONS;
-    argument?: string;
-    commandId?: CommandId;
-    result?: CommandResult;
 };
 
 type NeosHotKey = {
