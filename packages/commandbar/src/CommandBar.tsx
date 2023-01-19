@@ -106,6 +106,8 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     }
                 }
                 dispatch({ type: ACTIONS.FINISHED_COMMAND });
+            } else {
+                console.warn('Command result is not a promise or generator', actionResult);
             }
         },
         [state.searchWord, state.commands]

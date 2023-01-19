@@ -243,10 +243,10 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 name: i18nRegistry.translate(title),
                 description: editPreviewMode === mode ? 'Currently active' : '',
                 icon: isEditingMode ? 'pencil' : 'eye',
-                action: () => setEditPreviewMode(mode),
+                action: async () => setEditPreviewMode(mode),
             };
             return carry;
-        }, {});
+        }, {} as HierarchicalCommandList);
     };
 
     handleAddNode = async (): AsyncCommandResult => {
