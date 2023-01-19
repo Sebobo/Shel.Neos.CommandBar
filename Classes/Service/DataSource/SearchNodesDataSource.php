@@ -13,7 +13,6 @@ namespace Shel\Neos\CommandBar\Service\DataSource;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\I18n\EelHelper\TranslationParameterToken;
 use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
 use Neos\Neos\Service\LinkingService;
@@ -46,7 +45,7 @@ class SearchNodesDataSource extends AbstractDataSource
         return array_map(function (NodeInterface $matchingNode) {
             return [
                 'name' => $matchingNode->getLabel(),
-                'nodetype' => $this->translateByShortHandString($matchingNode->getNodeType()->getLabel()),
+                'nodetype' => TranslationHelper::translateByShortHandString($matchingNode->getNodeType()->getLabel()),
                 'contextPath' => $matchingNode->getContextPath(),
                 'icon' => $matchingNode->getNodeType()->getFullConfiguration()['ui']['icon'] ?? 'file',
                 'uri' => $this->getNodeUri($matchingNode),
@@ -61,20 +60,5 @@ class SearchNodesDataSource extends AbstractDataSource
         } catch (\Exception $e) {
             return '';
         }
-    }
-
-    // FIXME: Using the TranslationHelper instead throws class not found error, why?
-    public function translateByShortHandString(string $shortHandString): string
-    {
-        $shortHandStringParts = explode(':', $shortHandString);
-        if (count($shortHandStringParts) === 3) {
-            [$package, $source, $id] = $shortHandStringParts;
-            return (new TranslationParameterToken($id))
-                ->package($package)
-                ->source(str_replace('.', '/', $source))
-                ->translate();
-        }
-
-        return $shortHandString;
     }
 }

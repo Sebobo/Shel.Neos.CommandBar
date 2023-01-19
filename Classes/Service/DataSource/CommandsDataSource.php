@@ -13,9 +13,10 @@ namespace Shel\Neos\CommandBar\Service\DataSource;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\I18n\EelHelper\TranslationParameterToken;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
+use Shel\Neos\CommandBar\Domain\Dto\CommandDto;
+use Shel\Neos\CommandBar\Helper\TranslationHelper;
 
 class CommandsDataSource extends AbstractDataSource
 {
@@ -32,39 +33,32 @@ class CommandsDataSource extends AbstractDataSource
             static function (array $carry, array $site) {
                 // Skip the currently active site
                 if (!$site['active']) {
-                    // FIXME: For some reason the DTO class cannot be found and an exception is thrown, sad
-//                    $carry[$site['nodeName']] = new CommandDto($site['name'], '', $site['uri'], 'globe');
-                    $carry[$site['nodeName']] = [
-                        'name' => $site['name'],
-                        'description' => '',
-                        'action' => $site['uri'],
-                        'icon' => 'globe',
-                    ];
+                    $carry[$site['nodeName']] = new CommandDto($site['name'], '', $site['uri'], 'globe');
                 }
                 return $carry;
             }, []);
 
         $modulesForMenu = array_reduce($this->menuHelper->buildModuleList($this->controllerContext),
-            function (array $carry, array $module) {
+            static function (array $carry, array $module) {
                 // Skip hidden or modules without submodules
                 if (!$module['submodules'] || $module['hideInMenu']) {
                     return $carry;
                 }
                 $carry[$module['group']] = [
-                    'name' => $this->translateByShortHandString($module['label']),
-                    'description' => $this->translateByShortHandString($module['description']),
+                    'name' => TranslationHelper::translateByShortHandString($module['label']),
+                    'description' => TranslationHelper::translateByShortHandString($module['description']),
                     'icon' => $module['icon'],
                     'subCommands' => array_reduce($module['submodules'],
-                        function (array $carry, array $submodule) {
+                        static function (array $carry, array $submodule) {
                             if ($submodule['hideInMenu']) {
                                 return $carry;
                             }
-                            $carry[$submodule['module']] = [
-                                'name' => $this->translateByShortHandString($submodule['label']),
-                                'description' => $this->translateByShortHandString($submodule['description']),
-                                'icon' => $submodule['icon'],
-                                'action' => $submodule['modulePath'],
-                            ];
+                            $carry[$submodule['module']] = new CommandDto(
+                                TranslationHelper::translateByShortHandString($submodule['label']),
+                                TranslationHelper::translateByShortHandString($submodule['description']),
+                                $submodule['modulePath'],
+                                $submodule['icon'],
+                            );
                             return $carry;
                         }, []),
                 ];
@@ -85,20 +79,5 @@ class CommandsDataSource extends AbstractDataSource
                 'subCommands' => $modulesForMenu,
             ],
         ];
-    }
-
-    // FIXME: Using the TranslationHelper instead throws class not found error, why?
-    public function translateByShortHandString(string $shortHandString): string
-    {
-        $shortHandStringParts = explode(':', $shortHandString);
-        if (count($shortHandStringParts) === 3) {
-            [$package, $source, $id] = $shortHandStringParts;
-            return (new TranslationParameterToken($id))
-                ->package($package)
-                ->source(str_replace('.', '/', $source))
-                ->translate();
-        }
-
-        return $shortHandString;
     }
 }
