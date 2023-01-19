@@ -115,9 +115,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyEntered, true);
-        return () => {
-            document.removeEventListener('keydown', handleKeyEntered, true);
-        };
+        return () => document.removeEventListener('keydown', handleKeyEntered, true);
     }, []);
 
     if (!open) {
@@ -133,7 +131,11 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 handleSearch={handleSearch}
                 handleKeyEntered={handleKeyEntered}
             />
-            <div className={[styles.resultsWrap, state.expanded && styles.expanded, state.result && styles.split].join(' ')}>
+            <div
+                className={[styles.resultsWrap, state.expanded && styles.expanded, state.result && styles.split].join(
+                    ' '
+                )}
+            >
                 <CommandListing
                     commands={state.commands}
                     availableCommandIds={state.availableCommandIds}
