@@ -3,7 +3,7 @@
     background: none;
     border: none;
     color: currentColor;
-    font-size: 1.1em;
+    font-size: 1.1em !important; /* Fix to prevent Neos.UI css from forcing the font size to 14px */
     font-weight: 300;
     outline: none;
     padding: 0.5rem;
