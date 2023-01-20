@@ -200,7 +200,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         fetchData(ENDPOINT_COMMANDS)
             .then((commands: ModuleCommands) => {
                 this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
-                console.debug('Loaded commands', commands, this.state.commands);
             })
             .catch((error) => {
                 console.error('Failed to load commands', error);

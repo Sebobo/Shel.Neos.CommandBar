@@ -110,7 +110,6 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 const generator = actionResult as CommandGeneratorResult;
                 // TODO: Handle errors / success === false
                 for await (const result of generator) {
-                    console.debug('next value', result);
                     dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: result.message });
                     if (result.options) {
                         dispatch({ type: ACTIONS.SET_RESULT, result });
