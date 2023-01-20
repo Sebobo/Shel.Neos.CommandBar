@@ -1,7 +1,7 @@
 :root {
     --bar-min-width: 400px;
     --bar-max-width: 90vw;
-    --bar-width: 40vw;
+    --bar-width: 30vw;
     --bar-width-expanded: 60vw;
     --bar-background: rgba(0, 0, 0, 0.8);
     --footer-background: rgba(0, 0, 0, 0.8);
@@ -124,7 +124,7 @@
     background: none;
     border: none;
     color: currentColor;
-    font-size: 1.1em;
+    font-size: 1.1em !important; /* Fix to prevent Neos.UI css from forcing the font size to 14px */
     font-weight: 300;
     outline: none;
     padding: 0.5rem;
