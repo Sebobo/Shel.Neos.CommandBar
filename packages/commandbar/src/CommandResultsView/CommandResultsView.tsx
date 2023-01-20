@@ -34,6 +34,7 @@ const CommandResultsView: React.FC<CommandResultsViewProps> = ({ result }) => {
                     availableCommandIds={Object.keys(options)}
                     highlightedItem={0}
                     handleSelectItem={handleSelectItem}
+                    noCommandsMessage="Try a different query to find more results"
                 />
             )}
         </div>

@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import * as styles from './CommandListing.module.css';
 import CommandListItem from './CommandListItem';
@@ -10,6 +9,8 @@ type CommandListingProps = {
     highlightedItem: number;
     handleSelectItem: (commandId: CommandId) => void;
     heading?: string;
+    runningCommandId?: CommandId; // This argument forces a refresh after a command executed to update command properties
+    noCommandsMessage?: string;
 };
 
 const CommandListing: React.FC<CommandListingProps> = ({
@@ -18,6 +19,8 @@ const CommandListing: React.FC<CommandListingProps> = ({
     highlightedItem,
     handleSelectItem,
     heading = 'Commands',
+    runningCommandId = '',
+    noCommandsMessage = 'No matching commands found',
 }) => {
     const selectedElementRef = React.useRef(null);
 
@@ -37,11 +40,12 @@ const CommandListing: React.FC<CommandListingProps> = ({
                             command={commands[commandId]}
                             onItemSelect={handleSelectItem}
                             highlighted={highlightedItem === index}
+                            runningCommandId={runningCommandId}
                         />
                     ))}
                 </ul>
             ) : (
-                <small className={styles.noResults}>No matching commands found</small>
+                <small className={styles.noResults}>{noCommandsMessage}</small>
             )}
         </nav>
     );

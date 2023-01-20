@@ -48,7 +48,6 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         if (!open || e.defaultPrevented) {
             return;
         }
-        console.debug('Key event in command bar', state.selectedCommandGroup, state.searchWord, e);
         if (e.key === 'Escape') {
             e.stopPropagation();
             e.preventDefault();
@@ -165,6 +164,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     availableCommandIds={state.availableCommandIds}
                     highlightedItem={state.highlightedItem}
                     handleSelectItem={handleSelectItem}
+                    runningCommandId={state.runningCommandId}
                 />
                 {state.result && <CommandResultsView result={state.result} />}
             </div>

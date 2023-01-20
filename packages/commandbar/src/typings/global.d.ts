@@ -24,7 +24,7 @@ type CommandId = string;
 type AbstractCommandItem = {
     name: CommandName;
     icon?: string;
-    description?: string;
+    description?: string | (() => string);
 };
 
 // An executable command

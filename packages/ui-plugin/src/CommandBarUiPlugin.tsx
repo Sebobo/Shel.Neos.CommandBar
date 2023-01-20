@@ -224,13 +224,13 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
     };
 
     buildCommandsFromEditPreviewModes = (): HierarchicalCommandList => {
-        const { editPreviewMode, setEditPreviewMode, editPreviewModes, i18nRegistry } = this.props;
+        const { setEditPreviewMode, editPreviewModes, i18nRegistry } = this.props;
 
         return Object.keys(editPreviewModes).reduce((carry, mode) => {
             const { title, isEditingMode } = editPreviewModes[mode];
             carry[mode] = {
                 name: i18nRegistry.translate(title),
-                description: editPreviewMode === mode ? 'Currently active' : '',
+                description: () => (this.props.editPreviewMode === mode ? 'Currently active' : ''),
                 icon: isEditingMode ? 'pencil' : 'eye',
                 action: async () => setEditPreviewMode(mode),
             };
@@ -259,7 +259,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         )) as SearchNodeResult[];
         yield {
             success: true,
-            message: `${results.length} results match your query`,
+            message: `${results.length} options match your query`,
             options: results.reduce((carry, { name, nodetype, icon, contextPath, uri }) => {
                 if (!uri) {
                     // TODO: Show hint that document cannot be opened?
