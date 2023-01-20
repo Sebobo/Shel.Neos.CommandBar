@@ -35,3 +35,34 @@ Neos:
           'Shel.Neos.CommandBar.toggle.CMD': 'command+k'
           # Linux & Windows
           'Shel.Neos.CommandBar.toggle.CTRL': 'ctrl+k'
+
+    modules:
+      administration:
+        submodules:
+          users:
+            additionalResources: &commandBarIncludes
+              javaScripts:
+                Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.js'
+              styleSheets:
+                Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.css'
+          packages:
+            additionalResources: *commandBarIncludes
+          sites:
+            additionalResources: *commandBarIncludes
+          configuration:
+            additionalResources: *commandBarIncludes
+          dimensions:
+            additionalResources: *commandBarIncludes
+      management:
+        submodules:
+          workspaces:
+            additionalResources: *commandBarIncludes
+          history:
+            additionalResources: *commandBarIncludes
+          # FIXME: The redirects module doesn't let us extend the includes properly and doesn't use the Lite stylesheet
+#          redirects:
+#            additionalResources: *commandBarIncludes
+      user:
+        submodules:
+          usersettings:
+            additionalResources: *commandBarIncludes

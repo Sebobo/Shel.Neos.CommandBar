@@ -12,6 +12,7 @@
   "dependencies": {
     "@neos-commandbar/commandbar": "workspace:*",
     "@neos-commandbar/dev-server": "workspace:*",
+    "@neos-commandbar/module-plugin": "workspace:*",
     "@neos-commandbar/ui-plugin": "workspace:*"
   },
   "devDependencies": {
@@ -28,8 +29,12 @@
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "scripts": {
-    "build": "yarn workspace @neos-commandbar/ui-plugin build",
-    "watch": "yarn workspace @neos-commandbar/ui-plugin watch",
+    "build": "yarn build-ui && yarn build-module",
+    "watch": "yarn watch-ui && yarn watch-module",
+    "build-ui": "yarn workspace @neos-commandbar/ui-plugin build",
+    "watch-ui": "yarn workspace @neos-commandbar/ui-plugin watch",
+    "build-module": "yarn workspace @neos-commandbar/module-plugin build",
+    "watch-module": "yarn workspace @neos-commandbar/module-plugin watch",
     "dev": "yarn workspace @neos-commandbar/dev-server start",
     "test": "yarn workspace @neos-commandbar/commandbar test"
   },

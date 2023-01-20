@@ -1,0 +1,24 @@
+{
+  "name": "@neos-commandbar/module-plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "@neos-commandbar/commandbar": "*",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.0",
+    "parcel": "^2.8.2"
+  },
+  "source": "src/index.tsx",
+  "app": "../../Resources/Public/Module.js",
+  "targets": {
+    "app": {
+      "distDir": "../../Resources/Public"
+    }
+  },
+  "scripts": {
+    "build": "parcel build",
+    "watch": "parcel watch"
+  }
+}
