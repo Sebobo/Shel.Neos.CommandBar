@@ -1,8 +1,7 @@
-import * as React from 'react';
-import { useCallback, useEffect, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
 import * as styles from './CommandBar.module.css';
-import { commandBarReducer, ACTIONS } from './state/commandBarReducer';
+import { ACTIONS, commandBarReducer } from './state/commandBarReducer';
 import CommandBarFooter from './CommandBarFooter/CommandBarFooter';
 import CommandBarHeader from './CommandBarHeader/CommandBarHeader';
 import CommandListing from './CommandList/CommandListing';
@@ -27,6 +26,17 @@ const initialState: CommandBarState = {
     result: null,
 };
 
+/**
+ * A custom hook that creates a ref for a function, and updates it on every render.
+ * The new value is always the same function, but the function's context changes on every render.
+ * TODO: Move to own file
+ */
+function useRefEventListener(fn) {
+    const fnRef = useRef(fn);
+    fnRef.current = fn;
+    return fnRef;
+}
+
 const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
         ...initialState,
@@ -34,33 +44,35 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         availableCommandIds: Object.keys(commands),
     });
 
-    const handleKeyEntered = useCallback(
-        (e: KeyboardEvent | React.KeyboardEvent<HTMLInputElement>) => {
-            if (!open) {
-                return;
+    const handleKeyEnteredRef = useRefEventListener((e: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
+        if (!open || e.defaultPrevented) {
+            return;
+        }
+        console.debug('Key event in command bar', state.selectedCommandGroup, state.searchWord, e);
+        if (e.key === 'Escape') {
+            e.stopPropagation();
+            e.preventDefault();
+            if (state.selectedCommandGroup || state.searchWord) {
+                dispatch({ type: ACTIONS.CANCEL });
+            } else {
+                // Close command bar if cancel is noop
+                toggleOpen();
             }
-            if (e.key === 'Escape') {
-                if (state.selectedCommandGroup || state.searchWord) {
-                    dispatch({ type: ACTIONS.CANCEL });
-                } else {
-                    // Close command bar if cancel is noop
-                    toggleOpen();
-                }
-                e.preventDefault();
-            } else if (e.key === 'ArrowDown') {
-                dispatch({ type: ACTIONS.HIGHLIGHT_NEXT_ITEM });
-                e.stopPropagation();
-            } else if (e.key === 'ArrowUp') {
-                dispatch({ type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM });
-                e.stopPropagation();
-            } else if (e.key === 'Enter' && state.availableCommandIds.length > state.highlightedItem) {
-                const commandId = state.availableCommandIds[state.highlightedItem];
-                handleSelectItem(commandId);
-                e.stopPropagation();
-            }
-        },
-        [state.availableCommandIds, state.highlightedItem, state.searchWord, open]
-    );
+        } else if (e.key === 'ArrowDown') {
+            e.stopPropagation();
+            e.preventDefault();
+            dispatch({ type: ACTIONS.HIGHLIGHT_NEXT_ITEM });
+        } else if (e.key === 'ArrowUp') {
+            e.stopPropagation();
+            e.preventDefault();
+            dispatch({ type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM });
+        } else if (e.key === 'Enter' && state.availableCommandIds.length > state.highlightedItem) {
+            e.stopPropagation();
+            e.preventDefault();
+            const commandId = state.availableCommandIds[state.highlightedItem];
+            handleSelectItem(commandId);
+        }
+    });
 
     const handleSearch = useCallback((e) => {
         dispatch({ type: ACTIONS.UPDATE_SEARCH, argument: e.target.value.toLowerCase() });
@@ -113,10 +125,23 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         [state.searchWord, state.commands]
     );
 
+    /**
+     * Add key event handler, needs to be updated when any parameter for the key event handler changes
+     */
     useEffect(() => {
-        document.addEventListener('keydown', handleKeyEntered, true);
-        return () => document.removeEventListener('keydown', handleKeyEntered, true);
-    }, []);
+        if (!open) return;
+
+        // const guestFrame = document.getElementsByName('neos-content-main')[0] as HTMLIFrameElement;
+        // guestFrame.contentWindow?.addEventListener('keyup', (e) => {
+        //     console.debug('keypress in guestframe', e);
+        // });
+        // console.debug('guestFrame', guestFrame.contentWindow);
+
+        const windowKeyEventHandler = (e) => handleKeyEnteredRef.current(e);
+
+        window.addEventListener('keydown', windowKeyEventHandler);
+        return () => window.removeEventListener('keydown', windowKeyEventHandler);
+    }, [open]);
 
     if (!open) {
         return null;
@@ -129,7 +154,6 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 searchWord={state.searchWord}
                 dispatch={dispatch}
                 handleSearch={handleSearch}
-                handleKeyEntered={handleKeyEntered}
             />
             <div
                 className={[styles.resultsWrap, state.expanded && styles.expanded, state.result && styles.split].join(

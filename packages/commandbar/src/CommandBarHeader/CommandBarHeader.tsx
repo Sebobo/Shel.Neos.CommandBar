@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import { ACTIONS } from '../state/commandBarReducer';
 import Icon from '../Presentationals/Icon';
@@ -10,7 +10,6 @@ type CommandBarHeaderProps = {
     selectedCommandGroup: CommandId;
     searchWord: string;
     handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleKeyEntered: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     dispatch: React.Dispatch<CommandBarAction>;
 };
 
@@ -18,7 +17,6 @@ const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
     selectedCommandGroup,
     searchWord,
     dispatch,
-    handleKeyEntered,
     handleSearch,
 }) => {
     return (
@@ -32,7 +30,7 @@ const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
                     <Icon icon="arrow-left" />
                 </button>
             )}
-            <SearchBox searchWord={searchWord} onChange={handleSearch} onKeyUp={handleKeyEntered} />
+            <SearchBox searchWord={searchWord} onChange={handleSearch} />
         </header>
     );
 };

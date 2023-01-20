@@ -197,7 +197,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
     }
 
     componentDidMount() {
-        // TODO: Load additional commands from datasource
         fetchData(ENDPOINT_COMMANDS)
             .then((commands: ModuleCommands) => {
                 this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
@@ -206,16 +205,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             .catch((error) => {
                 console.error('Failed to load commands', error);
             });
-
-        window.addEventListener('keypress', (e) => {
-            console.debug('keypress on window', e);
-        });
-
-        const guestFrame = document.getElementsByName('neos-content-main')[0] as HTMLIFrameElement;
-        guestFrame.contentWindow?.addEventListener('keypress', (e) => {
-            console.debug('keypress in guestframe', e);
-        });
-        console.debug('guestFrame', guestFrame.contentWindow);
     }
 
     buildCommandsFromHotkeys = (): HierarchicalCommandList => {
