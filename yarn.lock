@@ -584,8 +584,6 @@ __metadata:
     "@types/react-redux": ^7.1.25
     fuzzy-search: ^3.2.1
     react: ^16.14.0
-    react-redux: ^7.2.9
-    redux-actions: ^0.12.0
   languageName: unknown
   linkType: soft
 
@@ -620,6 +618,8 @@ __metadata:
     "@neos-commandbar/commandbar": "*"
     "@neos-project/build-essentials": ^8.2.3
     "@neos-project/neos-ui-extensibility": ^8.2.3
+    react-redux: ^7.2.9
+    redux-actions: ^0.12.0
   languageName: unknown
   linkType: soft
 

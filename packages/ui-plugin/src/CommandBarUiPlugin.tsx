@@ -41,6 +41,7 @@ type CommandBarUiPluginProps = {
     baseWorkspace: string;
     setActiveContentCanvasContextPath: (contextPath: string) => void;
     setActiveContentCanvasSrc: (uri: string) => void;
+    plugins: Record<string, () => HierarchicalCommandList>;
 };
 
 type CommandBarUiPluginState = {
@@ -197,12 +198,26 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
     }
 
     componentDidMount() {
+        const { plugins } = this.props;
+        // Load 3rd party commands
+        if (plugins) {
+            Object.keys(plugins).forEach((pluginName) => {
+                try {
+                    const pluginCommands = plugins[pluginName]();
+                    this.setState((prev) => ({ commands: { ...prev.commands, ...pluginCommands } }));
+                } catch (e) {
+                    console.error(`[CommandBar] Could not load commands from plugin ${pluginName}`, e);
+                }
+            });
+        }
+
+        // Load commands from data source which are not available via the UI API
         fetchData(ENDPOINT_COMMANDS)
             .then((commands: ModuleCommands) => {
                 this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
             })
             .catch((error) => {
-                console.error('Failed to load commands', error);
+                console.error('[CommandBar] Failed to load commands', error);
             });
     }
 
@@ -244,7 +259,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
     };
 
     handleSearchNode = async function* (query: string): CommandGeneratorResult {
-        const { siteNode, setActiveContentCanvasContextPath, setActiveContentCanvasSrc } = this.props as CommandBarUiPluginProps;
+        const { siteNode, setActiveContentCanvasContextPath, setActiveContentCanvasSrc } = this
+            .props as CommandBarUiPluginProps;
         yield {
             success: true,
             message: `Searching for "${query}"`,
@@ -379,6 +395,7 @@ const mapGlobalRegistryToProps = neos((globalRegistry: any) => ({
     config: globalRegistry.get('frontendConfiguration').get('Shel.Neos.CommandBar:CommandBar'),
     nodeTypesRegistry: globalRegistry.get('@neos-project/neos-ui-contentrepository'),
     editPreviewModes: globalRegistry.get('frontendConfiguration').get('editPreviewModes'),
+    plugins: globalRegistry.get('Shel.Neos.CommandBar').getChildrenAsObject('plugins'),
 }));
 
 export default connect(() => ({}), {

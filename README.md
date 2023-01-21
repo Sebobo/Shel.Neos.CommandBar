@@ -20,6 +20,8 @@ This package provides a command bar plugin for Neos CMS.
 * 📰 Publishing
   * Publish / discard changes on current page
   * Publish / discard all changes
+* 🪛 Extensibility
+  * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
 
 ## Screenshot
 

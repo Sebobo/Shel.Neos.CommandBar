@@ -4,9 +4,7 @@
   "dependencies": {
     "@neos-project/react-ui-components": "^8.2.3",
     "fuzzy-search": "^3.2.1",
-    "react": "^16.14.0",
-    "react-redux": "^7.2.9",
-    "redux-actions": "^0.12.0"
+    "react": "^16.14.0"
   },
   "devDependencies": {
     "@types/react-redux": "^7.1.25"

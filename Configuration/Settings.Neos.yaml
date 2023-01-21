@@ -4,6 +4,8 @@ Neos:
       resources:
         javascript:
           Shel.Neos.CommandBar:CommandBar:
+            # Load early as the plugin provides a new registry for other plugins to use
+            position: 'after Neos.Neos.UI:Host'
             resource: resource://Shel.Neos.CommandBar/Public/Plugin.js
         stylesheets:
           Shel.Neos.CommandBar:CommandBar:
