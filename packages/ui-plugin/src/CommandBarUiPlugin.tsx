@@ -82,39 +82,27 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.state = {
             loaded: false,
             commands: {
-                testAsync: {
-                    name: 'Test async',
-                    icon: 'vial',
-                    description: 'Wait and return a debug message',
-                    action: async () => {
-                        await new Promise((resolve) => setTimeout(resolve, 2000));
-                        return {
-                            success: true,
-                            message: 'Debug message',
-                        };
-                    },
-                },
-                testGenerator: {
-                    name: 'Test generator',
-                    icon: 'vial',
-                    description: 'Wait and return iterate on command results',
-                    action: async function* () {
-                        yield {
-                            success: true,
-                            message: 'Doing some testing step 1',
-                        };
-                        await new Promise((resolve) => setTimeout(resolve, 2000));
-                        yield {
-                            success: true,
-                            message: 'Doing some more testing step 2',
-                        };
-                        await new Promise((resolve) => setTimeout(resolve, 2000));
-                        return {
-                            success: true,
-                            message: 'Finished testing',
-                        };
-                    },
-                },
+                // testGenerator: {
+                //     name: 'Test generator',
+                //     icon: 'vial',
+                //     description: 'Wait and return iterate on command results',
+                //     action: async function* () {
+                //         yield {
+                //             success: true,
+                //             message: 'Doing some testing step 1',
+                //         };
+                //         await new Promise((resolve) => setTimeout(resolve, 2000));
+                //         yield {
+                //             success: true,
+                //             message: 'Doing some more testing step 2',
+                //         };
+                //         await new Promise((resolve) => setTimeout(resolve, 2000));
+                //         return {
+                //             success: true,
+                //             message: 'Finished testing',
+                //         };
+                //     },
+                // },
                 addNode: {
                     name: 'Add node',
                     icon: 'plus',
