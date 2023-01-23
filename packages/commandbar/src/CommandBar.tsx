@@ -123,6 +123,13 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         [state.searchWord, state.commands]
     );
 
+    const handleSelectItemRef = useRefEventListener((commandId: CommandId) => {
+        const { searchWord } = state;
+        console.debug('searchWord', searchWord);
+        debugger;
+        handleSelectItem(commandId);
+    });
+
     /**
      * Add key event handler, needs to be updated when any parameter for the key event handler changes
      */
@@ -162,7 +169,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     commands={state.commands}
                     availableCommandIds={state.availableCommandIds}
                     highlightedItem={state.highlightedItem}
-                    handleSelectItem={handleSelectItem}
+                    handleSelectItem={(commandId: string) => handleSelectItemRef.current(commandId)} 
                     runningCommandId={state.runningCommandId}
                 />
                 {state.result && <CommandResultsView result={state.result} />}
