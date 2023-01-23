@@ -40,8 +40,8 @@ class CommandsDataSource extends AbstractDataSource
 
         $modulesForMenu = array_reduce($this->menuHelper->buildModuleList($this->controllerContext),
             static function (array $carry, array $module) {
-                // Skip hidden or modules without submodules
-                if (!$module['submodules'] || $module['hideInMenu']) {
+                // Skip modules without submodules
+                if (!$module['submodules']) {
                     return $carry;
                 }
                 $carry[$module['group']] = [
