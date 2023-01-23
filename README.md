@@ -22,6 +22,8 @@ This package provides a command bar plugin for Neos CMS.
   * Publish / discard all changes
 * 🪛 Extensibility
   * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
+* 🧩 Backend module integration
+  * Open the command bar from within the backend modules which have the module enabled (global inclusion possible with Neos 8.3)
 
 ## Screenshot
 
