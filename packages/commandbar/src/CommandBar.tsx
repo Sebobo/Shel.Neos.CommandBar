@@ -169,7 +169,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     commands={state.commands}
                     availableCommandIds={state.availableCommandIds}
                     highlightedItem={state.highlightedItem}
-                    handleSelectItem={(commandId: string) => handleSelectItemRef.current(commandId)} 
+                    handleSelectItem={(commandId: string) => handleSelectItemRef.current(commandId)}
                     runningCommandId={state.runningCommandId}
                 />
                 {state.result && <CommandResultsView result={state.result} />}
