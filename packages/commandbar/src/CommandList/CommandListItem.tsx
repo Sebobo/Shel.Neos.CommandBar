@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import * as styles from './CommandListItem.module.css';
 import Icon from '../Presentationals/Icon';
@@ -15,14 +15,10 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
     ({ command, onItemSelect, highlighted, runningCommandId }, ref) => {
         const { id, name, description, icon } = command;
 
-        const handleSelect = useCallback(() => {
-            onItemSelect(id);
-        }, [id]);
-
         return (
             <li
                 className={[styles.commandListItem, highlighted && styles.highlighted].join(' ')}
-                onClick={handleSelect}
+                onClick={() => onItemSelect(id)}
                 ref={ref}
             >
                 <Icon icon={icon} />
