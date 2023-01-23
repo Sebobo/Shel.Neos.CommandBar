@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import * as styles from './ModulePlugin.module.css';
 
-window.onload = async (): Promise<void> => {
+window.addEventListener('load', async (): Promise<void> => {
     while (!window.NeosCMS?.I18n?.initialized) {
         await new Promise((resolve) => setTimeout(resolve, 50));
     }
@@ -30,4 +30,4 @@ window.onload = async (): Promise<void> => {
     };
 
     ReactDOM.render(<App />, pluginContainer);
-};
+});
