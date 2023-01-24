@@ -21,6 +21,7 @@
 .label {
     display: flex;
     flex-wrap: wrap;
+    flex: 1;
     gap: 0 1em;
     align-items: baseline;
 }

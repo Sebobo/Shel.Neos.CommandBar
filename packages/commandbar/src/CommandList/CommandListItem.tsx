@@ -13,7 +13,9 @@ type CommandListItemProps = {
 
 const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
     ({ command, onItemSelect, highlighted, runningCommandId }, ref) => {
-        const { id, name, description, icon } = command;
+        const { id, name, description, icon, subCommandIds, canHandleQueries } = command;
+
+        const commandType = subCommandIds?.length > 0 ? 'category' : canHandleQueries ? 'query' : 'command';
 
         return (
             <li
@@ -26,6 +28,7 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                     <span>{name}</span>
                     {description && <small>{typeof description == 'string' ? description : description()}</small>}
                 </span>
+                <small>{commandType}</small>
             </li>
         );
     }
