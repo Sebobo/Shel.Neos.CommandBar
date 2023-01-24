@@ -1,3 +1,23 @@
+.CommandBarUiPlugin-module__fullScreenLayer___1cUx4 {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+}
+
+.CommandBarUiPlugin-module__open___1Bjxj {
+    display: block;
+}
+
+.CommandBarUiPlugin-module__commandBarToolbarComponent___1agRY {
+    display: flex;
+    align-items: center;
+}
+
 :root {
     --bar-min-width: 600px;
     --bar-max-width: 90vw;
@@ -12,10 +32,19 @@
     --color-icon-bg-hover: rgba(255, 255, 255, 0.4);
     --color-border: rgba(255, 255, 255, 0.2);
     --color-item-highlighted: rgba(255, 255, 255, 0.15);
-    --color-item-hover: rgba(255, 255, 255, 0.1);
+    --color-item-hover: rgba(255, 255, 255, 0.05);
     --border-radius-bar: 0.6rem;
     --border-radius-item: 0.4rem;
     --icon-size: 1.125em;
+
+    /* Neos UI colors */
+    --grayLight: #3f3f3f;
+    --grayLighter: #eee;
+    --grayMedium: #323232;
+    --textSubtleLight: #adadad;
+    --textOnGray: #fff;
+    --textOnWhite: #252525;
+    --primaryBlue: #00adee;
 }
 
 .CommandBar-module__commandBar___3t_V0 {
@@ -159,6 +188,7 @@
     transition: opacity 0.3s ease-in;
     overflow-y: auto;
     max-height: 60vh;
+    height: 100%;
 }
 
 .CommandListing-module__results___ug-oG h6 {
@@ -180,6 +210,12 @@
 
 .CommandListing-module__noResults___2zw8Z {
     padding: 0.5rem;
+}
+
+.CommandListing-module__disabled___3IBJW {
+    opacity: 0.5 !important;
+    pointer-events: none;
+    user-select: none;
 }
 
 .CommandListItem-module__commandListItem___PbP5Z {
@@ -205,6 +241,7 @@
 .CommandListItem-module__label___3g_nM {
     display: flex;
     flex-wrap: wrap;
+    flex: 1;
     gap: 0 1em;
     align-items: baseline;
 }
@@ -214,19 +251,42 @@
     overflow: auto;
 }
 
-.CommandBarUiPlugin-module__fullScreenLayer___1cUx4 {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    left: 0;
-    top: 0;
-    pointer-events: none;
-    z-index: 9999;
-    display: none;
+.ToggleButton-module__toggleButton___2GvMS {
+    background-color: var(--grayLight);
+    border: 1px solid var(--grayMedium);
+    color: var(--textSubtleLight);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    transition: 0.1s ease-out;
+    user-select: none;
+    padding: 2px 0.3rem 2px 0.5rem;
+    cursor: pointer;
+    line-height: 1.4em;
 }
 
-.CommandBarUiPlugin-module__open___1Bjxj {
-    display: block;
+.ToggleButton-module__toggleButton___2GvMS:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ToggleButton-module__toggleButton___2GvMS:not(:disabled):hover {
+    background-color: var(--grayLighter);
+    color: var(--textOnWhite);
+}
+
+.ToggleButton-module__buttonIcon___3yxlm {
+    background-color: var(--grayMedium);
+    border-radius: 3px;
+    color: var(--textOnGray);
+    font-size: 80%;
+    padding: 1px 4px;
+    transition: background-color 0.1s ease-out;
+}
+
+.ToggleButton-module__toggleButton___2GvMS:not(:disabled):hover .ToggleButton-module__buttonIcon___3yxlm {
+    background-color: var(--primaryBlue);
 }
 
 
