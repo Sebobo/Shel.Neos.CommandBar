@@ -3,6 +3,7 @@
     transition: opacity 0.3s ease-in;
     overflow-y: auto;
     max-height: 60vh;
+    height: 100%;
 }
 
 .results h6 {

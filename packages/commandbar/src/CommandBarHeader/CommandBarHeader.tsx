@@ -11,6 +11,7 @@ type CommandBarHeaderProps = {
     searchWord: string;
     handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
     dispatch: React.Dispatch<CommandBarAction>;
+    disabled?: boolean;
 };
 
 const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
@@ -18,6 +19,7 @@ const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
     searchWord,
     dispatch,
     handleSearch,
+    disabled = false,
 }) => {
     return (
         <header className={styles.commandBarHeader}>
@@ -30,7 +32,7 @@ const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
                     <Icon icon="arrow-left" />
                 </button>
             )}
-            <SearchBox searchWord={searchWord} onChange={handleSearch} />
+            <SearchBox searchWord={searchWord} onChange={handleSearch} disabled={disabled} />
         </header>
     );
 };

@@ -6,9 +6,10 @@ import { useCallback, useRef } from 'react';
 type SearchBoxProps = {
     searchWord: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    disabled?: boolean;
 };
 
-const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange }) => {
+const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange, disabled }) => {
     const inputRef = useRef<HTMLInputElement>();
 
     const handleKeyPress = useCallback(
@@ -34,6 +35,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange }) => {
             onChange={onChange}
             onKeyUp={handleKeyPress}
             value={searchWord}
+            disabled={disabled}
         />
     );
 };

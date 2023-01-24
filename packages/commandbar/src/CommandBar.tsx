@@ -178,6 +178,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 searchWord={state.searchWord}
                 dispatch={dispatch}
                 handleSearch={handleSearch}
+                disabled={!!state.result}
             />
             <div
                 className={[styles.resultsWrap, state.expanded && styles.expanded, state.result && styles.split].join(
