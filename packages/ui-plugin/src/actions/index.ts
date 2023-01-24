@@ -17,7 +17,7 @@ export const reducer = handleActions(
             plugins: {
                 ...state.plugins,
                 commandBar: {
-                    open: action.payload !== undefined ? action.payload.open : !state.plugins?.commandBar?.open,
+                    open: action.payload?.open !== undefined ? action.payload.open : !state.plugins?.commandBar?.open,
                 },
             },
         }),

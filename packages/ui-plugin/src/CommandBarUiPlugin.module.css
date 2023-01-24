@@ -12,3 +12,8 @@
 .open {
     display: block;
 }
+
+.commandBarToolbarComponent {
+    display: flex;
+    align-items: center;
+}

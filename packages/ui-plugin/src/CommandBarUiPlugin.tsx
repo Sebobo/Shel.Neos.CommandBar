@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect, DefaultRootState } from 'react-redux';
 import PropTypes from 'prop-types';
-import { IconButton } from '@neos-project/react-ui-components';
 
 // Neos dependencies are provided by the UI
 // @ts-ignore
@@ -9,9 +8,10 @@ import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
-import CommandBar from '@neos-commandbar/commandbar';
-import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
 import * as styles from './CommandBarUiPlugin.module.css';
+import CommandBar from '@neos-commandbar/commandbar';
+import ToggleButton from '@neos-commandbar/commandbar/src/ToggleButton/ToggleButton';
+import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
 import fetchData from './helpers/fetchData';
 
 type CommandBarUiPluginProps = {
@@ -256,7 +256,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         const results = (await fetchData(ENDPOINT_SEARCH_NODES, { query, node: siteNode.contextPath }).then(
             (results) => {
                 // TODO: Check results
-                console.debug('Search result', results);
                 return results;
             }
         )) as SearchNodeResult[];
@@ -274,7 +273,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     name,
                     description: nodetype,
                     action: async () => {
-                        console.debug('Search result selected', contextPath, uri);
                         setActiveContentCanvasSrc(uri);
                         setActiveContentCanvasContextPath(contextPath);
                     },
@@ -337,14 +335,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         const { commands, loaded } = this.state;
 
         return (
-            <div>
-                <IconButton
-                    onClick={() => toggleCommandBar()}
-                    isActive={commandBarOpen}
-                    title="Toggle command bar"
-                    icon="search"
-                    disabled={!loaded}
-                />
+            <div className={styles.commandBarToolbarComponent}>
+                <ToggleButton handleToggle={toggleCommandBar} disabled={!loaded} />
                 {loaded && (
                     <div className={[styles.fullScreenLayer, commandBarOpen && styles.open].join(' ')}>
                         <CommandBar open={commandBarOpen} commands={commands} toggleOpen={toggleCommandBar} />

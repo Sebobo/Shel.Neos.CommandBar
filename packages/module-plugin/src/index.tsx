@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 
 import * as styles from './ModulePlugin.module.css';
 
+import ToggleButton from '@neos-commandbar/commandbar/src/ToggleButton/ToggleButton';
+
 window.addEventListener('load', async (): Promise<void> => {
     while (!window.NeosCMS?.I18n?.initialized) {
         await new Promise((resolve) => setTimeout(resolve, 50));
@@ -21,10 +23,7 @@ window.addEventListener('load', async (): Promise<void> => {
 
         return (
             <div className={styles.pluginWrap}>
-                <button className={styles.toggleButton} onClick={handleToggle}>
-                    <span>Search…</span>
-                    <span className={styles.buttonIcon}>⌘K</span>
-                </button>
+                <ToggleButton handleToggle={handleToggle} />
             </div>
         );
     };
