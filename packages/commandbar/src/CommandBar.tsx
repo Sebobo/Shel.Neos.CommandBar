@@ -43,12 +43,17 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         commands: flattenCommands(commands),
         availableCommandIds: Object.keys(commands),
     });
+    const dialogRef = useRef<HTMLDialogElement>(null);
 
     const handleKeyEnteredRef = useRefEventListener((e: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
         if (!open || e.defaultPrevented) {
             return;
         }
-        if (e.key === 'Escape') {
+        if (e.key === 'k' && e.metaKey && dialogRef?.current.contains(e.target as Node)) {
+            // Close command bar
+            toggleOpen();
+        } else if (e.key === 'Escape') {
+            // Cancel search, or selection, or close command bar
             e.stopPropagation();
             e.preventDefault();
             if (state.selectedCommandGroup || state.searchWord) {
@@ -58,14 +63,17 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 toggleOpen();
             }
         } else if (e.key === 'ArrowDown') {
+            // Navigate to next command
             e.stopPropagation();
             e.preventDefault();
             dispatch({ type: ACTIONS.HIGHLIGHT_NEXT_ITEM });
         } else if (e.key === 'ArrowUp') {
+            // Navigate to previous command
             e.stopPropagation();
             e.preventDefault();
             dispatch({ type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM });
         } else if (e.key === 'Enter' && state.availableCommandIds.length > state.highlightedItem) {
+            // Execute highlighted command
             e.stopPropagation();
             e.preventDefault();
             const commandId = state.availableCommandIds[state.highlightedItem];
@@ -124,9 +132,6 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     );
 
     const handleSelectItemRef = useRefEventListener((commandId: CommandId) => {
-        const { searchWord } = state;
-        console.debug('searchWord', searchWord);
-        debugger;
         handleSelectItem(commandId);
     });
 
@@ -153,7 +158,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     }
 
     return (
-        <dialog className={[styles.commandBar, state.result && styles.hasResults].join(' ')} open={open}>
+        <dialog ref={dialogRef} className={[styles.commandBar, state.result && styles.hasResults].join(' ')} open={open}>
             <CommandBarHeader
                 selectedCommandGroup={state.selectedCommandGroup}
                 searchWord={state.searchWord}
