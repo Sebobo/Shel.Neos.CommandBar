@@ -11,6 +11,7 @@ type CommandListingProps = {
     heading?: string;
     runningCommandId?: CommandId; // This argument forces a refresh after a command executed to update command properties
     noCommandsMessage?: string;
+    disabled?: boolean;
 };
 
 const CommandListing: React.FC<CommandListingProps> = ({
@@ -21,6 +22,7 @@ const CommandListing: React.FC<CommandListingProps> = ({
     heading = 'Commands',
     runningCommandId = '',
     noCommandsMessage = 'No matching commands found',
+    disabled = false,
 }) => {
     const selectedElementRef = React.useRef(null);
 
@@ -29,7 +31,7 @@ const CommandListing: React.FC<CommandListingProps> = ({
     }, [selectedElementRef.current]);
 
     return (
-        <nav className={styles.results}>
+        <nav className={[styles.results, disabled && styles.disabled].join(' ')}>
             {heading && <h6>{heading}</h6>}
             {availableCommandIds.length > 0 ? (
                 <ul>

@@ -23,7 +23,10 @@ function filterAvailableCommands(
     commands: FlatCommandList
 ): CommandId[] {
     // Filter available commands for the current context
-    const availableCommands = Object.values(commands).filter((command) => command.parentId === selectedCommandGroup);
+    let availableCommands = Object.values(commands);
+    availableCommands = searchWord
+        ? availableCommands
+        : availableCommands.filter((command) => command.parentId === selectedCommandGroup);
 
     if (!searchWord) {
         return availableCommands.map((command) => command.id);
@@ -57,6 +60,16 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 result: null,
             };
         case ACTIONS.HIGHLIGHT_NEXT_ITEM:
+            if (state.result) {
+                return {
+                    ...state,
+                    highlightedResultItem: clamp(
+                        state.highlightedResultItem + 1,
+                        0,
+                        Object.keys(state.result.options).length - 1
+                    ),
+                };
+            }
             return {
                 ...state,
                 expanded: true,
@@ -65,6 +78,16 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                     : 0,
             };
         case ACTIONS.HIGHLIGHT_PREVIOUS_ITEM:
+            if (state.result) {
+                return {
+                    ...state,
+                    highlightedResultItem: clamp(
+                        state.highlightedResultItem - 1,
+                        0,
+                        Object.keys(state.result.options).length - 1
+                    ),
+                };
+            }
             return {
                 ...state,
                 highlightedItem: clamp(state.highlightedItem - 1, 0, state.availableCommandIds.length - 1),
@@ -75,6 +98,7 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 ? {
                       ...state,
                       result: null,
+                      highlightedResultItem: 0,
                   }
                 : state.searchWord
                 ? {
@@ -138,6 +162,7 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 result: {
                     ...action.result,
                 },
+                highlightedResultItem: 0,
             };
         }
         default:

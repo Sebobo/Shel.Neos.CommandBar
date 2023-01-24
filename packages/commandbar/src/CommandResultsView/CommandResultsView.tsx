@@ -5,9 +5,10 @@ import CommandListing from '../CommandList/CommandListing';
 
 type CommandResultsViewProps = {
     result: CommandResult;
+    highlightedItem: number;
 };
 
-const CommandResultsView: React.FC<CommandResultsViewProps> = ({ result }) => {
+const CommandResultsView: React.FC<CommandResultsViewProps> = ({ result, highlightedItem }) => {
     const { options, view, message } = result;
 
     const handleSelectItem = useCallback(
@@ -32,7 +33,7 @@ const CommandResultsView: React.FC<CommandResultsViewProps> = ({ result }) => {
                     heading={message}
                     commands={options}
                     availableCommandIds={Object.keys(options)}
-                    highlightedItem={0}
+                    highlightedItem={highlightedItem}
                     handleSelectItem={handleSelectItem}
                     noCommandsMessage="Try a different query to find more results"
                 />

@@ -77,6 +77,7 @@ type CommandBarState = {
     runningCommandId: CommandId;
     runningCommandMessage: string;
     result: CommandResult | null;
+    highlightedResultItem: number;
 };
 
 // FIXME: Define type safe action variants

@@ -24,6 +24,7 @@ const initialState: CommandBarState = {
     runningCommandId: null,
     runningCommandMessage: null,
     result: null,
+    highlightedResultItem: 0,
 };
 
 /**
@@ -76,8 +77,13 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
             // Execute highlighted command
             e.stopPropagation();
             e.preventDefault();
-            const commandId = state.availableCommandIds[state.highlightedItem];
-            handleSelectItem(commandId);
+            if (state.result) {
+                const command = Object.values(state.result.options)[state.highlightedResultItem];
+                handleSelectItem(command);
+            } else {
+                const commandId = state.availableCommandIds[state.highlightedItem];
+                handleSelectItem(commandId);
+            }
         }
     });
 
@@ -86,8 +92,12 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     }, []);
 
     const handleSelectItem = useCallback(
-        async (commandId: CommandId) => {
-            const { action, canHandleQueries } = state.commands[commandId];
+        async (command: CommandId | ProcessedCommandItem) => {
+            const {
+                action,
+                canHandleQueries,
+                id: commandId,
+            } = typeof command === 'string' ? state.commands[command] : command;
             if (!action) {
                 return dispatch({ type: ACTIONS.SELECT_GROUP, commandId });
             }
@@ -158,7 +168,11 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     }
 
     return (
-        <dialog ref={dialogRef} className={[styles.commandBar, state.result && styles.hasResults].join(' ')} open={open}>
+        <dialog
+            ref={dialogRef}
+            className={[styles.commandBar, state.result && styles.hasResults].join(' ')}
+            open={open}
+        >
             <CommandBarHeader
                 selectedCommandGroup={state.selectedCommandGroup}
                 searchWord={state.searchWord}
@@ -176,8 +190,11 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     highlightedItem={state.highlightedItem}
                     handleSelectItem={(commandId: string) => handleSelectItemRef.current(commandId)}
                     runningCommandId={state.runningCommandId}
+                    disabled={!!state.result}
                 />
-                {state.result && <CommandResultsView result={state.result} />}
+                {state.result && (
+                    <CommandResultsView result={state.result} highlightedItem={state.highlightedResultItem} />
+                )}
             </div>
             {state.expanded && (
                 <CommandBarFooter
