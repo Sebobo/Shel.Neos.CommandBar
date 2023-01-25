@@ -4,6 +4,8 @@
 
 This package provides a command bar plugin for Neos CMS.
 
+⚠️ This package is a work in progress and not ready for production use yet.
+
 ## Features
 
 * 🔍 Open commandbar via CMD+K or CTRL+K in the Neos content module
