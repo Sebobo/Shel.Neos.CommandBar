@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { ACTIONS } from '../state/commandBarReducer';
 import Icon from '../Presentationals/Icon';
 import SearchBox from '../SearchBox/SearchBox';
 
@@ -10,25 +9,21 @@ type CommandBarHeaderProps = {
     selectedCommandGroup: CommandId;
     searchWord: string;
     handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    dispatch: React.Dispatch<CommandBarAction>;
+    handleBack: () => void;
     disabled?: boolean;
 };
 
 const CommandBarHeader: React.FC<CommandBarHeaderProps> = ({
     selectedCommandGroup,
     searchWord,
-    dispatch,
+    handleBack,
     handleSearch,
     disabled = false,
 }) => {
     return (
         <header className={styles.commandBarHeader}>
             {selectedCommandGroup && (
-                <button
-                    type="button"
-                    onClick={() => dispatch({ type: ACTIONS.GO_TO_PARENT_GROUP })}
-                    className={styles.backButton}
-                >
+                <button type="button" onClick={handleBack} className={styles.backButton}>
                     <Icon icon="arrow-left" />
                 </button>
             )}

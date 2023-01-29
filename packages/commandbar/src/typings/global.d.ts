@@ -80,15 +80,6 @@ type CommandBarState = {
     highlightedResultItem: number;
 };
 
-// FIXME: Define type safe action variants
-// Dispatch-able actions for the command bar reducer
-type CommandBarAction = {
-    type: ACTIONS;
-    argument?: string;
-    commandId?: CommandId;
-    result?: CommandResult;
-};
-
 // ---------------------------
 // Types from the Neos UI core
 // ---------------------------

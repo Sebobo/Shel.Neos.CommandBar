@@ -13,6 +13,20 @@ enum ACTIONS {
     SET_RESULT,
 }
 
+// FIXME: Define type safe action variants
+// Dispatch-able actions for the command bar reducer
+type CommandBarAction =
+    | { type: ACTIONS.RESET_SEARCH }
+    | { type: ACTIONS.HIGHLIGHT_NEXT_ITEM }
+    | { type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM }
+    | { type: ACTIONS.CANCEL }
+    | { type: ACTIONS.SELECT_GROUP; commandId: string }
+    | { type: ACTIONS.GO_TO_PARENT_GROUP }
+    | { type: ACTIONS.UPDATE_SEARCH; searchWord: string }
+    | { type: ACTIONS.RUNNING_COMMAND; commandId: CommandId; argument: string }
+    | { type: ACTIONS.FINISHED_COMMAND }
+    | { type: ACTIONS.SET_RESULT; result: CommandResult };
+
 function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
 }
@@ -133,11 +147,11 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
             return {
                 ...state,
                 expanded: true,
-                searchWord: action.argument,
+                searchWord: action.searchWord,
                 highlightedItem: 0,
                 availableCommandIds: filterAvailableCommands(
                     state.selectedCommandGroup,
-                    action.argument,
+                    action.searchWord,
                     state.commands
                 ),
             };
@@ -165,9 +179,8 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 highlightedResultItem: 0,
             };
         }
-        default:
-            throw new Error(`Invalid action ${action.type}`);
     }
+    throw new Error(`Invalid action ${JSON.stringify(action)}`);
 };
 
 export { commandBarReducer, ACTIONS };

@@ -88,7 +88,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     });
 
     const handleSearch = useCallback((e) => {
-        dispatch({ type: ACTIONS.UPDATE_SEARCH, argument: e.target.value.toLowerCase() });
+        dispatch({ type: ACTIONS.UPDATE_SEARCH, searchWord: e.target.value.toLowerCase() });
     }, []);
 
     const handleSelectItem = useCallback(
@@ -176,7 +176,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
             <CommandBarHeader
                 selectedCommandGroup={state.selectedCommandGroup}
                 searchWord={state.searchWord}
-                dispatch={dispatch}
+                handleBack={() => dispatch({ type: ACTIONS.GO_TO_PARENT_GROUP })}
                 handleSearch={handleSearch}
                 disabled={!!state.result}
             />
