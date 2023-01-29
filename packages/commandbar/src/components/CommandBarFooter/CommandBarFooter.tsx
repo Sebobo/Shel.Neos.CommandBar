@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Icon from '../Presentationals/Icon';
+import Icon from '../Icon/Icon';
 
 import * as styles from './CommandBarFooter.module.css';
 

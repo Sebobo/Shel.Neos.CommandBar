@@ -2,11 +2,9 @@ import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 
 import * as styles from './CommandBar.module.css';
 import { ACTIONS, commandBarReducer } from './state/commandBarReducer';
-import CommandBarFooter from './CommandBarFooter/CommandBarFooter';
-import CommandBarHeader from './CommandBarHeader/CommandBarHeader';
-import CommandListing from './CommandList/CommandListing';
+import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from './components';
 import { flattenCommands } from './helpers/flattenCommands';
-import CommandResultsView from './CommandResultsView/CommandResultsView';
+import useFunctionRef from './hooks/useFunctionRef';
 
 type CommandBarProps = {
     commands: HierarchicalCommandList;
@@ -27,17 +25,6 @@ const initialState: CommandBarState = {
     highlightedResultItem: 0,
 };
 
-/**
- * A custom hook that creates a ref for a function, and updates it on every render.
- * The new value is always the same function, but the function's context changes on every render.
- * TODO: Move to own file
- */
-function useRefEventListener(fn) {
-    const fnRef = useRef(fn);
-    fnRef.current = fn;
-    return fnRef;
-}
-
 const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
         ...initialState,
@@ -46,7 +33,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
     });
     const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const handleKeyEnteredRef = useRefEventListener((e: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
+    const handleKeyEnteredRef = useFunctionRef((e: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
         if (!open || e.defaultPrevented) {
             return;
         }
@@ -141,7 +128,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         [state.searchWord, state.commands]
     );
 
-    const handleSelectItemRef = useRefEventListener((commandId: CommandId) => {
+    const handleSelectItemRef = useFunctionRef((commandId: CommandId) => {
         handleSelectItem(commandId);
     });
 
@@ -185,7 +172,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                     ' '
                 )}
             >
-                <CommandListing
+                <CommandList
                     commands={state.commands}
                     availableCommandIds={state.availableCommandIds}
                     highlightedItem={state.highlightedItem}

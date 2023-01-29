@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import * as styles from './ModulePlugin.module.css';
 
-import ToggleButton from '@neos-commandbar/commandbar/src/ToggleButton/ToggleButton';
+import { ToggleButton } from '@neos-commandbar/commandbar';
 
 const ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
 

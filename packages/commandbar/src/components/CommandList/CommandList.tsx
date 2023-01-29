@@ -14,7 +14,7 @@ type CommandListingProps = {
     disabled?: boolean;
 };
 
-const CommandListing: React.FC<CommandListingProps> = ({
+const CommandList: React.FC<CommandListingProps> = ({
     commands,
     availableCommandIds,
     highlightedItem,
@@ -53,4 +53,4 @@ const CommandListing: React.FC<CommandListingProps> = ({
     );
 };
 
-export default React.memo(CommandListing);
+export default React.memo(CommandList);

@@ -9,8 +9,7 @@ import { neos } from '@neos-project/neos-ui-decorators';
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
 import * as styles from './CommandBarUiPlugin.module.css';
-import CommandBar from '@neos-commandbar/commandbar';
-import ToggleButton from '@neos-commandbar/commandbar/src/ToggleButton/ToggleButton';
+import { CommandBar, ToggleButton } from '@neos-commandbar/commandbar';
 import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
 import fetchData from './helpers/fetchData';
 

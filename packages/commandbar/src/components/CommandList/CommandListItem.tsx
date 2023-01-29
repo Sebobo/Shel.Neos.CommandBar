@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as styles from './CommandListItem.module.css';
-import Icon from '../Presentationals/Icon';
+import Icon from '../Icon/Icon';
 
 type CommandListItemProps = {
     command: ProcessedCommandItem;

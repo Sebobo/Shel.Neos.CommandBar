@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Icon from '../Presentationals/Icon';
+import Icon from '../Icon/Icon';
 import SearchBox from '../SearchBox/SearchBox';
 
 import * as styles from './CommandBarHeader.module.css';

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import * as styles from './CommandResultsView.module.css';
-import CommandListing from '../CommandList/CommandListing';
+import CommandListing from '../CommandList/CommandList';
 
 type CommandResultsViewProps = {
     result: CommandResult;
