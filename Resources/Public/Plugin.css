@@ -67,7 +67,7 @@
     translate: -50% -50%;
     width: var(--bar-width);
     pointer-events: all;
-    transition: width 0.1s ease-out;
+    transition: width 0.1s ease-out, opacity 0.05s;
 }
 
 .CommandBar-module__commandBar___3t_V0.CommandBar-module__hasResults___3NzEf {
@@ -102,13 +102,13 @@
     grid-template-columns: 1fr 1fr;
 }
 
-.Icon-module__iconWrap___1tIr6 {
+.Icon-module__iconWrap___3B4ri {
     width: var(--icon-size);
     display: inline-block;
     text-align: center;
 }
 
-.CommandBarFooter-module__commandBarFooter___1mMGR {
+.CommandBarFooter-module__commandBarFooter___2mcre {
     border-top: 1px solid var(--color-border);
     background-color: var(--footer-background);
     padding: 0.8rem 1rem;
@@ -119,36 +119,36 @@
     user-select: none;
 }
 
-.CommandBarFooter-module__breadcrumb___2xMga {
+.CommandBarFooter-module__breadcrumb___1Ul24 {
     display: flex;
     gap: 1rem;
 }
 
-.CommandBarFooter-module__activity___1YdE7 {
+.CommandBarFooter-module__activity___2GXJU {
     display: flex;
     gap: 1rem;
 }
 
-.CommandBarFooter-module__madeWithLove___2_GKs {
+.CommandBarFooter-module__madeWithLove___zHu8L {
     display: flex;
 }
 
-.CommandBarFooter-module__madeWithLove___2_GKs small {
+.CommandBarFooter-module__madeWithLove___zHu8L small {
     transition: color 0.1s ease-in-out;
 }
 
-.CommandBarFooter-module__madeWithLove___2_GKs:hover small {
+.CommandBarFooter-module__madeWithLove___zHu8L:hover small {
     color: var(--color-light-text-hover);
 }
 
-.CommandBarFooter-module__madeWithLove___2_GKs svg {
+.CommandBarFooter-module__madeWithLove___zHu8L svg {
     display: inline-block;
     width: var(--icon-size);
     height: auto;
     margin-left: 0.5em;
 }
 
-.SearchBox-module__searchBox___3J8zU {
+.SearchBox-module__searchBox___1SEtn {
     appearance: none;
     background: none;
     border: none;
@@ -160,7 +160,12 @@
     flex: 1;
 }
 
-.CommandBarHeader-module__commandBarHeader___2UG9r {
+.SearchBox-module__searchBox___1SEtn:disabled {
+    color: var(--color-light-text);
+    cursor: not-allowed;
+}
+
+.CommandBarHeader-module__commandBarHeader___3Y2hR {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -168,7 +173,7 @@
     border-bottom: 1px solid var(--color-border);
 }
 
-.CommandBarHeader-module__backButton___3tZcE {
+.CommandBarHeader-module__backButton___1qIGu {
     padding: 0.3rem;
     background-color: var(--color-icon-bg);
     border-radius: 50%;
@@ -179,11 +184,11 @@
     transition: background-color 0.1s ease-in-out;
 }
 
-.CommandBarHeader-module__backButton___3tZcE:hover {
+.CommandBarHeader-module__backButton___1qIGu:hover {
     background-color: var(--color-icon-bg-hover);
 }
 
-.CommandListing-module__results___ug-oG {
+.CommandListing-module__results___23Rve {
     min-height: 0;
     transition: opacity 0.3s ease-in;
     overflow-y: auto;
@@ -191,7 +196,7 @@
     height: 100%;
 }
 
-.CommandListing-module__results___ug-oG h6 {
+.CommandListing-module__results___23Rve h6 {
     color: var(--color-light-text);
     margin: 0.5rem;
     font-size: 0.9em;
@@ -199,7 +204,7 @@
     user-select: none;
 }
 
-.CommandListing-module__results___ug-oG ul {
+.CommandListing-module__results___23Rve ul {
     padding: 0;
     list-style: none;
     display: flex;
@@ -208,17 +213,17 @@
     margin: 0;
 }
 
-.CommandListing-module__noResults___2zw8Z {
+.CommandListing-module__noResults___Mb89V {
     padding: 0.5rem;
 }
 
-.CommandListing-module__disabled___3IBJW {
+.CommandListing-module__disabled___6gpPj {
     opacity: 0.5 !important;
     pointer-events: none;
     user-select: none;
 }
 
-.CommandListItem-module__commandListItem___PbP5Z {
+.CommandListItem-module__commandListItem___1Gsrl {
     cursor: pointer;
     display: flex !important; /* Necessary due to the neos header bar styling */
     gap: 1em;
@@ -230,15 +235,15 @@
     user-select: none;
 }
 
-.CommandListItem-module__commandListItem___PbP5Z:hover {
+.CommandListItem-module__commandListItem___1Gsrl:hover {
     background-color: var(--color-item-hover);
 }
 
-.CommandListItem-module__highlighted___ww9c6 {
+.CommandListItem-module__highlighted___3Lsze {
     background-color: var(--color-item-highlighted);
 }
 
-.CommandListItem-module__label___3g_nM {
+.CommandListItem-module__label___32-bU {
     display: flex;
     flex-wrap: wrap;
     flex: 1;
@@ -246,12 +251,12 @@
     align-items: baseline;
 }
 
-.CommandResultsView-module__commandResultsView___2_3i- {
+.CommandResultsView-module__commandResultsView___xLqwb {
     max-width: 100%;
     overflow: auto;
 }
 
-.ToggleButton-module__toggleButton___2GvMS {
+.ToggleButton-module__toggleButton___2wPs- {
     background-color: var(--grayLight);
     border: 1px solid var(--grayMedium);
     color: var(--textSubtleLight);
@@ -266,17 +271,17 @@
     line-height: 1.4em;
 }
 
-.ToggleButton-module__toggleButton___2GvMS:disabled {
+.ToggleButton-module__toggleButton___2wPs-:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-.ToggleButton-module__toggleButton___2GvMS:not(:disabled):hover {
+.ToggleButton-module__toggleButton___2wPs-:not(:disabled):hover {
     background-color: var(--grayLighter);
     color: var(--textOnWhite);
 }
 
-.ToggleButton-module__buttonIcon___3yxlm {
+.ToggleButton-module__buttonIcon___UjFjw {
     background-color: var(--grayMedium);
     border-radius: 3px;
     color: var(--textOnGray);
@@ -285,7 +290,7 @@
     transition: background-color 0.1s ease-out;
 }
 
-.ToggleButton-module__toggleButton___2GvMS:not(:disabled):hover .ToggleButton-module__buttonIcon___3yxlm {
+.ToggleButton-module__toggleButton___2wPs-:not(:disabled):hover .ToggleButton-module__buttonIcon___UjFjw {
     background-color: var(--primaryBlue);
 }
 
