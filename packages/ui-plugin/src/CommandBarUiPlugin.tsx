@@ -9,7 +9,7 @@ import { neos } from '@neos-project/neos-ui-decorators';
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
 import * as styles from './CommandBarUiPlugin.module.css';
-import { CommandBar, ToggleButton } from '@neos-commandbar/commandbar';
+import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
 import fetchData from './helpers/fetchData';
 
@@ -193,7 +193,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     const pluginCommands = plugins[pluginName]();
                     this.setState((prev) => ({ commands: { ...prev.commands, ...pluginCommands } }));
                 } catch (e) {
-                    console.error(`[CommandBar] Could not load commands from plugin ${pluginName}`, e);
+                    logger.error(`[CommandBar] Could not load commands from plugin ${pluginName}`, e);
                 }
             });
         }
@@ -204,7 +204,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
             })
             .catch((error) => {
-                console.error('[CommandBar] Failed to load commands', error);
+                logger.error('[CommandBar] Failed to load commands', error);
             });
     }
 

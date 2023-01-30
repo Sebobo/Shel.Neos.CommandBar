@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 
 import * as styles from './CommandResultsView.module.css';
 import CommandListing from '../CommandList/CommandList';
+import { logger } from '../../helpers';
 
 type CommandResultsViewProps = {
     result: CommandResult;
@@ -19,7 +20,7 @@ const CommandResultsView: React.FC<CommandResultsViewProps> = ({ result, highlig
                 window.location.href = action;
                 return;
             }
-            console.debug('Running action result command', commandId);
+            logger.debug('Running action result command', commandId);
             action();
         },
         [options]

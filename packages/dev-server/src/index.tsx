@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { CommandBar } from '@neos-commandbar/commandbar';
+import { CommandBar, logger } from '@neos-commandbar/commandbar';
 
 (() => {
     const initialContent = {
@@ -35,12 +35,12 @@ import { CommandBar } from '@neos-commandbar/commandbar';
         const [currentWebsite, setCurrentWebsite] = useState('pageA');
 
         const publishAll: CommandAction = useCallback(async () => {
-            console.debug('Publishing all');
+            logger.debug('Publishing all');
             setPublished(true);
         }, []);
 
         const addContentElement = useCallback(async (page: string, nodeType: string, text: string) => {
-            console.debug('Adding more content to page ' + page);
+            logger.debug('Adding more content to page ' + page);
             setContent((prev) => {
                 return {
                     ...prev,
@@ -56,7 +56,7 @@ import { CommandBar } from '@neos-commandbar/commandbar';
         }, []);
 
         const findDocument: CommandAction = useCallback(async () => {
-            console.debug('Find document ist not implemented yet');
+            logger.debug('Find document ist not implemented yet');
             return {
                 success: false,
             };
@@ -69,7 +69,7 @@ import { CommandBar } from '@neos-commandbar/commandbar';
                     icon: 'home',
                     name: 'Home',
                     description: 'Sends you home',
-                    action: async () => console.debug('Go home'),
+                    action: async () => logger.debug('Go home'),
                 },
                 toggleLeftSidebar: {
                     icon: 'toggle-on',
@@ -125,25 +125,25 @@ import { CommandBar } from '@neos-commandbar/commandbar';
                             name: 'Media',
                             icon: 'camera',
                             description: 'Manage images and other assets',
-                            action: async () => console.debug('Opened the media module'),
+                            action: async () => logger.debug('Opened the media module'),
                         },
                         workspaces: {
                             name: 'Workspaces',
                             icon: 'th-large',
                             description: 'Publish or discard changes in workspaces',
-                            action: async () => console.debug('Opened the workspaces module'),
+                            action: async () => logger.debug('Opened the workspaces module'),
                         },
                         history: {
                             name: 'History',
                             icon: 'calendar',
                             description: 'View historic changes to content',
-                            action: async () => console.debug('Opened the history module'),
+                            action: async () => logger.debug('Opened the history module'),
                         },
                         redirects: {
                             name: 'Redirects',
                             icon: 'share',
                             description: 'Manage redirects for documents and assets',
-                            action: async () => console.debug('Opened the redirects module'),
+                            action: async () => logger.debug('Opened the redirects module'),
                         },
                     },
                 },

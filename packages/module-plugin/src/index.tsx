@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 
 import * as styles from './ModulePlugin.module.css';
 
-import { ToggleButton } from '@neos-commandbar/commandbar';
+// FIXME: Replace with import from main when esm build issue is fixed
+import { ToggleButton } from '@neos-commandbar/commandbar/src/components';
+import { logger } from '@neos-commandbar/commandbar/src/helpers';
 
 const ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
 
@@ -34,13 +36,13 @@ window.addEventListener('load', async (): Promise<void> => {
                 .then((commands: ModuleCommands) => {
                     setCommands({ ...commands });
                     setInitialized(true);
-                    console.debug(
+                    logger.debug(
                         '[CommandBar] Initialized command bar for backend modules with the following commands:',
                         Object.keys(commands)
                     );
                 })
                 .catch((e) => {
-                    console.error('[CommandBar]', e);
+                    logger.error('[CommandBar]', e);
                 });
         }, []);
 

@@ -1,4 +1,5 @@
 import FuzzySearch from 'fuzzy-search';
+import { clamp } from '../helpers';
 
 enum ACTIONS {
     RESET_SEARCH,
@@ -26,10 +27,6 @@ type CommandBarAction =
     | { type: ACTIONS.RUNNING_COMMAND; commandId: CommandId; argument: string }
     | { type: ACTIONS.FINISHED_COMMAND }
     | { type: ACTIONS.SET_RESULT; result: CommandResult };
-
-function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-}
 
 function filterAvailableCommands(
     selectedCommandGroup: CommandId,

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useReducer, useRef } from 'react';
 import * as styles from './CommandBar.module.css';
 import { ACTIONS, commandBarReducer } from './state/commandBarReducer';
 import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from './components';
-import { flattenCommands } from './helpers/flattenCommands';
+import { clamp, flattenCommands, logger } from './helpers';
 import useFunctionRef from './hooks/useFunctionRef';
 
 type CommandBarProps = {
@@ -101,11 +101,11 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 (actionResult as AsyncCommandResult)
                     .then((result) => {
                         // TODO: Handle success === false
-                        console.debug('Command result', result);
+                        logger.debug('Command result', result);
                     })
                     .catch((error) => {
                         // TODO: Show error message
-                        console.error('Command error', error);
+                        logger.error('Command error', error);
                     })
                     .finally(() => {
                         dispatch({ type: ACTIONS.FINISHED_COMMAND });
@@ -122,7 +122,7 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
                 }
                 dispatch({ type: ACTIONS.FINISHED_COMMAND });
             } else {
-                console.warn('Command result is not a promise or generator', actionResult);
+                logger.error('Command result is not a promise or generator', actionResult);
             }
         },
         [state.searchWord, state.commands]
@@ -140,9 +140,9 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
 
         // const guestFrame = document.getElementsByName('neos-content-main')[0] as HTMLIFrameElement;
         // guestFrame.contentWindow?.addEventListener('keyup', (e) => {
-        //     console.debug('keypress in guestframe', e);
+        //     log.debug('keypress in guestframe', e);
         // });
-        // console.debug('guestFrame', guestFrame.contentWindow);
+        // log.debug('guestFrame', guestFrame.contentWindow);
 
         const windowKeyEventHandler = (e) => handleKeyEnteredRef.current(e);
 
