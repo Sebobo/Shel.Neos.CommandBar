@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useRef } from 'react';
+import React, { CSSProperties, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import * as styles from './CommandBar.module.css';
 import { ACTIONS, commandBarReducer } from './state/commandBarReducer';
@@ -10,6 +10,7 @@ type CommandBarProps = {
     commands: HierarchicalCommandList;
     open: boolean;
     toggleOpen: () => void;
+    onDrag?: (state: boolean) => void;
 };
 
 const initialState: CommandBarState = {
@@ -25,13 +26,25 @@ const initialState: CommandBarState = {
     highlightedResultItem: 0,
 };
 
-const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) => {
+const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen, onDrag }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
         ...initialState,
         commands: flattenCommands(commands),
         availableCommandIds: Object.keys(commands),
     });
     const dialogRef = useRef<HTMLDialogElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragState, setDragState] = useState<{
+        left: string | number;
+        top: string | number;
+        offsetLeft: number;
+        offsetTop: number;
+    }>({
+        left: '50%',
+        top: '50%',
+        offsetLeft: 0,
+        offsetTop: 0,
+    });
 
     const handleKeyEnteredRef = useFunctionRef((e: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
         if (!open || e.defaultPrevented) {
@@ -150,6 +163,51 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
         return () => window.removeEventListener('keydown', windowKeyEventHandler);
     }, [open]);
 
+    const handleDragStart = useCallback(
+        (e) => {
+            if (e.target.tagName === 'INPUT') {
+                logger.debug('Drag ignored because input is focused');
+                return;
+            }
+            e.dataTransfer.setData('text/plain', 'CommandBar');
+            e.dataTransfer.dropEffect = 'move';
+            e.dataTransfer.effectAllowed = 'move';
+            logger.debug('Drag started with offset');
+            setDragState({
+                left: e.clientX,
+                top: e.clientY,
+                offsetLeft: dialogRef.current.offsetLeft - e.clientX,
+                offsetTop: dialogRef.current.offsetTop - e.clientY,
+            });
+            onDrag && onDrag(true);
+        },
+        [dialogRef.current]
+    );
+
+    const handleDragEnd = useCallback(
+        (e) => {
+            const { clientX, clientY } = e;
+            setIsDragging(false);
+            setDragState((prev) => ({
+                ...prev,
+                left: clamp(clientX, 0, window.innerWidth - (dialogRef.current.offsetWidth / 2 + prev.offsetLeft)),
+                top: clamp(clientY, 0, window.innerHeight - (dialogRef.current.offsetHeight / 2 + prev.offsetTop)),
+            }));
+            logger.debug('Drag ended', window.innerWidth, dialogRef.current.offsetWidth, clientX, clientY);
+            onDrag && onDrag(false);
+        },
+        [dialogRef.current]
+    );
+
+    const dialogStyle = useMemo(() => {
+        const { left, top, offsetLeft, offsetTop } = dragState;
+        return {
+            left: typeof left == 'string' ? left : left + offsetLeft + 'px',
+            top: typeof top == 'string' ? top : top + offsetTop + 'px',
+            visibility: isDragging ? 'hidden' : 'visible',
+        } as CSSProperties;
+    }, [dragState, isDragging, dialogRef.current]);
+
     if (!open) {
         return null;
     }
@@ -159,6 +217,11 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen }) =
             ref={dialogRef}
             className={[styles.commandBar, state.result && styles.hasResults].join(' ')}
             open={open}
+            draggable
+            onDragStart={handleDragStart}
+            onDrag={() => setIsDragging(true)}
+            onDragEnd={handleDragEnd}
+            style={dialogStyle}
         >
             <CommandBarHeader
                 selectedCommandGroup={state.selectedCommandGroup}

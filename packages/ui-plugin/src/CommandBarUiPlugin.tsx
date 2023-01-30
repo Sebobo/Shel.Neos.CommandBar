@@ -45,6 +45,7 @@ type CommandBarUiPluginProps = {
 
 type CommandBarUiPluginState = {
     loaded: boolean;
+    dragging: boolean;
     commands: HierarchicalCommandList;
 };
 
@@ -80,6 +81,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         super(props);
         this.state = {
             loaded: false,
+            dragging: false,
             commands: {
                 // testGenerator: {
                 //     name: 'Test generator',
@@ -329,16 +331,29 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         };
     };
 
+    setDragging = (dragging) => {
+        this.setState({ ...this.state, dragging });
+    };
+
     render() {
         const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiPluginProps;
-        const { commands, loaded } = this.state;
+        const { commands, loaded, dragging } = this.state;
 
         return (
             <div className={styles.commandBarToolbarComponent}>
                 <ToggleButton handleToggle={toggleCommandBar} disabled={!loaded} />
                 {loaded && (
-                    <div className={[styles.fullScreenLayer, commandBarOpen && styles.open].join(' ')}>
-                        <CommandBar open={commandBarOpen} commands={commands} toggleOpen={toggleCommandBar} />
+                    <div
+                        className={[styles.fullScreenLayer, commandBarOpen && styles.open].join(' ')}
+                        onDragOver={(e) => e.preventDefault()}
+                        style={dragging ? { pointerEvents: 'all' } : null}
+                    >
+                        <CommandBar
+                            open={commandBarOpen}
+                            commands={commands}
+                            toggleOpen={toggleCommandBar}
+                            onDrag={this.setDragging}
+                        />
                     </div>
                 )}
             </div>
