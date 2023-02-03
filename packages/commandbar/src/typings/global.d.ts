@@ -66,20 +66,6 @@ type CommandResult = {
     view?: string | ReactElement;
 };
 
-// The core state of the command bar
-type CommandBarState = {
-    expanded: boolean;
-    selectedCommandGroup: CommandId;
-    availableCommandIds: CommandId[];
-    searchWord: string;
-    highlightedItem: number;
-    commands: FlatCommandList;
-    runningCommandId: CommandId;
-    runningCommandMessage: string;
-    result: CommandResult | null;
-    highlightedResultItem: number;
-};
-
 // ---------------------------
 // Types from the Neos UI core
 // ---------------------------

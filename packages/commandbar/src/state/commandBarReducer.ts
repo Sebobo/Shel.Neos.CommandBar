@@ -1,20 +1,7 @@
 import FuzzySearch from 'fuzzy-search';
 import { clamp } from '../helpers';
+import { MachineState, transition } from './commandBarMachine';
 
-enum ACTIONS {
-    RESET_SEARCH,
-    HIGHLIGHT_NEXT_ITEM,
-    HIGHLIGHT_PREVIOUS_ITEM,
-    CANCEL,
-    SELECT_GROUP,
-    GO_TO_PARENT_GROUP,
-    UPDATE_SEARCH,
-    RUNNING_COMMAND,
-    FINISHED_COMMAND,
-    SET_RESULT,
-}
-
-// FIXME: Define type safe action variants
 // Dispatch-able actions for the command bar reducer
 type CommandBarAction =
     | { type: ACTIONS.RESET_SEARCH }
@@ -24,9 +11,22 @@ type CommandBarAction =
     | { type: ACTIONS.SELECT_GROUP; commandId: string }
     | { type: ACTIONS.GO_TO_PARENT_GROUP }
     | { type: ACTIONS.UPDATE_SEARCH; searchWord: string }
-    | { type: ACTIONS.RUNNING_COMMAND; commandId: CommandId; argument: string }
-    | { type: ACTIONS.FINISHED_COMMAND }
-    | { type: ACTIONS.SET_RESULT; result: CommandResult };
+    | { type: ACTIONS.RUN_COMMAND; commandId: CommandId; argument: string }
+    | { type: ACTIONS.FINISH_COMMAND }
+    | { type: ACTIONS.SHOW_RESULT; result: CommandResult };
+
+type CommandBarState = MachineState & {
+    expanded: boolean;
+    selectedCommandGroup: CommandId;
+    availableCommandIds: CommandId[];
+    searchWord: string;
+    highlightedItem: number;
+    commands: FlatCommandList;
+    runningCommandId: CommandId;
+    runningCommandMessage: string;
+    result: CommandResult | null;
+    highlightedResultItem: number;
+};
 
 function filterAvailableCommands(
     selectedCommandGroup: CommandId,
@@ -48,7 +48,7 @@ function filterAvailableCommands(
     });
     const matchingCommands = searcher.search(searchWord);
 
-    // Add all commands that can handle queries to the result
+    // Add all commands that can handle queries to the result, the Set removes duplicates
     return [
         ...new Set([
             ...matchingCommands.map((command) => command.id),
@@ -60,6 +60,8 @@ function filterAvailableCommands(
 const commandBarReducer = (state: CommandBarState, action: CommandBarAction): CommandBarState => {
     // The parent command group of the currently selected command group which is used in several actions
     const parentCommandGroup = state.selectedCommandGroup ? state.commands[state.selectedCommandGroup].parentId : null;
+
+    const newState = transition(state, action);
 
     switch (action.type) {
         case ACTIONS.RESET_SEARCH:
@@ -153,21 +155,21 @@ const commandBarReducer = (state: CommandBarState, action: CommandBarAction): Co
                 ),
             };
         }
-        case ACTIONS.RUNNING_COMMAND: {
+        case ACTIONS.RUN_COMMAND: {
             return {
                 ...state,
                 runningCommandId: action.commandId,
                 runningCommandMessage: action.argument,
             };
         }
-        case ACTIONS.FINISHED_COMMAND: {
+        case ACTIONS.FINISH_COMMAND: {
             return {
                 ...state,
                 runningCommandId: null,
                 runningCommandMessage: null,
             };
         }
-        case ACTIONS.SET_RESULT: {
+        case ACTIONS.SHOW_RESULT: {
             return {
                 ...state,
                 result: {

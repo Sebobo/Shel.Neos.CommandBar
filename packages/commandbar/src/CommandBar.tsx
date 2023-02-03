@@ -13,22 +13,17 @@ type CommandBarProps = {
     onDrag?: (state: boolean) => void;
 };
 
-const initialState: CommandBarState = {
-    expanded: false,
-    selectedCommandGroup: null,
-    availableCommandIds: [],
-    searchWord: '',
-    highlightedItem: 0,
-    commands: {},
-    runningCommandId: null,
-    runningCommandMessage: null,
-    result: null,
-    highlightedResultItem: 0,
-};
-
 const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen, onDrag }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
-        ...initialState,
+        status: 'loading',
+        expanded: false,
+        selectedCommandGroup: null,
+        searchWord: '',
+        highlightedItem: 0,
+        runningCommandId: null,
+        runningCommandMessage: null,
+        result: null,
+        highlightedResultItem: 0,
         commands: flattenCommands(commands),
         availableCommandIds: Object.keys(commands),
     });
@@ -103,11 +98,11 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen, onD
             }
             // FIXME: Show loading indicator and block further actions while command is running or url is opened
             if (typeof action == 'string') {
-                dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: 'Loading url' });
+                dispatch({ type: ACTIONS.RUN_COMMAND, commandId, argument: 'Loading url' });
                 window.location.href = action;
                 return;
             }
-            dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: 'Running command' });
+            dispatch({ type: ACTIONS.RUN_COMMAND, commandId, argument: 'Running command' });
             const actionResult = action(canHandleQueries ? state.searchWord : undefined);
             if ((actionResult as AsyncCommandResult).then) {
                 // Handle Promises
@@ -121,19 +116,19 @@ const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen, onD
                         logger.error('Command error', error);
                     })
                     .finally(() => {
-                        dispatch({ type: ACTIONS.FINISHED_COMMAND });
+                        dispatch({ type: ACTIONS.FINISH_COMMAND });
                     });
             } else if ((actionResult as CommandGeneratorResult).next) {
                 // Handle generators
                 const generator = actionResult as CommandGeneratorResult;
                 // TODO: Handle errors / success === false
                 for await (const result of generator) {
-                    dispatch({ type: ACTIONS.RUNNING_COMMAND, commandId, argument: result.message });
+                    dispatch({ type: ACTIONS.RUN_COMMAND, commandId, argument: result.message });
                     if (result.options) {
-                        dispatch({ type: ACTIONS.SET_RESULT, result });
+                        dispatch({ type: ACTIONS.SHOW_RESULT, result });
                     }
                 }
-                dispatch({ type: ACTIONS.FINISHED_COMMAND });
+                dispatch({ type: ACTIONS.FINISH_COMMAND });
             } else {
                 logger.error('Command result is not a promise or generator', actionResult);
             }
