@@ -1,29 +1,32 @@
-import * as React from 'react';
+import React from 'react';
 
 import Icon from '../Icon/Icon';
+import { useCommandBarState } from '../../state';
 
 import * as styles from './CommandBarFooter.module.css';
 
-type FooterProps = {
-    selectedGroup: ProcessedCommandItem;
-    runningCommand: ProcessedCommandItem;
-    runningCommandMessage: string | null;
-};
+const CommandBarFooter: React.FC = () => {
+    const {
+        state: { runningCommandId, runningCommandMessage, commands, result, selectedCommandGroup, expanded },
+    } = useCommandBarState();
 
-const CommandBarFooter: React.FC<FooterProps> = ({ selectedGroup, runningCommand, runningCommandMessage }) => {
+    if (!expanded) return null;
+
+    const runningCommand = runningCommandId ? commands[runningCommandId] ?? result.options[runningCommandId] : null;
+
     return (
         <footer className={styles.commandBarFooter}>
-            {runningCommand ? (
+            {runningCommandId ? (
                 <span className={styles.activity}>
                     <Icon icon="circle-notch" spin={true} />
                     <em>
                         {runningCommand.name} ‒ {runningCommandMessage}
                     </em>
                 </span>
-            ) : selectedGroup ? (
+            ) : selectedCommandGroup ? (
                 <span className={styles.breadcrumb}>
-                    <Icon icon={selectedGroup.icon} />
-                    <small>{selectedGroup.name}</small>
+                    <Icon icon={commands[selectedCommandGroup].icon} />
+                    <small>{commands[selectedCommandGroup].name}</small>
                 </span>
             ) : (
                 <Icon icon="neos" />

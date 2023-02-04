@@ -2,21 +2,21 @@ import FuzzySearch from 'fuzzy-search';
 import { clamp } from '../helpers';
 
 enum ACTIONS {
-    RESET_SEARCH,
-    HIGHLIGHT_NEXT_ITEM,
-    HIGHLIGHT_PREVIOUS_ITEM,
-    CANCEL,
-    SELECT_GROUP,
-    GO_TO_PARENT_GROUP,
-    UPDATE_SEARCH,
-    RUNNING_COMMAND,
-    FINISHED_COMMAND,
-    SET_RESULT,
+    RESET_SEARCH = 'RESET_SEARCH',
+    HIGHLIGHT_NEXT_ITEM = 'HIGHLIGHT_NEXT_ITEM',
+    HIGHLIGHT_PREVIOUS_ITEM = 'HIGHLIGHT_PREVIOUS_ITEM',
+    CANCEL = 'CANCEL',
+    SELECT_GROUP = 'SELECT_GROUP',
+    GO_TO_PARENT_GROUP = 'GO_TO_PARENT_GROUP',
+    UPDATE_SEARCH = 'UPDATE_SEARCH',
+    RUNNING_COMMAND = 'RUNNING_COMMAND',
+    FINISHED_COMMAND = 'FINISHED_COMMAND',
+    SET_RESULT = 'SET_RESULT',
 }
 
 // FIXME: Define type safe action variants
 // Dispatch-able actions for the command bar reducer
-type CommandBarAction =
+export type CommandBarAction =
     | { type: ACTIONS.RESET_SEARCH }
     | { type: ACTIONS.HIGHLIGHT_NEXT_ITEM }
     | { type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM }

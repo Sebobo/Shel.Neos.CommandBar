@@ -1,29 +1,23 @@
 import React, { useEffect } from 'react';
 
+import CommandListItem from '../CommandListItem/CommandListItem';
+import { useCommandInput, useCommandBarState } from '../../state';
+
 import * as styles from './CommandListing.module.css';
-import CommandListItem from './CommandListItem';
 
 type CommandListingProps = {
-    commands: FlatCommandList;
-    availableCommandIds: CommandId[];
-    highlightedItem: number;
-    handleSelectItem: (commandId: CommandId) => void;
     heading?: string;
-    runningCommandId?: CommandId; // This argument forces a refresh after a command executed to update command properties
     noCommandsMessage?: string;
-    disabled?: boolean;
 };
 
 const CommandList: React.FC<CommandListingProps> = ({
-    commands,
-    availableCommandIds,
-    highlightedItem,
-    handleSelectItem,
     heading = 'Commands',
-    runningCommandId = '',
     noCommandsMessage = 'No matching commands found',
-    disabled = false,
 }) => {
+    const {
+        state: { commands, highlightedItem, availableCommandIds, runningCommandId, result },
+    } = useCommandBarState();
+    const { executeCommand } = useCommandInput();
     const selectedElementRef = React.useRef(null);
 
     useEffect(() => {
@@ -31,7 +25,7 @@ const CommandList: React.FC<CommandListingProps> = ({
     }, [selectedElementRef.current]);
 
     return (
-        <nav className={[styles.results, disabled && styles.disabled].join(' ')}>
+        <nav className={[styles.results, !!result && styles.disabled].join(' ')}>
             {heading && <h6>{heading}</h6>}
             {availableCommandIds.length > 0 ? (
                 <ul>
@@ -40,7 +34,7 @@ const CommandList: React.FC<CommandListingProps> = ({
                             key={commandId}
                             ref={highlightedItem === index ? selectedElementRef : null}
                             command={commands[commandId]}
-                            onItemSelect={handleSelectItem}
+                            onItemSelect={executeCommand}
                             highlighted={highlightedItem === index}
                             runningCommandId={runningCommandId}
                         />

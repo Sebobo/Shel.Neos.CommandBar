@@ -1,0 +1,28 @@
+:root {
+    --bar-min-width: 600px;
+    --bar-max-width: 90vw;
+    --bar-width: 30vw;
+    --bar-width-expanded: 60vw;
+    --bar-background: rgba(0, 0, 0, 0.8);
+    --footer-background: rgba(0, 0, 0, 0.8);
+    --color-shadow: rgba(255, 255, 255, 0.7);
+    --color-light-text: rgba(255, 255, 255, 0.6);
+    --color-light-text-hover: rgba(255, 255, 255, 0.8);
+    --color-icon-bg: rgba(255, 255, 255, 0.2);
+    --color-icon-bg-hover: rgba(255, 255, 255, 0.4);
+    --color-border: rgba(255, 255, 255, 0.2);
+    --color-item-highlighted: rgba(255, 255, 255, 0.15);
+    --color-item-hover: rgba(255, 255, 255, 0.05);
+    --border-radius-bar: 0.6rem;
+    --border-radius-item: 0.4rem;
+    --icon-size: 1.125em;
+
+    /* Neos UI colors */
+    --grayLight: #3f3f3f;
+    --grayLighter: #eee;
+    --grayMedium: #323232;
+    --textSubtleLight: #adadad;
+    --textOnGray: #fff;
+    --textOnWhite: #252525;
+    --primaryBlue: #00adee;
+}

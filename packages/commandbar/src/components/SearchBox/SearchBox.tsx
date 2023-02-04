@@ -1,15 +1,14 @@
-import * as React from 'react';
+import React, { useCallback, useRef } from 'react';
+
+import { useCommandBarState } from '../../state/CommandBarStateProvider';
 
 import * as styles from './SearchBox.module.css';
-import { useCallback, useRef } from 'react';
 
-type SearchBoxProps = {
-    searchWord: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    disabled?: boolean;
-};
-
-const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange, disabled }) => {
+const SearchBox: React.FC = () => {
+    const {
+        state: { searchWord, result },
+        actions,
+    } = useCommandBarState();
     const inputRef = useRef<HTMLInputElement>();
 
     const handleKeyPress = useCallback(
@@ -25,6 +24,8 @@ const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange, disabled })
         [inputRef.current]
     );
 
+    const handleChange = useCallback((e) => actions.UPDATE_SEARCH(e.target.value.toLowerCase()), []);
+
     return (
         <input
             ref={inputRef}
@@ -32,10 +33,10 @@ const SearchBox: React.FC<SearchBoxProps> = ({ searchWord, onChange, disabled })
             type="search"
             placeholder="Search for commands…"
             autoFocus
-            onChange={onChange}
+            onChange={handleChange}
             onKeyUp={handleKeyPress}
             value={searchWord}
-            disabled={disabled}
+            disabled={!!result}
         />
     );
 };
