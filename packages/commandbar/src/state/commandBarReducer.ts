@@ -43,6 +43,7 @@ function filterAvailableCommands(
         return availableCommands.map((command) => command.id);
     }
 
+    // TODO: Try @leeoniya/ufuzzy for fuzzy search which makes it easier to use custom sorting functions
     const searcher = new FuzzySearch(availableCommands, ['name'], {
         sort: true,
     });
