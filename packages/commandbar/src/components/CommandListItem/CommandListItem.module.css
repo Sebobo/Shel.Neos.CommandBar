@@ -5,7 +5,7 @@
     padding: 0.4rem 0.6rem;
     align-items: baseline;
     border-radius: var(--border-radius-item);
-    transition: background-color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, opacity 0.1s ease-in-out;
     background-color: transparent;
     user-select: none;
 }
@@ -16,6 +16,11 @@
 
 .highlighted {
     background-color: var(--color-item-highlighted);
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .label {

@@ -9,18 +9,23 @@ type CommandListItemProps = {
     highlighted: boolean;
     ref?: React.Ref<HTMLLIElement>;
     runningCommandId?: CommandId;
+    disabled?: boolean;
 };
 
 const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
-    ({ command, onItemSelect, highlighted, runningCommandId }, ref) => {
+    ({ command, onItemSelect, highlighted, runningCommandId, disabled }, ref) => {
         const { id, name, description, icon, subCommandIds, canHandleQueries } = command;
 
         const commandType = subCommandIds?.length > 0 ? 'category' : canHandleQueries ? 'query' : 'command';
 
         return (
             <li
-                className={[styles.commandListItem, highlighted && styles.highlighted].join(' ')}
-                onClick={() => onItemSelect(id)}
+                className={[
+                    styles.commandListItem,
+                    highlighted && styles.highlighted,
+                    disabled && styles.disabled,
+                ].join(' ')}
+                onClick={disabled ? null : () => onItemSelect(id)}
                 ref={ref}
             >
                 <Icon icon={icon} />
@@ -38,6 +43,9 @@ CommandListItem.displayName = 'CommandListItem';
 // Update component when the command, highlight or last executed command changes to allow a refresh of the commands properties
 export default React.memo(CommandListItem, (prev, next) => {
     return (
-        prev.command.id === next.command.id && prev.ref === next.ref && prev.runningCommandId === next.runningCommandId
+        prev.command.id === next.command.id &&
+        prev.ref === next.ref &&
+        prev.runningCommandId === next.runningCommandId &&
+        prev.disabled === next.disabled
     );
 });
