@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 
-import { useCommandBarState } from '../../state/CommandBarStateProvider';
+import { useCommandBarState } from '../../state';
 
 import * as styles from './SearchBox.module.css';
 

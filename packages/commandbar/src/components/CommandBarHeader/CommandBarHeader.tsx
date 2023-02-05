@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useCommandBarState } from '../../state/CommandBarStateProvider';
+import { useCommandBarState } from '../../state';
 import Icon from '../Icon/Icon';
 import SearchBox from '../SearchBox/SearchBox';
 
