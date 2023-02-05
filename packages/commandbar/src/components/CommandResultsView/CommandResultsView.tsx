@@ -1,43 +1,44 @@
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
+
+import { useCommandBarState, useCommandInput } from '../../state';
+import CommandListItem from '../CommandListItem/CommandListItem';
 
 import * as styles from './CommandResultsView.module.css';
-import CommandListing from '../CommandList/CommandList';
-import { logger } from '../../helpers';
 
-type CommandResultsViewProps = {
-    result: CommandResult;
-    highlightedItem: number;
-};
+const CommandResultsView: React.FC = () => {
+    const {
+        state: { result, highlightedResultItem, runningCommandId },
+    } = useCommandBarState();
+    const { executeCommand } = useCommandInput();
+    const selectedElementRef = React.useRef(null);
 
-const CommandResultsView: React.FC<CommandResultsViewProps> = ({ result, highlightedItem }) => {
+    useEffect(() => {
+        selectedElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [selectedElementRef.current]);
+
+    if (!result) return null;
+
     const { options, view, message } = result;
-
-    const handleSelectItem = useCallback(
-        (commandId: CommandId) => {
-            const { action } = options[commandId];
-            if (!action) return;
-            if (typeof action == 'string') {
-                window.location.href = action;
-                return;
-            }
-            logger.debug('Running action result command', commandId);
-            action();
-        },
-        [options]
-    );
 
     return (
         <div className={styles.commandResultsView}>
+            {message && <h6>{message}</h6>}
             {view ? <div>{view}</div> : ''}
             {options && (
-                <CommandListing
-                    heading={message}
-                    commands={options}
-                    availableCommandIds={Object.keys(options)}
-                    highlightedItem={highlightedItem}
-                    handleSelectItem={handleSelectItem}
-                    noCommandsMessage="Try a different query to find more results"
-                />
+                <nav className={[styles.results, !!result && styles.disabled].join(' ')}>
+                    <ul>
+                        {Object.keys(options).map((commandId, index) => (
+                            <CommandListItem
+                                key={commandId}
+                                ref={highlightedResultItem === index ? selectedElementRef : null}
+                                command={options[commandId]}
+                                onItemSelect={executeCommand}
+                                highlighted={highlightedResultItem === index}
+                                runningCommandId={runningCommandId}
+                            />
+                        ))}
+                    </ul>
+                </nav>
             )}
         </div>
     );

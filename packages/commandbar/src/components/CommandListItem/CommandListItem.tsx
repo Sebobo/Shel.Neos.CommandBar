@@ -8,7 +8,7 @@ type CommandListItemProps = {
     onItemSelect: (commandId: CommandId) => void;
     highlighted: boolean;
     ref?: React.Ref<HTMLLIElement>;
-    runningCommandId: CommandId;
+    runningCommandId?: CommandId;
 };
 
 const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(

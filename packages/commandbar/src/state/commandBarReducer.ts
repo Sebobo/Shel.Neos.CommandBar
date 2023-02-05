@@ -2,8 +2,22 @@ import FuzzySearch from 'fuzzy-search';
 import { clamp } from '../helpers';
 import { MachineState, transition } from './commandBarMachine';
 
+enum ACTIONS {
+    RESET_SEARCH = 'RESET_SEARCH',
+    HIGHLIGHT_NEXT_ITEM = 'HIGHLIGHT_NEXT_ITEM',
+    HIGHLIGHT_PREVIOUS_ITEM = 'HIGHLIGHT_PREVIOUS_ITEM',
+    CANCEL = 'CANCEL',
+    SELECT_GROUP = 'SELECT_GROUP',
+    GO_TO_PARENT_GROUP = 'GO_TO_PARENT_GROUP',
+    UPDATE_SEARCH = 'UPDATE_SEARCH',
+    RUN_COMMAND = 'RUN_COMMAND',
+    FINISH_COMMAND = 'FINISH_COMMAND',
+    SHOW_RESULT = 'SHOW_RESULT',
+}
+
+// FIXME: Define type safe action variants
 // Dispatch-able actions for the command bar reducer
-type CommandBarAction =
+export type CommandBarAction =
     | { type: ACTIONS.RESET_SEARCH }
     | { type: ACTIONS.HIGHLIGHT_NEXT_ITEM }
     | { type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM }
@@ -43,6 +57,7 @@ function filterAvailableCommands(
         return availableCommands.map((command) => command.id);
     }
 
+    // TODO: Try @leeoniya/ufuzzy for fuzzy search which makes it easier to use custom sorting functions
     const searcher = new FuzzySearch(availableCommands, ['name'], {
         sort: true,
     });
