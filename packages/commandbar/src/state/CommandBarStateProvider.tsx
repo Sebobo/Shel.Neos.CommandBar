@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useMemo, useReducer } from 'react';
 
-import { ACTIONS, commandBarReducer } from './commandBarReducer';
+import { commandBarReducer, CommandBarState } from './commandBarReducer';
 import { flattenCommands } from '../helpers';
+import { STATUS, TRANSITION } from './commandBarMachine';
 
 interface CommandBarContextProps {
     commands: HierarchicalCommandList;
@@ -10,7 +11,7 @@ interface CommandBarContextProps {
 
 interface CommandBarContextValues {
     state: CommandBarState;
-    actions: Record<ACTIONS, (...any) => void>;
+    actions: Record<TRANSITION, (...any) => void>;
 }
 
 const CommandBarContext = createContext({} as CommandBarContextValues);
@@ -18,36 +19,38 @@ export const useCommandBarState = (): CommandBarContextValues => useContext(Comm
 
 export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ commands, children }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
+        status: STATUS.COLLAPSED,
         availableCommandIds: Object.keys(commands),
         commands: flattenCommands(commands),
         expanded: false,
         highlightedItem: 0,
-        highlightedResultItem: 0,
+        highlightedOption: 0,
         result: null,
-        runningCommandId: null,
-        runningCommandMessage: null,
+        activeCommandId: null,
+        activeCommandMessage: null,
         searchWord: '',
         selectedCommandGroup: null,
     });
 
     // Provide all actions as shorthand functions
-    const actions: Record<ACTIONS, (...any) => void> = useMemo(() => {
+    const actions: Record<TRANSITION, (...any) => void> = useMemo(() => {
         return {
-            [ACTIONS.RESET_SEARCH]: () => dispatch({ type: ACTIONS.RESET_SEARCH }),
-            [ACTIONS.HIGHLIGHT_NEXT_ITEM]: () => dispatch({ type: ACTIONS.HIGHLIGHT_NEXT_ITEM }),
-            [ACTIONS.HIGHLIGHT_PREVIOUS_ITEM]: () => dispatch({ type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM }),
-            [ACTIONS.CANCEL]: () => dispatch({ type: ACTIONS.CANCEL }),
-            [ACTIONS.SELECT_GROUP]: (commandId: CommandId) => dispatch({ type: ACTIONS.SELECT_GROUP, commandId }),
-            [ACTIONS.GO_TO_PARENT_GROUP]: () => dispatch({ type: ACTIONS.GO_TO_PARENT_GROUP }),
-            [ACTIONS.UPDATE_SEARCH]: (searchWord: string) => dispatch({ type: ACTIONS.UPDATE_SEARCH, searchWord }),
-            [ACTIONS.RUNNING_COMMAND]: (commandId: CommandId, argument: string) =>
+            [TRANSITION.RESET_SEARCH]: () => dispatch({ type: TRANSITION.RESET_SEARCH }),
+            [TRANSITION.HIGHLIGHT_NEXT_ITEM]: () => dispatch({ type: TRANSITION.HIGHLIGHT_NEXT_ITEM }),
+            [TRANSITION.HIGHLIGHT_PREVIOUS_ITEM]: () => dispatch({ type: TRANSITION.HIGHLIGHT_PREVIOUS_ITEM }),
+            [TRANSITION.CANCEL]: () => dispatch({ type: TRANSITION.CANCEL }),
+            [TRANSITION.SELECT_GROUP]: (commandId: CommandId) => dispatch({ type: TRANSITION.SELECT_GROUP, commandId }),
+            [TRANSITION.GO_TO_PARENT_GROUP]: () => dispatch({ type: TRANSITION.GO_TO_PARENT_GROUP }),
+            [TRANSITION.UPDATE_SEARCH]: (searchWord: string) =>
+                dispatch({ type: TRANSITION.UPDATE_SEARCH, searchWord }),
+            [TRANSITION.EXECUTE_COMMAND]: (commandId: CommandId, argument: string) =>
                 dispatch({
-                    type: ACTIONS.RUNNING_COMMAND,
+                    type: TRANSITION.EXECUTE_COMMAND,
                     commandId,
                     argument,
                 }),
-            [ACTIONS.FINISHED_COMMAND]: () => dispatch({ type: ACTIONS.FINISHED_COMMAND }),
-            [ACTIONS.SET_RESULT]: (result: CommandResult) => dispatch({ type: ACTIONS.SET_RESULT, result }),
+            [TRANSITION.FINISH_COMMAND]: () => dispatch({ type: TRANSITION.FINISH_COMMAND }),
+            [TRANSITION.UPDATE_RESULT]: (result: CommandResult) => dispatch({ type: TRANSITION.UPDATE_RESULT, result }),
         };
     }, []);
 

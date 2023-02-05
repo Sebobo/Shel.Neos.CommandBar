@@ -2,7 +2,8 @@ import React, { useCallback, useEffect } from 'react';
 
 import useFunctionRef from '../hooks/useFunctionRef';
 import { useCommandBarState } from './CommandBarStateProvider';
-import { logger } from '../helpers';
+import { assert, logger } from '../helpers';
+import { STATUS } from './commandBarMachine';
 
 interface CommandInputContextProps {
     children: React.ReactElement | React.ReactElement[];
@@ -51,39 +52,40 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
             // Execute highlighted command
             e.stopPropagation();
             e.preventDefault();
-            const commandId = state.result?.options
-                ? Object.keys(state.result.options)[state.highlightedResultItem]
-                : state.availableCommandIds[state.highlightedItem];
+            const commandId =
+                state.status === STATUS.DISPLAYING_RESULT
+                    ? Object.keys(state.result.options)[state.highlightedOption]
+                    : state.availableCommandIds[state.highlightedItem];
             executeCommand(commandId);
         }
     });
 
     const executeCommand = useCallback(
-        async (command: CommandId | ProcessedCommandItem) => {
-            let commandObject = command;
-
-            if (typeof command === 'string') {
-                commandObject = state.result?.options[command] ?? state.commands[command];
-            }
-
-            const { action, canHandleQueries, id: commandId } = commandObject as ProcessedCommandItem;
+        async (commandId: CommandId) => {
+            const command = state.result?.options[commandId] ?? state.commands[commandId];
+            const { action, canHandleQueries, subCommandIds } = command;
 
             // If the command is a group, select it
-            if (!action) {
+            if (subCommandIds?.length > 0) {
                 actions.SELECT_GROUP(commandId);
                 return;
             }
 
+            assert(action, `Command ${commandId} has no action`);
+
+            if (command.canHandleQueries && !state.searchWord) {
+                return;
+            }
+
             // If the command is a url, open it
-            // FIXME: Show loading indicator and block further actions while command is running or url is opened
             if (typeof action == 'string') {
-                actions.RUNNING_COMMAND(commandId, 'Loading url');
+                actions.EXECUTE_COMMAND(commandId, 'Loading url');
                 window.location.href = action;
                 return;
             }
 
             // If the command is a function, execute it
-            actions.RUNNING_COMMAND(commandId, 'Running command');
+            actions.EXECUTE_COMMAND(commandId, 'Running command');
             const actionResult = action(canHandleQueries ? state.searchWord : undefined);
             if ((actionResult as AsyncCommandResult).then) {
                 // Handle Promises
@@ -97,19 +99,16 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
                         logger.error('Command error', error);
                     })
                     .finally(() => {
-                        actions.FINISHED_COMMAND();
+                        actions.FINISH_COMMAND();
                     });
             } else if ((actionResult as CommandGeneratorResult).next) {
                 // Handle generators
                 const generator = actionResult as CommandGeneratorResult;
                 // TODO: Handle errors / success === false
                 for await (const result of generator) {
-                    actions.RUNNING_COMMAND(commandId, result.message);
-                    if (result.options) {
-                        actions.SET_RESULT(result);
-                    }
+                    actions.UPDATE_RESULT(result);
                 }
-                actions.FINISHED_COMMAND();
+                actions.FINISH_COMMAND();
             } else {
                 logger.error('Command result is not a promise or generator', actionResult);
             }

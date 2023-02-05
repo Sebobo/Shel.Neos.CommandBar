@@ -1,200 +1,128 @@
-import FuzzySearch from 'fuzzy-search';
-import { clamp } from '../helpers';
-import { MachineState, transition } from './commandBarMachine';
+import { assert, clamp, filterCommands } from '../helpers';
+import { ACTION, MachineState, TRANSITION, transition } from './commandBarMachine';
 
-enum ACTIONS {
-    RESET_SEARCH = 'RESET_SEARCH',
-    HIGHLIGHT_NEXT_ITEM = 'HIGHLIGHT_NEXT_ITEM',
-    HIGHLIGHT_PREVIOUS_ITEM = 'HIGHLIGHT_PREVIOUS_ITEM',
-    CANCEL = 'CANCEL',
-    SELECT_GROUP = 'SELECT_GROUP',
-    GO_TO_PARENT_GROUP = 'GO_TO_PARENT_GROUP',
-    UPDATE_SEARCH = 'UPDATE_SEARCH',
-    RUN_COMMAND = 'RUN_COMMAND',
-    FINISH_COMMAND = 'FINISH_COMMAND',
-    SHOW_RESULT = 'SHOW_RESULT',
-}
+export type CommandBarEvent =
+    | { type: TRANSITION.RESET_SEARCH }
+    | { type: TRANSITION.HIGHLIGHT_NEXT_ITEM }
+    | { type: TRANSITION.HIGHLIGHT_PREVIOUS_ITEM }
+    | { type: TRANSITION.CANCEL }
+    | { type: TRANSITION.SELECT_GROUP; commandId: string }
+    | { type: TRANSITION.GO_TO_PARENT_GROUP }
+    | { type: TRANSITION.UPDATE_SEARCH; searchWord: string }
+    | { type: TRANSITION.EXECUTE_COMMAND; commandId: CommandId; argument: string }
+    | { type: TRANSITION.FINISH_COMMAND }
+    | { type: TRANSITION.UPDATE_RESULT; result: CommandResult };
 
-// FIXME: Define type safe action variants
-// Dispatch-able actions for the command bar reducer
-export type CommandBarAction =
-    | { type: ACTIONS.RESET_SEARCH }
-    | { type: ACTIONS.HIGHLIGHT_NEXT_ITEM }
-    | { type: ACTIONS.HIGHLIGHT_PREVIOUS_ITEM }
-    | { type: ACTIONS.CANCEL }
-    | { type: ACTIONS.SELECT_GROUP; commandId: string }
-    | { type: ACTIONS.GO_TO_PARENT_GROUP }
-    | { type: ACTIONS.UPDATE_SEARCH; searchWord: string }
-    | { type: ACTIONS.RUN_COMMAND; commandId: CommandId; argument: string }
-    | { type: ACTIONS.FINISH_COMMAND }
-    | { type: ACTIONS.SHOW_RESULT; result: CommandResult };
-
-type CommandBarState = MachineState & {
+export type CommandBarState = MachineState & {
     expanded: boolean;
     selectedCommandGroup: CommandId;
     availableCommandIds: CommandId[];
     searchWord: string;
     highlightedItem: number;
     commands: FlatCommandList;
-    runningCommandId: CommandId;
-    runningCommandMessage: string;
+    activeCommandId: CommandId;
+    activeCommandMessage: string;
     result: CommandResult | null;
-    highlightedResultItem: number;
+    highlightedOption: number;
 };
 
-function filterAvailableCommands(
-    selectedCommandGroup: CommandId,
-    searchWord: string,
-    commands: FlatCommandList
-): CommandId[] {
-    // Filter available commands for the current context
-    let availableCommands = Object.values(commands);
-    availableCommands = searchWord
-        ? availableCommands
-        : availableCommands.filter((command) => command.parentId === selectedCommandGroup);
-
-    if (!searchWord) {
-        return availableCommands.map((command) => command.id);
+function runAction(action: ACTION, nextState: CommandBarState, event: CommandBarEvent) {
+    switch (action) {
+        case ACTION.RESET_SEARCH:
+            nextState.searchWord = '';
+            break;
+        case ACTION.RESET_HIGHLIGHT:
+            nextState.highlightedItem = 0;
+            break;
+        case ACTION.REFRESH_COMMANDS:
+            nextState.availableCommandIds = filterCommands(
+                nextState.selectedCommandGroup,
+                nextState.searchWord,
+                nextState.commands
+            );
+            break;
+        case ACTION.HIGHLIGHT_NEXT_COMMAND:
+            nextState.highlightedItem = clamp(
+                nextState.highlightedItem + 1,
+                0,
+                nextState.availableCommandIds.length - 1
+            );
+            break;
+        case ACTION.HIGHLIGHT_PREVIOUS_COMMAND:
+            nextState.highlightedItem = clamp(
+                nextState.highlightedItem - 1,
+                0,
+                nextState.availableCommandIds.length - 1
+            );
+            break;
+        case ACTION.HIGHLIGHT_NEXT_OPTION:
+            nextState.highlightedOption = clamp(
+                nextState.highlightedOption + 1,
+                0,
+                Object.keys(nextState.result.options).length - 1
+            );
+            break;
+        case ACTION.HIGHLIGHT_PREVIOUS_OPTION:
+            nextState.highlightedOption = clamp(
+                nextState.highlightedOption - 1,
+                0,
+                Object.keys(nextState.result.options).length - 1
+            );
+            break;
+        case ACTION.SET_SEARCH_WORD:
+            assert(event.type === TRANSITION.UPDATE_SEARCH);
+            nextState.searchWord = event.searchWord.toLowerCase();
+            break;
+        case ACTION.EXPAND:
+            nextState.expanded = true;
+            break;
+        case ACTION.SET_ACTIVE_COMMAND:
+            assert(event.type === TRANSITION.EXECUTE_COMMAND);
+            nextState.activeCommandId = event.commandId;
+            nextState.activeCommandMessage = event.argument;
+            break;
+        case ACTION.UNSET_ACTIVE_COMMAND:
+            nextState.activeCommandId = null;
+            nextState.activeCommandMessage = null;
+            break;
+        case ACTION.UPDATE_RESULT:
+            assert(event.type === TRANSITION.UPDATE_RESULT);
+            nextState.result = {
+                ...nextState.result,
+                ...event.result,
+            };
+            break;
+        case ACTION.RESET_OPTION_HIGHLIGHT:
+            nextState.highlightedOption = 0;
+            break;
+        case ACTION.RESET_SEARCH_OR_LEAVE_GROUP:
+            if (nextState.searchWord) {
+                nextState.searchWord = '';
+            } else {
+                nextState.selectedCommandGroup = nextState.selectedCommandGroup
+                    ? nextState.commands[nextState.selectedCommandGroup].parentId
+                    : null;
+            }
+            break;
+        case ACTION.UNSET_RESULT:
+            nextState.result = null;
+            break;
+        case ACTION.LEAVE_GROUP:
+            nextState.selectedCommandGroup = nextState.selectedCommandGroup
+                ? nextState.commands[nextState.selectedCommandGroup].parentId
+                : null;
+            break;
+        case ACTION.SET_GROUP:
+            assert(event.type === TRANSITION.SELECT_GROUP);
+            nextState.selectedCommandGroup = event.commandId;
+            break;
+        default:
+            throw Error(`Action ${action} not implemented`);
     }
-
-    // TODO: Try @leeoniya/ufuzzy for fuzzy search which makes it easier to use custom sorting functions
-    const searcher = new FuzzySearch(availableCommands, ['name'], {
-        sort: true,
-    });
-    const matchingCommands = searcher.search(searchWord);
-
-    // Add all commands that can handle queries to the result, the Set removes duplicates
-    return [
-        ...new Set([
-            ...matchingCommands.map((command) => command.id),
-            ...availableCommands.filter((command) => command.canHandleQueries).map((command) => command.id),
-        ]),
-    ];
 }
 
-const commandBarReducer = (state: CommandBarState, action: CommandBarAction): CommandBarState => {
-    // The parent command group of the currently selected command group which is used in several actions
-    const parentCommandGroup = state.selectedCommandGroup ? state.commands[state.selectedCommandGroup].parentId : null;
-
-    const newState = transition(state, action);
-
-    switch (action.type) {
-        case ACTIONS.RESET_SEARCH:
-            return {
-                ...state,
-                searchWord: '',
-                highlightedItem: 0,
-                availableCommandIds: filterAvailableCommands(state.selectedCommandGroup, '', state.commands),
-                result: null,
-            };
-        case ACTIONS.HIGHLIGHT_NEXT_ITEM:
-            if (state.result) {
-                return {
-                    ...state,
-                    highlightedResultItem: clamp(
-                        state.highlightedResultItem + 1,
-                        0,
-                        Object.keys(state.result.options).length - 1
-                    ),
-                };
-            }
-            return {
-                ...state,
-                expanded: true,
-                highlightedItem: state.expanded
-                    ? clamp(state.highlightedItem + 1, 0, state.availableCommandIds.length - 1)
-                    : 0,
-            };
-        case ACTIONS.HIGHLIGHT_PREVIOUS_ITEM:
-            if (state.result) {
-                return {
-                    ...state,
-                    highlightedResultItem: clamp(
-                        state.highlightedResultItem - 1,
-                        0,
-                        Object.keys(state.result.options).length - 1
-                    ),
-                };
-            }
-            return {
-                ...state,
-                highlightedItem: clamp(state.highlightedItem - 1, 0, state.availableCommandIds.length - 1),
-            };
-        case ACTIONS.CANCEL:
-            // Either leave the result view, cancel current search,  or traverse to parent group
-            return state.result
-                ? {
-                      ...state,
-                      result: null,
-                      highlightedResultItem: 0,
-                  }
-                : state.searchWord
-                ? {
-                      ...state,
-                      searchWord: '',
-                      highlightedItem: 0,
-                      availableCommandIds: filterAvailableCommands(state.selectedCommandGroup, '', state.commands),
-                  }
-                : {
-                      ...state,
-                      selectedCommandGroup: parentCommandGroup,
-                      availableCommandIds: filterAvailableCommands(parentCommandGroup, '', state.commands),
-                  };
-        case ACTIONS.GO_TO_PARENT_GROUP:
-            return {
-                ...state,
-                highlightedItem: 0,
-                selectedCommandGroup: null,
-                availableCommandIds: filterAvailableCommands(parentCommandGroup, '', state.commands),
-                result: null,
-            };
-        case ACTIONS.SELECT_GROUP:
-            return {
-                ...state,
-                searchWord: '',
-                highlightedItem: 0,
-                selectedCommandGroup: action.commandId,
-                availableCommandIds: filterAvailableCommands(action.commandId, '', state.commands),
-                result: null,
-            };
-        case ACTIONS.UPDATE_SEARCH: {
-            return {
-                ...state,
-                expanded: true,
-                searchWord: action.searchWord,
-                highlightedItem: 0,
-                availableCommandIds: filterAvailableCommands(
-                    state.selectedCommandGroup,
-                    action.searchWord,
-                    state.commands
-                ),
-            };
-        }
-        case ACTIONS.RUN_COMMAND: {
-            return {
-                ...state,
-                runningCommandId: action.commandId,
-                runningCommandMessage: action.argument,
-            };
-        }
-        case ACTIONS.FINISH_COMMAND: {
-            return {
-                ...state,
-                runningCommandId: null,
-                runningCommandMessage: null,
-            };
-        }
-        case ACTIONS.SHOW_RESULT: {
-            return {
-                ...state,
-                result: {
-                    ...action.result,
-                },
-                highlightedResultItem: 0,
-            };
-        }
-    }
-    throw new Error(`Invalid action ${JSON.stringify(action)}`);
+const commandBarReducer = (state: CommandBarState, event: CommandBarEvent): CommandBarState => {
+    return transition(state, event, runAction) as CommandBarState;
 };
 
-export { commandBarReducer, ACTIONS };
+export { commandBarReducer };

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 
 import CommandListItem from '../CommandListItem/CommandListItem';
-import { useCommandInput, useCommandBarState } from '../../state';
+import { useCommandBarState, useCommandInput } from '../../state';
 
 import * as styles from './CommandListing.module.css';
+import { STATUS } from '../../state/commandBarMachine';
 
 type CommandListingProps = {
     heading?: string;
@@ -15,7 +16,7 @@ const CommandList: React.FC<CommandListingProps> = ({
     noCommandsMessage = 'No matching commands found',
 }) => {
     const {
-        state: { commands, highlightedItem, availableCommandIds, runningCommandId, result },
+        state: { commands, highlightedItem, availableCommandIds, activeCommandId, status, searchWord },
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
     const selectedElementRef = React.useRef(null);
@@ -25,7 +26,7 @@ const CommandList: React.FC<CommandListingProps> = ({
     }, [selectedElementRef.current]);
 
     return (
-        <nav className={[styles.results, !!result && styles.disabled].join(' ')}>
+        <nav className={[styles.results, status !== STATUS.IDLE && styles.disabled].join(' ')}>
             {heading && <h6>{heading}</h6>}
             {availableCommandIds.length > 0 ? (
                 <ul>
@@ -36,7 +37,8 @@ const CommandList: React.FC<CommandListingProps> = ({
                             command={commands[commandId]}
                             onItemSelect={executeCommand}
                             highlighted={highlightedItem === index}
-                            runningCommandId={runningCommandId}
+                            runningCommandId={activeCommandId}
+                            disabled={!searchWord && commands[commandId].canHandleQueries}
                         />
                     ))}
                 </ul>

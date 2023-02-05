@@ -7,7 +7,7 @@ import * as styles from './CommandResultsView.module.css';
 
 const CommandResultsView: React.FC = () => {
     const {
-        state: { result, highlightedResultItem, runningCommandId },
+        state: { result, highlightedOption, activeCommandId },
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
     const selectedElementRef = React.useRef(null);
@@ -30,11 +30,11 @@ const CommandResultsView: React.FC = () => {
                         {Object.keys(options).map((commandId, index) => (
                             <CommandListItem
                                 key={commandId}
-                                ref={highlightedResultItem === index ? selectedElementRef : null}
+                                ref={highlightedOption === index ? selectedElementRef : null}
                                 command={options[commandId]}
                                 onItemSelect={executeCommand}
-                                highlighted={highlightedResultItem === index}
-                                runningCommandId={runningCommandId}
+                                highlighted={highlightedOption === index}
+                                runningCommandId={activeCommandId}
                             />
                         ))}
                     </ul>

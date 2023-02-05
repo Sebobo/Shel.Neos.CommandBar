@@ -7,20 +7,20 @@ import * as styles from './CommandBarFooter.module.css';
 
 const CommandBarFooter: React.FC = () => {
     const {
-        state: { runningCommandId, runningCommandMessage, commands, result, selectedCommandGroup, expanded },
+        state: { activeCommandId, activeCommandMessage, commands, result, selectedCommandGroup, expanded },
     } = useCommandBarState();
 
     if (!expanded) return null;
 
-    const runningCommand = runningCommandId ? commands[runningCommandId] ?? result.options[runningCommandId] : null;
+    const runningCommand = activeCommandId ? commands[activeCommandId] ?? result.options[activeCommandId] : null;
 
     return (
         <footer className={styles.commandBarFooter}>
-            {runningCommandId ? (
+            {activeCommandId ? (
                 <span className={styles.activity}>
                     <Icon icon="circle-notch" spin={true} />
                     <em>
-                        {runningCommand.name} ‒ {runningCommandMessage}
+                        {runningCommand.name} ‒ {activeCommandMessage}
                     </em>
                 </span>
             ) : selectedCommandGroup ? (
