@@ -1,12 +1,13 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import { useCommandBarState } from '../../state';
+import { STATUS } from '../../state/commandBarMachine';
 
 import * as styles from './SearchBox.module.css';
 
 const SearchBox: React.FC = () => {
     const {
-        state: { searchWord, result },
+        state: { searchWord, status },
         actions,
     } = useCommandBarState();
     const inputRef = useRef<HTMLInputElement>();
@@ -24,7 +25,13 @@ const SearchBox: React.FC = () => {
         [inputRef.current]
     );
 
-    const handleChange = useCallback((e) => actions.UPDATE_SEARCH(e.target.value.toLowerCase()), []);
+    useEffect(() => {
+        if (status === STATUS.IDLE) {
+            inputRef.current?.focus();
+        }
+    }, [inputRef.current, status]);
+
+    const handleChange = useCallback((e) => actions.UPDATE_SEARCH(e.target.value), []);
 
     return (
         <input
@@ -36,7 +43,7 @@ const SearchBox: React.FC = () => {
             onChange={handleChange}
             onKeyUp={handleKeyPress}
             value={searchWord}
-            disabled={!!result}
+            disabled={status !== STATUS.IDLE && status !== STATUS.COLLAPSED}
         />
     );
 };
