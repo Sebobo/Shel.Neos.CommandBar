@@ -4,10 +4,11 @@ import { useCommandBarState } from '../../state';
 import { STATUS } from '../../state/commandBarMachine';
 
 import * as styles from './SearchBox.module.css';
+import Icon from '../Icon/Icon';
 
 const SearchBox: React.FC = () => {
     const {
-        state: { searchWord, status },
+        state: { searchWord, status, expanded },
         actions,
     } = useCommandBarState();
     const inputRef = useRef<HTMLInputElement>();
@@ -34,17 +35,24 @@ const SearchBox: React.FC = () => {
     const handleChange = useCallback((e) => actions.UPDATE_SEARCH(e.target.value), []);
 
     return (
-        <input
-            ref={inputRef}
-            className={styles.searchBox}
-            type="search"
-            placeholder="Search for commands…"
-            autoFocus
-            onChange={handleChange}
-            onKeyUp={handleKeyPress}
-            value={searchWord}
-            disabled={status !== STATUS.IDLE && status !== STATUS.COLLAPSED}
-        />
+        <>
+            <input
+                ref={inputRef}
+                className={styles.searchBox}
+                type="search"
+                placeholder="Search for commands…"
+                autoFocus
+                onChange={handleChange}
+                onKeyUp={handleKeyPress}
+                value={searchWord}
+                disabled={status !== STATUS.IDLE && status !== STATUS.COLLAPSED}
+            />
+            {!expanded && (
+                <button className={styles.expandButton} onClick={actions.EXPAND} title="Expand to show all commands">
+                    <Icon icon="caret-down" />
+                </button>
+            )}
+        </>
     );
 };
 

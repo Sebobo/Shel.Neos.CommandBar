@@ -14,3 +14,24 @@
     color: var(--color-light-text);
     cursor: not-allowed;
 }
+
+.expandButton {
+    position: absolute;
+    padding: 0 1rem;
+    height: 100%;
+    right: 0;
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.expandButton svg {
+    font-size: 120%;
+    color: var(--textOnGray);
+    transition: color 0.1s ease-in-out;
+}
+
+.expandButton:hover svg {
+    color: var(--primaryBlue);
+}

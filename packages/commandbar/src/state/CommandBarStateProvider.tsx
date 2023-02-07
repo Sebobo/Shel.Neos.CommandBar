@@ -51,6 +51,7 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ comm
                 }),
             [TRANSITION.FINISH_COMMAND]: () => dispatch({ type: TRANSITION.FINISH_COMMAND }),
             [TRANSITION.UPDATE_RESULT]: (result: CommandResult) => dispatch({ type: TRANSITION.UPDATE_RESULT, result }),
+            [TRANSITION.EXPAND]: () => dispatch({ type: TRANSITION.EXPAND }),
         };
     }, []);
 

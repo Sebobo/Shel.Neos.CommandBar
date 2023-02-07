@@ -11,7 +11,8 @@ export type CommandBarEvent =
     | { type: TRANSITION.UPDATE_SEARCH; searchWord: string }
     | { type: TRANSITION.EXECUTE_COMMAND; commandId: CommandId; argument: string }
     | { type: TRANSITION.FINISH_COMMAND }
-    | { type: TRANSITION.UPDATE_RESULT; result: CommandResult };
+    | { type: TRANSITION.UPDATE_RESULT; result: CommandResult }
+    | { type: TRANSITION.EXPAND };
 
 export type CommandBarState = MachineState & {
     expanded: boolean;

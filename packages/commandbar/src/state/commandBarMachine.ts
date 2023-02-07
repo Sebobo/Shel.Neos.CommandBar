@@ -18,6 +18,7 @@ export enum TRANSITION {
     EXECUTE_COMMAND = 'EXECUTE_COMMAND',
     FINISH_COMMAND = 'FINISH_COMMAND',
     UPDATE_RESULT = 'UPDATE_RESULT',
+    EXPAND = 'EXPAND',
 }
 
 export enum ACTION {
@@ -68,6 +69,10 @@ export const machine: MachineDefinition = {
                 HIGHLIGHT_NEXT_ITEM: {
                     target: STATUS.IDLE,
                     actions: [ACTION.EXPAND, ACTION.HIGHLIGHT_NEXT_COMMAND],
+                },
+                EXPAND: {
+                    target: STATUS.IDLE,
+                    actions: [ACTION.EXPAND],
                 },
             },
         },
