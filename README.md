@@ -29,7 +29,7 @@ This package provides a command bar plugin for Neos CMS.
 
 ## Screenshot
 
-// TODO: Add screenshot
+![Main window](Documentation/index-commandbar.jpeg)
 
 ## Installation
 
