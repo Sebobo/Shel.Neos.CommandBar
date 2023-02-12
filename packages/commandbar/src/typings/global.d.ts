@@ -31,6 +31,7 @@ type AbstractCommandItem = {
 type Command = AbstractCommandItem & {
     action: string | CommandAction | CommandGeneratorAction;
     canHandleQueries?: boolean;
+    category?: string;
     // TODO: Introduce a disabled state via a callback -> solve issue that react might not update the component
 };
 

@@ -12,11 +12,31 @@ type CommandListItemProps = {
     disabled?: boolean;
 };
 
-const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
-    ({ command, onItemSelect, highlighted, runningCommandId, disabled }, ref) => {
-        const { id, name, description, icon, subCommandIds, canHandleQueries } = command;
+function getCommandType({ subCommandIds, category, canHandleQueries, action }: ProcessedCommandItem): string {
+    if (subCommandIds?.length > 0) {
+        return 'category';
+    }
 
-        const commandType = subCommandIds?.length > 0 ? 'category' : canHandleQueries ? 'query' : 'command';
+    if (category) {
+        return category;
+    }
+
+    if (canHandleQueries) {
+        return 'query';
+    }
+
+    if (typeof action == 'string') {
+        return 'link';
+    }
+
+    return 'command';
+}
+
+const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
+    ({ command, onItemSelect, highlighted, disabled }, ref) => {
+        const { id, name, description, icon } = command;
+
+        const commandType = getCommandType(command);
 
         return (
             <li
@@ -31,7 +51,7 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                 <Icon icon={icon} />
                 <span className={styles.label}>
                     <span>{name}</span>
-                    {description && <small>{typeof description == 'string' ? description : description()}</small>}
+                    {description && <span className={styles.description}>{typeof description == 'string' ? description : description()}</span>}
                 </span>
                 <small>{commandType}</small>
             </li>

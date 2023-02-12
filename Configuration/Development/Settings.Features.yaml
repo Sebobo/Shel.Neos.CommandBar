@@ -1,0 +1,14 @@
+Shel:
+  Neos:
+    CommandBar:
+      features:
+        searchNeosDocs:
+          enabled: true
+
+Neos:
+  Neos:
+    Ui:
+      frontendConfiguration:
+        'Shel.Neos.CommandBar:CommandBar':
+          features:
+            searchNeosDocs: true

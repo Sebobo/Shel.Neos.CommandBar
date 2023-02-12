@@ -14,6 +14,9 @@ Neos:
       frontendConfiguration:
         'Shel.Neos.CommandBar:CommandBar':
           enabled: true
+          features:
+            searchNeosDocs: false
+            loadTestCommands: false
           hotkeys:
             filter:
               # Hide the command bar hotkeys

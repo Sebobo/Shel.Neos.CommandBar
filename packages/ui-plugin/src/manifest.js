@@ -5,7 +5,9 @@ import { reducer, actions } from './actions';
 import CommandBarUiPlugin from './CommandBarUiPlugin';
 
 manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { store, frontendConfiguration }) => {
-    const { enabled } = frontendConfiguration['Shel.Neos.CommandBar:CommandBar'];
+    /** @type {{ enabled: boolean, features: { loadTestCommands: boolean } }} pluginConfig */
+    const pluginConfig = frontendConfiguration['Shel.Neos.CommandBar:CommandBar'];
+    const { enabled, features } = pluginConfig;
 
     if (!enabled) {
         return;
@@ -20,8 +22,8 @@ manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { store, fronte
     );
 
     // Register test plugin command
-    globalRegistry.get('Shel.Neos.CommandBar').set('plugins/test', () => {
-        return {
+    if (features.loadTestCommands) {
+        globalRegistry.get('Shel.Neos.CommandBar').set('plugins/test', () => ({
             extensibilityTest: {
                 name: 'Extensibility test',
                 icon: 'vial',
@@ -33,8 +35,8 @@ manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { store, fronte
                     window.alert(`The current document node is ${documentNode.contextPath} and the query is ${query}.`);
                 },
             },
-        };
-    });
+        }));
+    }
 
     // Register commandbar component in the primary toolbar
     globalRegistry.get('containers').set('PrimaryToolbar/Middle/CommandBar', CommandBarUiPlugin);

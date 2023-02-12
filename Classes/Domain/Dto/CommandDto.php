@@ -23,6 +23,7 @@ class CommandDto implements \JsonSerializable
         public readonly string $description,
         public readonly string $action,
         public readonly string $icon,
+        public readonly string $category = '',
     ) {
     }
 
@@ -33,6 +34,7 @@ class CommandDto implements \JsonSerializable
             'description' => $this->description,
             'action' => $this->action,
             'icon' => $this->icon,
+            'category' => $this->category,
         ];
     }
 }

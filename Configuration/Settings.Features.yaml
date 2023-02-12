@@ -1,0 +1,8 @@
+Shel:
+  Neos:
+    CommandBar:
+      features:
+        searchNeosDocs:
+          enabled: false
+          endpoint: 'https://docs.neos.io/search'
+          queryParameter: 'search'

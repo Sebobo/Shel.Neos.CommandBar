@@ -11,6 +11,7 @@
     margin: 0;
     max-width: var(--bar-max-width);
     min-width: var(--bar-min-width);
+    max-height: 90vh;
     overflow: hidden;
     position: absolute;
     padding: 0;
@@ -35,6 +36,7 @@
     grid-template-rows: 0fr;
     transform-origin: top center;
     transition: grid-template-rows 0.2s ease-in;
+    overflow: auto;
 }
 
 .resultsWrap > * {

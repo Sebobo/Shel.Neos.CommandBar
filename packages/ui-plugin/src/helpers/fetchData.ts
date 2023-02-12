@@ -16,7 +16,12 @@ const fetchData = async (endpoint: string, params?: Record<string, any>) => {
                 'X-Flow-Csrftoken': csrfToken,
             },
         }))
-        .then((response) => response && response.json());
+        .then((response: Response) => {
+            if (response.headers.get('Content-Type')?.includes('application/json')) {
+                return response.json();
+            }
+            return response.text();
+        });
 };
 
 export default fetchData;

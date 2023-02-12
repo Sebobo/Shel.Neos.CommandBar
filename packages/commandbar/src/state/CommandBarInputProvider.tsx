@@ -56,7 +56,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
                 state.status === STATUS.DISPLAYING_RESULT
                     ? Object.keys(state.result.options)[state.highlightedOption]
                     : state.availableCommandIds[state.highlightedItem];
-            executeCommand(commandId);
+            void executeCommand(commandId);
         }
     });
 
@@ -80,7 +80,15 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
             // If the command is a url, open it
             if (typeof action == 'string') {
                 actions.EXECUTE_COMMAND(commandId, 'Loading url');
-                window.location.href = action;
+
+                // We need to check if the url is in the same domain, otherwise we need to open it in a new tab
+                // TODO: We should add another option to a link command to define its target
+                if (action.indexOf(document.location.origin) !== 0) {
+                    window.open(action, '_blank', 'noopener,noreferrer')?.focus();
+                } else {
+                    window.location.href = action;
+                }
+                actions.FINISH_COMMAND();
                 return;
             }
 
@@ -117,7 +125,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
     );
 
     const executeCommandRef = useFunctionRef((commandId: CommandId) => {
-        executeCommand(commandId);
+        void executeCommand(commandId);
     });
 
     /**

@@ -51,6 +51,7 @@ type CommandBarUiPluginState = {
 
 const ENDPOINT_COMMANDS = 'service/data-source/shel-neos-commandbar-commands';
 const ENDPOINT_SEARCH_NODES = 'service/data-source/shel-neos-commandbar-search-nodes';
+const ENDPOINT_SEARCH_NEOS_DOCS = 'service/data-source/shel-neos-commandbar-search-neos-docs';
 
 class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
     static propTypes = {
@@ -160,6 +161,13 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     description: 'Switch between edit and preview modes',
                     subCommands: this.buildCommandsFromEditPreviewModes(),
                 },
+                neosDocs: {
+                    name: 'Documentation',
+                    icon: 'book',
+                    description: 'Browse or search the Neos documentation',
+                    canHandleQueries: true,
+                    action: this.handleSearchNeosDocs.bind(this),
+                },
             },
         };
     }
@@ -254,15 +262,14 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             success: true,
             message: `Searching for "${query}"`,
         };
-        const results = (await fetchData(ENDPOINT_SEARCH_NODES, { query, node: siteNode.contextPath }).then(
-            (results) => {
-                // TODO: Check results
-                return results;
-            }
-        )) as SearchNodeResult[];
+        const results = (await fetchData(ENDPOINT_SEARCH_NODES, {
+            query,
+            node: siteNode.contextPath,
+        })) as SearchNodeResult[];
         yield {
             success: true,
             message: `${results.length} options match your query`,
+            // TODO: Already provide commands in the response so we only have to adjust the action
             options: results.reduce((carry, { name, nodetype, icon, contextPath, uri }) => {
                 if (!uri) {
                     // TODO: Show hint that document cannot be opened?
@@ -272,7 +279,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 carry[contextPath] = {
                     id: contextPath,
                     name,
-                    description: nodetype,
+                    category: nodetype,
                     action: async () => {
                         setActiveContentCanvasSrc(uri);
                         setActiveContentCanvasContextPath(contextPath);
@@ -282,10 +289,32 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 return carry;
             }, {} as FlatCommandList),
         };
-        // TODO: Show selectable results
         return {
             success: true,
-            message: 'Finished searching',
+            message: 'Finished search',
+        };
+    };
+
+    handleSearchNeosDocs = async function* (query: string): CommandGeneratorResult {
+        yield {
+            success: true,
+            message: `Searching for "${query}"`,
+        };
+        const results = (await fetchData(ENDPOINT_SEARCH_NEOS_DOCS, { query })) as Command[];
+        yield {
+            success: true,
+            message: `${results.length} options match your query`,
+            options: results.reduce((carry, item: Command, i) => {
+                carry[`result_${i}`] = {
+                    id: `result_${i}`,
+                    ...item,
+                };
+                return carry;
+            }, {} as FlatCommandList),
+        };
+        return {
+            success: true,
+            message: 'Finished search',
         };
     };
 
