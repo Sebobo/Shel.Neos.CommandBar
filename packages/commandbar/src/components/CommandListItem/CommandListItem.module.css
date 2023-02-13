@@ -27,10 +27,11 @@
     display: flex;
     flex-wrap: wrap;
     flex: 1;
-    gap: 0 1em;
+    gap: 0.2em 1em;
     align-items: baseline;
 }
 
 .description {
     white-space:pre-wrap;
+    font-size: 0.9em;
 }
