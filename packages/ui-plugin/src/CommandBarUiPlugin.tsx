@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
+import { Icon } from '@neos-project/react-ui-components';
 
 import * as styles from './CommandBarUiPlugin.module.css';
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
@@ -52,6 +53,8 @@ type CommandBarUiPluginState = {
 const ENDPOINT_COMMANDS = 'service/data-source/shel-neos-commandbar-commands';
 const ENDPOINT_SEARCH_NODES = 'service/data-source/shel-neos-commandbar-search-nodes';
 const ENDPOINT_SEARCH_NEOS_DOCS = 'service/data-source/shel-neos-commandbar-search-neos-docs';
+
+const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => <Icon icon={icon} spin={spin} />;
 
 class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
     static propTypes = {
@@ -382,6 +385,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                             commands={commands}
                             toggleOpen={toggleCommandBar}
                             onDrag={this.setDragging}
+                            IconComponent={IconComponent}
                         />
                     </div>
                 )}

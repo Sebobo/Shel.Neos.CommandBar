@@ -12,11 +12,13 @@
 .breadcrumb {
     display: flex;
     gap: 1rem;
+    --icon-size: 0.875em;
 }
 
 .activity {
     display: flex;
     gap: 1rem;
+    --icon-size: 0.875em;
 }
 
 .madeWithLove {

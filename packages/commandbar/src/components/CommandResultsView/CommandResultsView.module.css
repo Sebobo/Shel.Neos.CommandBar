@@ -2,3 +2,38 @@
     max-width: 100%;
     overflow: auto;
 }
+
+.results {
+    min-height: 0;
+    transition: opacity 0.3s ease-in;
+    overflow-y: auto;
+    max-height: 60vh;
+    height: 100%;
+}
+
+.results h6 {
+    color: var(--color-light-text);
+    margin: 0.5rem;
+    font-size: 0.9em;
+    font-weight: normal;
+    user-select: none;
+}
+
+.results ul {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin: 0;
+}
+
+.noResults {
+    padding: 0.5rem;
+}
+
+.disabled {
+    opacity: 0.5 !important;
+    pointer-events: none;
+    user-select: none;
+}

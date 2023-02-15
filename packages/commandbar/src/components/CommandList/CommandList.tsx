@@ -17,6 +17,7 @@ const CommandList: React.FC<CommandListingProps> = ({
 }) => {
     const {
         state: { commands, highlightedItem, availableCommandIds, activeCommandId, status, searchWord },
+        Icon,
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
     const selectedElementRef = React.useRef(null);
@@ -33,6 +34,7 @@ const CommandList: React.FC<CommandListingProps> = ({
                     {availableCommandIds.map((commandId, index) => (
                         <CommandListItem
                             key={commandId}
+                            Icon={Icon}
                             highlightRef={highlightedItem === index ? selectedElementRef : null}
                             command={commands[commandId]}
                             onItemSelect={executeCommand}

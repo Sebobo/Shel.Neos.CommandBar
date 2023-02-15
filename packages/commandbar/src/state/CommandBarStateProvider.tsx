@@ -1,23 +1,26 @@
-import React, { createContext, useContext, useMemo, useReducer } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useReducer } from 'react';
 
 import { commandBarReducer, CommandBarState } from './commandBarReducer';
 import { flattenCommands } from '../helpers';
 import { STATUS, TRANSITION } from './commandBarMachine';
+import { IconWrapper } from '../components';
 
 interface CommandBarContextProps {
     commands: HierarchicalCommandList;
-    children: React.ReactElement;
+    children: JSX.Element;
+    IconComponent: React.FC<IconProps>;
 }
 
 interface CommandBarContextValues {
     state: CommandBarState;
     actions: Record<TRANSITION, (...any) => void>;
+    Icon: Renderable<IconProps>;
 }
 
 const CommandBarContext = createContext({} as CommandBarContextValues);
 export const useCommandBarState = (): CommandBarContextValues => useContext(CommandBarContext);
 
-export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ commands, children }) => {
+export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ commands, children, IconComponent }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
         status: STATUS.COLLAPSED,
         availableCommandIds: Object.keys(commands),
@@ -55,5 +58,13 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ comm
         };
     }, []);
 
-    return <CommandBarContext.Provider value={{ state, actions }}>{children}</CommandBarContext.Provider>;
+    const Icon: React.FC<IconProps> = useCallback(({ icon, spin = false }) => {
+        return (
+            <IconWrapper>
+                <IconComponent icon={icon} spin={spin} />
+            </IconWrapper>
+        );
+    }, []);
+
+    return <CommandBarContext.Provider value={{ state, actions, Icon }}>{children}</CommandBarContext.Provider>;
 };

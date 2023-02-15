@@ -27,8 +27,7 @@
 }
 
 .expandButton svg {
-    font-size: 120%;
-    color: var(--textOnGray);
+    color: var(--grayLighter);
     transition: color 0.1s ease-in-out;
 }
 

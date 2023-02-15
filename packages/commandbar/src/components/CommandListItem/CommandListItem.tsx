@@ -1,7 +1,6 @@
 import React, { LegacyRef } from 'react';
 
 import * as styles from './CommandListItem.module.css';
-import Icon from '../Icon/Icon';
 
 type CommandListItemProps = {
     command: ProcessedCommandItem;
@@ -10,6 +9,7 @@ type CommandListItemProps = {
     highlightRef?: React.Ref<HTMLLIElement>;
     runningCommandId?: CommandId;
     disabled?: boolean;
+    Icon: React.FC<IconProps>;
 };
 
 function getCommandType({ subCommandIds, category, canHandleQueries, action }: ProcessedCommandItem): string {
@@ -33,7 +33,7 @@ function getCommandType({ subCommandIds, category, canHandleQueries, action }: P
 }
 
 const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
-    ({ command, onItemSelect, highlighted, disabled }, highlightRef: LegacyRef<HTMLLIElement>) => {
+    ({ command, onItemSelect, highlighted, disabled, Icon }, highlightRef: LegacyRef<HTMLLIElement>) => {
         const { id, name, description, icon } = command;
 
         const commandType = getCommandType(command);
@@ -57,7 +57,7 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                         </span>
                     )}
                 </span>
-                <small>{commandType}</small>
+                <small className={styles.type}>{commandType}</small>
             </li>
         );
     }

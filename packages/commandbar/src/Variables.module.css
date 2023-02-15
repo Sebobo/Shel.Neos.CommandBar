@@ -19,9 +19,11 @@
     --dialog-blur: 5px;
 
     /* Neos UI colors */
-    --grayLight: #3f3f3f;
+    --grayLight: #999;
     --grayLighter: #eee;
     --grayMedium: #323232;
+    --grayDark: #3f3f3f;
+    --gray: #555;
     --textSubtleLight: #adadad;
     --textOnGray: #fff;
     --textOnWhite: #252525;

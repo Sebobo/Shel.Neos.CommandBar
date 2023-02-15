@@ -8,6 +8,7 @@ import * as styles from './CommandResultsView.module.css';
 const CommandResultsView: React.FC = () => {
     const {
         state: { result, highlightedOption, activeCommandId },
+        Icon,
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
     const selectedElementRef = React.useRef(null);
@@ -25,16 +26,17 @@ const CommandResultsView: React.FC = () => {
             {message && <h6>{message}</h6>}
             {view ? <div>{view}</div> : ''}
             {options && (
-                <nav className={[styles.results, !!result && styles.disabled].join(' ')}>
+                <nav className={[styles.results].join(' ')}>
                     <ul>
                         {Object.keys(options).map((commandId, index) => (
                             <CommandListItem
                                 key={commandId}
-                                ref={highlightedOption === index ? selectedElementRef : null}
+                                highlightRef={highlightedOption === index ? selectedElementRef : null}
                                 command={options[commandId]}
                                 onItemSelect={executeCommand}
                                 highlighted={highlightedOption === index}
                                 runningCommandId={activeCommandId}
+                                Icon={Icon}
                             />
                         ))}
                     </ul>

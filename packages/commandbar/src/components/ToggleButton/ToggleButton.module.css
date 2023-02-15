@@ -1,5 +1,5 @@
 .toggleButton {
-    background-color: var(--grayLight);
+    background-color: var(--grayDark);
     border: 1px solid var(--grayMedium);
     color: var(--textSubtleLight);
     border-radius: 6px;
@@ -24,7 +24,7 @@
 }
 
 .buttonIcon {
-    background-color: var(--grayMedium);
+    background-color: var(--gray);
     border-radius: 3px;
     color: var(--textOnGray);
     font-size: 80%;

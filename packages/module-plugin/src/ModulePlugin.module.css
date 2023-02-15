@@ -2,6 +2,31 @@
     display: flex;
     align-items: center;
     height: 41px;
-    font-size: 0.8rem !important;
+    font-size: 14px !important;
+    line-height: 20px;
     margin: 0 1rem;
+}
+
+.fullScreenLayer {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+}
+
+.open {
+    display: block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% {  transform: rotate(359deg); }
+}
+
+.spin {
+    animation: spin 2s linear infinite;
 }

@@ -1,0 +1,17 @@
+diff --git a/src/postcss.config.js b/src/postcss.config.js
+index 7d74e8f86c90e5afe0b66c159918e0b6d53fcd96..17b22e59f103325cf7a3804d0c3fbfee7fbc45ff 100644
+--- a/src/postcss.config.js
++++ b/src/postcss.config.js
+@@ -4,9 +4,9 @@ const styleVars = styles.generateCssVarsObject(styles.config);
+ module.exports = {
+     plugins: [
+         require('autoprefixer'),
+-        require('postcss-css-variables')({
+-            variables: Object.assign(styleVars)
+-        }),
++        // require('postcss-css-variables')({
++        //     variables: Object.assign(styleVars)
++        // }),
+         require('postcss-import')(),
+         require('postcss-nested')(),
+         require('postcss-hexrgba')()

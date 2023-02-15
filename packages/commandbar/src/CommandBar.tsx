@@ -10,11 +10,12 @@ type CommandBarProps = {
     open: boolean;
     toggleOpen: () => void;
     onDrag?: (state: boolean) => void;
+    IconComponent: React.FC<IconProps>;
 };
 
-const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen, onDrag }) => {
+const CommandBar: React.FC<CommandBarProps> = ({ commands, open, toggleOpen, onDrag, IconComponent }) => {
     return (
-        <CommandBarStateProvider commands={commands}>
+        <CommandBarStateProvider commands={commands} IconComponent={IconComponent}>
             <CommandBarDialog onDrag={onDrag} open={open} toggleOpen={toggleOpen} />
         </CommandBarStateProvider>
     );

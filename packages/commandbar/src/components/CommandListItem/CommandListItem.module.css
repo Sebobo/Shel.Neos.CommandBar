@@ -8,6 +8,7 @@
     transition: background-color 0.1s ease-in-out, opacity 0.1s ease-in-out;
     background-color: transparent;
     user-select: none;
+    --icon-size: 0.875em;
 }
 
 .commandListItem:hover {
@@ -34,4 +35,8 @@
 .description {
     white-space:pre-wrap;
     font-size: 0.9em;
+}
+
+.type {
+    max-width: 30%;
 }

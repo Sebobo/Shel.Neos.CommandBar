@@ -9,6 +9,9 @@ type CommandBarConfig = {
     };
 };
 
+type Renderable<Props> = React.FC<Props>;
+type IconProps = { icon: string; spin?: boolean };
+
 // Nested command list for simpler definition by the user
 type HierarchicalCommandList = Record<CommandId, CommandItem>;
 

@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "dependencies": {
     "@neos-commandbar/commandbar": "*",
+    "@neos-project/react-ui-components": "^8.2.6",
     "react-redux": "^7.2.9",
     "redux-actions": "^0.12.0"
   },
   "devDependencies": {
-    "@neos-project/build-essentials": "^8.2.3",
-    "@neos-project/neos-ui-extensibility": "^8.2.3"
+    "@neos-project/build-essentials": "^8.2.6",
+    "@neos-project/neos-ui-extensibility": "^8.2.6"
   },
   "source": "src/index.html",
   "scripts": {
