@@ -13,6 +13,7 @@ namespace Shel\Neos\CommandBar\Service\DataSource;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
 use Shel\Neos\CommandBar\Domain\Dto\CommandDto;
@@ -23,12 +24,16 @@ class CommandsDataSource extends AbstractDataSource
 
     static protected $identifier = 'shel-neos-commandbar-commands';
 
-    public function __construct(private readonly MenuHelper $menuHelper)
-    {
+    public function __construct(
+        private readonly MenuHelper $menuHelper,
+        private readonly UriBuilder $uriBuilder
+    ) {
     }
 
     public function getData(NodeInterface $node = null, array $arguments = []): array
     {
+        $this->uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
+
         $sitesForMenu = array_reduce($this->menuHelper->buildSiteList($this->controllerContext),
             static function (array $carry, array $site) {
                 // Skip the currently active site
@@ -39,7 +44,7 @@ class CommandsDataSource extends AbstractDataSource
             }, []);
 
         $modulesForMenu = array_reduce($this->menuHelper->buildModuleList($this->controllerContext),
-            static function (array $carry, array $module) {
+            function (array $carry, array $module) {
                 // Skip modules without submodules
                 if (!$module['submodules']) {
                     return $carry;
@@ -49,14 +54,19 @@ class CommandsDataSource extends AbstractDataSource
                     'description' => TranslationHelper::translateByShortHandString($module['description']),
                     'icon' => $module['icon'],
                     'subCommands' => array_reduce($module['submodules'],
-                        static function (array $carry, array $submodule) {
+                        function (array $carry, array $submodule) {
                             if ($submodule['hideInMenu']) {
                                 return $carry;
                             }
                             $carry[$submodule['module']] = new CommandDto(
                                 TranslationHelper::translateByShortHandString($submodule['label']),
                                 TranslationHelper::translateByShortHandString($submodule['description']),
-                                $submodule['modulePath'],
+                                $this->uriBuilder->uriFor(
+                                    'index',
+                                    ['module' => $submodule['modulePath']],
+                                    'Backend\Module',
+                                    'Neos.Neos'
+                                ),
                                 $submodule['icon'],
                             );
                             return $carry;
