@@ -21,6 +21,7 @@
 
 .madeWithLove {
     display: flex;
+    text-decoration: none;
 }
 
 .madeWithLove small {
