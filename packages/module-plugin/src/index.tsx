@@ -94,11 +94,7 @@ class CommandBarContainer extends HTMLElement {
 }
 customElements.define('command-bar-container', CommandBarContainer);
 
-window.addEventListener('load', async (): Promise<void> => {
-    while (!window.NeosCMS?.I18n?.initialized) {
-        await new Promise((resolve) => setTimeout(resolve, 50));
-    }
-
+window.addEventListener('neoscms-i18n-initialized', async (): Promise<void> => {
     const commandBarStyleTag = document.querySelector(
         'link[rel="stylesheet"][href*="Shel.Neos.CommandBar"]'
     ) as HTMLLinkElement;
