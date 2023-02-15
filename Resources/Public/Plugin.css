@@ -18,12 +18,6 @@
     align-items: center;
 }
 
-.Icon-module__iconWrap___3B4ri {
-    width: var(--icon-size);
-    display: inline-block;
-    text-align: center;
-}
-
 .CommandBarFooter-module__commandBarFooter___2mcre {
     border-top: 1px solid var(--color-border);
     background-color: var(--footer-background);
@@ -32,21 +26,26 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
 }
 
 .CommandBarFooter-module__breadcrumb___1Ul24 {
     display: flex;
     gap: 1rem;
+    --icon-size: 0.875em;
 }
 
 .CommandBarFooter-module__activity___2GXJU {
     display: flex;
     gap: 1rem;
+    --icon-size: 0.875em;
 }
 
 .CommandBarFooter-module__madeWithLove___zHu8L {
     display: flex;
+    text-decoration: none;
 }
 
 .CommandBarFooter-module__madeWithLove___zHu8L small {
@@ -64,8 +63,23 @@
     margin-left: 0.5em;
 }
 
+.IconWrapper-module__iconWrap___1Z3nD {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    display: inline-block;
+    text-align: center;
+}
+
+.IconWrapper-module__iconWrap___1Z3nD svg {
+    max-width: 100%;
+    max-height: 100%;
+    display: inline-block;
+}
+
 .SearchBox-module__searchBox___1SEtn {
-    appearance: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
     background: none;
     border: none;
     color: currentColor;
@@ -81,23 +95,47 @@
     cursor: not-allowed;
 }
 
+.SearchBox-module__expandButton___B2jYv {
+    position: absolute;
+    padding: 0 1rem;
+    height: 100%;
+    right: 0;
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.SearchBox-module__expandButton___B2jYv svg {
+    color: var(--grayLighter);
+    transition: color 0.1s ease-in-out;
+}
+
+.SearchBox-module__expandButton___B2jYv:hover svg {
+    color: var(--primaryBlue);
+}
+
 .CommandBarHeader-module__commandBarHeader___3Y2hR {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 0.3rem 0.5rem;
     border-bottom: 1px solid var(--color-border);
+    position: relative;
 }
 
 .CommandBarHeader-module__backButton___1qIGu {
     padding: 0.3rem;
     background-color: var(--color-icon-bg);
     border-radius: 50%;
-    appearance: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
     border: none;
     color: white;
     cursor: pointer;
     transition: background-color 0.1s ease-in-out;
+    display: flex;
 }
 
 .CommandBarHeader-module__backButton___1qIGu:hover {
@@ -113,7 +151,10 @@
     border-radius: var(--border-radius-item);
     transition: background-color 0.1s ease-in-out, opacity 0.1s ease-in-out;
     background-color: transparent;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
+    --icon-size: 0.875em;
 }
 
 .CommandListItem-module__commandListItem___2u7xD:hover {
@@ -133,8 +174,17 @@
     display: flex;
     flex-wrap: wrap;
     flex: 1;
-    gap: 0 1em;
+    gap: 0.2em 1em;
     align-items: baseline;
+}
+
+.CommandListItem-module__description___2RTG3 {
+    white-space:pre-wrap;
+    font-size: 0.9em;
+}
+
+.CommandListItem-module__type___1C7PR {
+    max-width: 30%;
 }
 
 .CommandListing-module__results___23Rve {
@@ -150,7 +200,9 @@
     margin: 0.5rem;
     font-size: 0.9em;
     font-weight: normal;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
 }
 
 .CommandListing-module__results___23Rve ul {
@@ -169,7 +221,9 @@
 .CommandListing-module__disabled___6gpPj {
     opacity: 0.5 !important;
     pointer-events: none;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
 }
 
 .CommandResultsView-module__commandResultsView___xLqwb {
@@ -177,8 +231,47 @@
     overflow: auto;
 }
 
+.CommandResultsView-module__results___1t6jB {
+    min-height: 0;
+    transition: opacity 0.3s ease-in;
+    overflow-y: auto;
+    max-height: 60vh;
+    height: 100%;
+}
+
+.CommandResultsView-module__results___1t6jB h6 {
+    color: var(--color-light-text);
+    margin: 0.5rem;
+    font-size: 0.9em;
+    font-weight: normal;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
+}
+
+.CommandResultsView-module__results___1t6jB ul {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin: 0;
+}
+
+.CommandResultsView-module__noResults___2ksIF {
+    padding: 0.5rem;
+}
+
+.CommandResultsView-module__disabled___OmNvX {
+    opacity: 0.5 !important;
+    pointer-events: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
+}
+
 .ToggleButton-module__toggleButton___2wPs- {
-    background-color: var(--grayLight);
+    background-color: var(--grayDark);
     border: 1px solid var(--grayMedium);
     color: var(--textSubtleLight);
     border-radius: 6px;
@@ -186,7 +279,9 @@
     align-items: center;
     gap: 0.5em;
     transition: 0.1s ease-out;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
     padding: 2px 0.3rem 2px 0.5rem;
     cursor: pointer;
     line-height: 1.4em;
@@ -203,7 +298,7 @@
 }
 
 .ToggleButton-module__buttonIcon___UjFjw {
-    background-color: var(--grayMedium);
+    background-color: var(--gray);
     border-radius: 3px;
     color: var(--textOnGray);
     font-size: 80%;
@@ -216,7 +311,8 @@
 }
 
 .CommandBarDialog-module__commandBar___1Hb5s {
-    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(var(--dialog-blur));
+            backdrop-filter: blur(var(--dialog-blur));
     background: var(--bar-background);
     border-radius: var(--border-radius-bar, 5);
     border: 1px solid var(--color-border);
@@ -228,6 +324,7 @@
     margin: 0;
     max-width: var(--bar-max-width);
     min-width: var(--bar-min-width);
+    max-height: 90vh;
     overflow: hidden;
     position: absolute;
     padding: 0;
@@ -247,11 +344,29 @@
     font-size: 90%;
 }
 
+.CommandBarDialog-module__commandBar___1Hb5s ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.CommandBarDialog-module__commandBar___1Hb5s ::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.CommandBarDialog-module__commandBar___1Hb5s ::-webkit-scrollbar-thumb {
+    background-color: var(--grayLight);
+}
+
+.CommandBarDialog-module__commandBar___1Hb5s ::-webkit-scrollbar-corner {
+    background-color: var(--grayDark);
+}
+
 .CommandBarDialog-module__resultsWrap___2gd3U {
     display: grid;
     grid-template-rows: 0fr;
     transform-origin: top center;
     transition: grid-template-rows 0.2s ease-in;
+    overflow: auto;
 }
 
 .CommandBarDialog-module__resultsWrap___2gd3U > * {
@@ -266,6 +381,7 @@
     opacity: 1;
     padding: 0.5rem;
 }
+
 .CommandBarDialog-module__resultsWrap___2gd3U.CommandBarDialog-module__split___66TVs {
     grid-template-columns: 1fr 1fr;
 }
@@ -288,11 +404,14 @@
     --border-radius-bar: 0.6rem;
     --border-radius-item: 0.4rem;
     --icon-size: 1.125em;
+    --dialog-blur: 5px;
 
     /* Neos UI colors */
-    --grayLight: #3f3f3f;
+    --grayLight: #999;
     --grayLighter: #eee;
     --grayMedium: #323232;
+    --grayDark: #3f3f3f;
+    --gray: #555;
     --textSubtleLight: #adadad;
     --textOnGray: #fff;
     --textOnWhite: #252525;
