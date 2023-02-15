@@ -16,6 +16,7 @@
     --border-radius-bar: 0.6rem;
     --border-radius-item: 0.4rem;
     --icon-size: 1.125em;
+    --dialog-blur: 5px;
 
     /* Neos UI colors */
     --grayLight: #3f3f3f;

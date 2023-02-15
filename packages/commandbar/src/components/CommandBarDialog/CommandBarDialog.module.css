@@ -1,5 +1,5 @@
 .commandBar {
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(var(--dialog-blur));
     background: var(--bar-background);
     border-radius: var(--border-radius-bar, 5);
     border: 1px solid var(--color-border);
