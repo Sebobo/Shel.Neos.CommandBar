@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { LegacyRef } from 'react';
 
 import * as styles from './CommandListItem.module.css';
 import Icon from '../Icon/Icon';
@@ -7,7 +7,7 @@ type CommandListItemProps = {
     command: ProcessedCommandItem;
     onItemSelect: (commandId: CommandId) => void;
     highlighted: boolean;
-    ref?: React.Ref<HTMLLIElement>;
+    highlightRef?: React.Ref<HTMLLIElement>;
     runningCommandId?: CommandId;
     disabled?: boolean;
 };
@@ -33,7 +33,7 @@ function getCommandType({ subCommandIds, category, canHandleQueries, action }: P
 }
 
 const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
-    ({ command, onItemSelect, highlighted, disabled }, ref) => {
+    ({ command, onItemSelect, highlighted, disabled }, highlightRef: LegacyRef<HTMLLIElement>) => {
         const { id, name, description, icon } = command;
 
         const commandType = getCommandType(command);
@@ -46,12 +46,16 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                     disabled && styles.disabled,
                 ].join(' ')}
                 onClick={disabled ? null : () => onItemSelect(id)}
-                ref={ref}
+                ref={highlightRef}
             >
                 <Icon icon={icon} />
                 <span className={styles.label}>
                     <span>{name}</span>
-                    {description && <span className={styles.description}>{typeof description == 'string' ? description : description()}</span>}
+                    {description && (
+                        <span className={styles.description}>
+                            {typeof description == 'string' ? description : description()}
+                        </span>
+                    )}
                 </span>
                 <small>{commandType}</small>
             </li>
@@ -64,7 +68,7 @@ CommandListItem.displayName = 'CommandListItem';
 export default React.memo(CommandListItem, (prev, next) => {
     return (
         prev.command.id === next.command.id &&
-        prev.ref === next.ref &&
+        prev.highlightRef === next.highlightRef &&
         prev.runningCommandId === next.runningCommandId &&
         prev.disabled === next.disabled
     );

@@ -33,7 +33,7 @@ const CommandList: React.FC<CommandListingProps> = ({
                     {availableCommandIds.map((commandId, index) => (
                         <CommandListItem
                             key={commandId}
-                            ref={highlightedItem === index ? selectedElementRef : null}
+                            highlightRef={highlightedItem === index ? selectedElementRef : null}
                             command={commands[commandId]}
                             onItemSelect={executeCommand}
                             highlighted={highlightedItem === index}
