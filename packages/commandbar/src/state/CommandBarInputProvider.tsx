@@ -83,7 +83,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
 
                 // We need to check if the url is in the same domain, otherwise we need to open it in a new tab
                 // TODO: We should add another option to a link command to define its target
-                if (action.indexOf(document.location.origin) !== 0) {
+                if (action.indexOf('http') === 0 && action.indexOf(document.location.origin) !== 0) {
                     window.open(action, '_blank', 'noopener,noreferrer')?.focus();
                 } else {
                     window.location.href = action;
