@@ -8,8 +8,8 @@
     "react-shadow-dom-retarget-events": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.0",
-    "parcel": "^2.8.2"
+    "@babel/core": "^7.20.12",
+    "parcel": "^2.8.3"
   },
   "source": "src/index.tsx",
   "app": "../../Resources/Public/Module.js",
