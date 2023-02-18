@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: 'Neos CMS command bar build'
+    name: 'CommandBar build'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -20,5 +20,27 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Build the plugin
-        run: yarn build
+      - name: Lint the sources
+        run: yarn lint
+
+      - name: Build the Neos UI plugin
+        run: yarn build-ui
+
+      - name: Build the backend module plugin
+        run: yarn build-module
+
+  test:
+    runs-on: ubuntu-latest
+    name: 'CommandBar tests'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run tests
+        run: yarn test:github-actions

@@ -17,15 +17,17 @@
   },
   "devDependencies": {
     "@types/react": "^16.14.35",
-    "@typescript-eslint/eslint-plugin": "^5.47.1",
-    "@typescript-eslint/parser": "^5.47.1",
-    "eslint": "^8.30.0",
-    "eslint-config-prettier": "^8.5.0",
+    "@typescript-eslint/eslint-plugin": "^5.52.0",
+    "@typescript-eslint/parser": "^5.52.0",
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "prettier": "^2.8.1",
-    "typescript": "^4.9.4",
+    "prettier": "^2.8.4",
+    "testcafe": "^2.3.1",
+    "testcafe-react-selectors": "^5.0.2",
+    "typescript": "^4.9.5",
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "scripts": {
@@ -36,7 +38,9 @@
     "build-module": "yarn workspace @neos-commandbar/module-plugin build",
     "watch-module": "yarn workspace @neos-commandbar/module-plugin watch",
     "dev": "yarn workspace @neos-commandbar/dev-server start",
-    "test": "yarn workspace @neos-commandbar/commandbar test"
+    "test": "testcafe",
+    "test:github-actions": "xvfb-run --server-args=\"-screen 0 1280x720x24\" yarn testcafe chrome",
+    "lint": "eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'"
   },
   "prettier": {
     "printWidth": 120,
