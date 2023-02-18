@@ -23,8 +23,11 @@ jobs:
       - name: Lint the sources
         run: yarn lint
 
-      - name: Build the plugin
-        run: yarn build
+      - name: Build the Neos UI plugin
+        run: yarn build-ui
+
+      - name: Build the backend module plugin
+        run: yarn build-module
 
   test:
     runs-on: ubuntu-latest
