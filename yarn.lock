@@ -54,7 +54,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.12.1, @babel/core@npm:^7.20.12":
+"@babel/core@npm:^7.12.1":
   version: 7.20.12
   resolution: "@babel/core@npm:7.20.12"
   dependencies:
@@ -1873,7 +1873,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/dev-server@workspace:packages/dev-server"
   dependencies:
-    "@babel/core": ^7.20.12
     "@neos-commandbar/commandbar": "*"
     parcel: ^2.8.3
     react: ^16.14.0
@@ -1885,7 +1884,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/module-plugin@workspace:packages/module-plugin"
   dependencies:
-    "@babel/core": ^7.20.12
     "@neos-commandbar/commandbar": "*"
     parcel: ^2.8.3
     react: ^16.14.0
