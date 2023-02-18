@@ -7,6 +7,16 @@ import * as styles from './ModulePlugin.module.css';
 
 const ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
 
+let favourites: CommandId[] = [];
+let recentCommands: CommandId[] = [];
+
+const userPreferencesService: UserPreferencesService = {
+    getFavourites: () => [...favourites],
+    setFavourites: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
+    getRecentlyUsed: () => [...recentCommands],
+    setRecentlyUsed: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
+};
+
 const App: React.FC = () => {
     const [initialized, setInitialized] = useState(false);
     const [open, setOpen] = useState(false);
@@ -51,6 +61,7 @@ const App: React.FC = () => {
                         toggleOpen={handleToggle}
                         onDrag={setDragging}
                         IconComponent={IconComponent}
+                        userPreferencesService={userPreferencesService}
                     />
                 </div>
             )}

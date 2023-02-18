@@ -38,6 +38,16 @@ import { CommandBar, logger } from '@neos-commandbar/commandbar';
         );
     };
 
+    let favourites: CommandId[] = [];
+    let recentCommands: CommandId[] = [];
+
+    const userPreferencesService: UserPreferencesService = {
+        getFavourites: () => [...favourites],
+        setFavourites: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
+        getRecentlyUsed: () => [...recentCommands],
+        setRecentlyUsed: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
+    };
+
     const App = () => {
         const [sideBarLeftOpen, setSideBarLeftOpen] = useState(false);
         const [sideBarRightOpen, setSideBarRightOpen] = useState(false);
@@ -237,6 +247,7 @@ import { CommandBar, logger } from '@neos-commandbar/commandbar';
                     open={commandBarOpen}
                     toggleOpen={() => setCommandBarOpen((prev) => !prev)}
                     IconComponent={IconComponent}
+                    userPreferencesService={userPreferencesService}
                 />
             </div>
         );

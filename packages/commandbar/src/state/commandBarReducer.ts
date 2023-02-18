@@ -12,7 +12,9 @@ export type CommandBarEvent =
     | { type: TRANSITION.EXECUTE_COMMAND; commandId: CommandId; argument: string }
     | { type: TRANSITION.FINISH_COMMAND }
     | { type: TRANSITION.UPDATE_RESULT; result: CommandResult }
-    | { type: TRANSITION.EXPAND };
+    | { type: TRANSITION.EXPAND }
+    | { type: TRANSITION.ADD_FAVOURITE; commandId: CommandId }
+    | { type: TRANSITION.REMOVE_FAVOURITE; commandId: CommandId };
 
 export type CommandBarState = MachineState & {
     expanded: boolean;
@@ -25,7 +27,11 @@ export type CommandBarState = MachineState & {
     activeCommandMessage: string;
     result: CommandResult | null;
     highlightedOption: number;
+    favourites: CommandId[];
+    recentlyUsed: CommandId[];
 };
+
+const MAX_RECENTLY_USED = 5;
 
 function runAction(action: ACTION, nextState: CommandBarState, event: CommandBarEvent) {
     switch (action) {
@@ -116,6 +122,26 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
         case ACTION.SET_GROUP:
             assert(event.type === TRANSITION.SELECT_GROUP);
             nextState.selectedCommandGroup = event.commandId;
+            break;
+        case ACTION.ADD_FAVOURITE:
+            assert(event.type === TRANSITION.ADD_FAVOURITE);
+            if (!nextState.favourites.includes(event.commandId)) {
+                nextState.favourites.push(event.commandId);
+            }
+            break;
+        case ACTION.REMOVE_FAVOURITE:
+            assert(event.type === TRANSITION.ADD_FAVOURITE);
+            nextState.favourites = nextState.favourites.filter((id) => id !== event.commandId);
+            break;
+        case ACTION.ADD_RECENTLY_USED:
+            assert(event.type === TRANSITION.EXECUTE_COMMAND);
+            if (nextState.recentlyUsed.includes(event.commandId)) {
+                nextState.recentlyUsed = nextState.recentlyUsed.filter((id) => id !== event.commandId);
+            }
+            nextState.recentlyUsed.unshift(event.commandId);
+            if (nextState.recentlyUsed.length > MAX_RECENTLY_USED) {
+                nextState.recentlyUsed.pop();
+            }
             break;
         default:
             throw Error(`Action ${action} not implemented`);

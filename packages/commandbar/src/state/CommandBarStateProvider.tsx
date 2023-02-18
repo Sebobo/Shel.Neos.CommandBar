@@ -1,7 +1,7 @@
-import React, { createContext, useCallback, useContext, useMemo, useReducer } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
 
 import { commandBarReducer, CommandBarState } from './commandBarReducer';
-import { flattenCommands } from '../helpers';
+import { flattenCommands, logger } from '../helpers';
 import { STATUS, TRANSITION } from './commandBarMachine';
 import { IconWrapper } from '../components';
 
@@ -9,6 +9,7 @@ interface CommandBarContextProps {
     commands: HierarchicalCommandList;
     children: JSX.Element;
     IconComponent: React.FC<IconProps>;
+    userPreferencesService: UserPreferencesService;
 }
 
 interface CommandBarContextValues {
@@ -20,7 +21,12 @@ interface CommandBarContextValues {
 const CommandBarContext = createContext({} as CommandBarContextValues);
 export const useCommandBarState = (): CommandBarContextValues => useContext(CommandBarContext);
 
-export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ commands, children, IconComponent }) => {
+export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
+    commands,
+    children,
+    IconComponent,
+    userPreferencesService,
+}) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
         status: STATUS.COLLAPSED,
         availableCommandIds: Object.keys(commands),
@@ -33,6 +39,8 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ comm
         activeCommandMessage: null,
         searchWord: '',
         selectedCommandGroup: null,
+        favourites: userPreferencesService.getFavourites(),
+        recentlyUsed: userPreferencesService.getRecentlyUsed(),
     });
 
     // Provide all actions as shorthand functions
@@ -55,8 +63,24 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({ comm
             [TRANSITION.FINISH_COMMAND]: () => dispatch({ type: TRANSITION.FINISH_COMMAND }),
             [TRANSITION.UPDATE_RESULT]: (result: CommandResult) => dispatch({ type: TRANSITION.UPDATE_RESULT, result }),
             [TRANSITION.EXPAND]: () => dispatch({ type: TRANSITION.EXPAND }),
+            [TRANSITION.ADD_FAVOURITE]: (commandId: CommandId) =>
+                dispatch({ type: TRANSITION.ADD_FAVOURITE, commandId }),
+            [TRANSITION.REMOVE_FAVOURITE]: (commandId: CommandId) =>
+                dispatch({ type: TRANSITION.REMOVE_FAVOURITE, commandId }),
         };
     }, []);
+
+    useEffect(() => {
+        userPreferencesService
+            .setFavourites(state.favourites)
+            .catch((e) => logger.error('Could not load favourites', e));
+    }, [state.favourites]);
+
+    useEffect(() => {
+        userPreferencesService
+            .setRecentlyUsed(state.recentlyUsed)
+            .catch((e) => logger.error('Could not load recently used commands', e));
+    }, [state.recentlyUsed]);
 
     const Icon: React.FC<IconProps> = useCallback(({ icon, spin = false }) => {
         return (
