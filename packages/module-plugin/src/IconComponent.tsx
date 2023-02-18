@@ -4,7 +4,7 @@ import * as styles from './ModulePlugin.module.css';
 /**
  * As we don't have font awesome in the shadow dom, we need to render a fallback icon for commands
  */
-const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => {
+const IconComponent: React.FC<IconProps> = ({ spin = false }) => {
     return (
         <svg className={spin ? styles.spin : ''} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <path

@@ -39,7 +39,8 @@
     "watch-module": "yarn workspace @neos-commandbar/module-plugin watch",
     "dev": "yarn workspace @neos-commandbar/dev-server start",
     "test": "testcafe",
-    "test:github-actions": "xvfb-run --server-args=\"-screen 0 1280x720x24\" yarn testcafe chrome"
+    "test:github-actions": "xvfb-run --server-args=\"-screen 0 1280x720x24\" yarn testcafe chrome",
+    "lint": "eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'"
   },
   "prettier": {
     "printWidth": 120,

@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Lint the sources
+        run: yarn lint
+
       - name: Build the plugin
         run: yarn build
 
