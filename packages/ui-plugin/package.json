@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "@neos-project/build-essentials": "^8.2.6",
-    "@neos-project/neos-ui-extensibility": "^8.2.6"
+    "@neos-project/neos-ui-extensibility": "^8.2.6",
+    "@types/react-redux": "^7.1.25"
   },
   "source": "src/index.html",
   "scripts": {

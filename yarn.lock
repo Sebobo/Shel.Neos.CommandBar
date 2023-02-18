@@ -1864,8 +1864,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/commandbar@workspace:packages/commandbar"
   dependencies:
-    "@types/react-redux": ^7.1.25
-    classnames: ^2.3.2
     fuzzy-search: ^3.2.1
     react: ^16.14.0
   languageName: unknown
@@ -1904,6 +1902,7 @@ __metadata:
     "@neos-project/build-essentials": ^8.2.6
     "@neos-project/neos-ui-extensibility": ^8.2.6
     "@neos-project/react-ui-components": ^8.2.6
+    "@types/react-redux": ^7.1.25
     react-redux: ^7.2.9
     redux-actions: ^0.12.0
   languageName: unknown
@@ -5824,7 +5823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.2.3, classnames@npm:^2.3.2":
+"classnames@npm:^2.2.3":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
   checksum: 2c62199789618d95545c872787137262e741f9db13328e216b093eea91c85ef2bfb152c1f9e63027204e2559a006a92eb74147d46c800a9f96297ae1d9f96f4e
