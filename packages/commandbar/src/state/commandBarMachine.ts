@@ -101,7 +101,7 @@ export const machine: MachineDefinition = {
                 },
                 EXECUTE_COMMAND: {
                     target: STATUS.EXECUTING_COMMAND,
-                    actions: [ACTION.SET_ACTIVE_COMMAND, ACTION.ADD_RECENTLY_USED],
+                    actions: [ACTION.SET_ACTIVE_COMMAND, ACTION.ADD_RECENTLY_USED, ACTION.REFRESH_COMMANDS],
                 },
                 GO_TO_PARENT_GROUP: {
                     target: STATUS.IDLE,

@@ -46,7 +46,8 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
                 nextState.selectedCommandGroup,
                 nextState.searchWord,
                 nextState.commands,
-                nextState.favourites
+                nextState.favourites,
+                nextState.recentlyUsed
             );
             break;
         case ACTION.HIGHLIGHT_NEXT_COMMAND:
@@ -136,6 +137,10 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             break;
         case ACTION.ADD_RECENTLY_USED:
             assert(event.type === TRANSITION.EXECUTE_COMMAND);
+            // Only add to recently used if the command has an action
+            if (!nextState.commands[event.commandId].action) {
+                break;
+            }
             if (nextState.recentlyUsed.includes(event.commandId)) {
                 nextState.recentlyUsed = nextState.recentlyUsed.filter((id) => id !== event.commandId);
             }

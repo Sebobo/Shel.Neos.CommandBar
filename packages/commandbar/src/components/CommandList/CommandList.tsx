@@ -17,7 +17,16 @@ const CommandList: React.FC<CommandListingProps> = ({
     noCommandsMessage = 'No matching commands found',
 }) => {
     const {
-        state: { commands, highlightedItem, availableCommandIds, activeCommandId, status, searchWord, favourites },
+        state: {
+            commands,
+            highlightedItem,
+            availableCommandIds,
+            activeCommandId,
+            status,
+            searchWord,
+            favourites,
+            recentlyUsed,
+        },
         actions: { ADD_FAVOURITE, REMOVE_FAVOURITE },
         Icon,
     } = useCommandBarState();
@@ -39,29 +48,65 @@ const CommandList: React.FC<CommandListingProps> = ({
         [favourites]
     );
 
+    const availableCommandIdsWithRecentlyUsed = availableCommandIds.filter(
+        (commandId) => !recentlyUsed.includes(commandId)
+    );
+
     return (
         <nav className={classnames(styles.results, status !== STATUS.IDLE && styles.disabled)}>
-            {heading && <h6>{heading}</h6>}
-            {availableCommandIds.length > 0 ? (
-                <ul>
-                    {availableCommandIds.map((commandId, index) => (
-                        <CommandListItem
-                            key={commandId}
-                            Icon={Icon}
-                            highlightRef={highlightedItem === index ? selectedElementRef : null}
-                            command={commands[commandId]}
-                            onItemSelect={executeCommand}
-                            highlighted={highlightedItem === index}
-                            runningCommandId={activeCommandId}
-                            disabled={!searchWord && commands[commandId].canHandleQueries}
-                            isFavourite={favourites.includes(commandId)}
-                            onToggleFavourite={handleToggleFavourite}
-                        />
-                    ))}
-                </ul>
-            ) : (
-                <small className={styles.noResults}>{noCommandsMessage}</small>
+            {availableCommandIds.some((commandId) => recentlyUsed.includes(commandId)) && (
+                <>
+                    <h6>Suggestions</h6>
+                    <ul>
+                        {availableCommandIds
+                            .filter((commandId) => recentlyUsed.includes(commandId))
+                            .map((commandId) => (
+                                <CommandListItem
+                                    key={commandId}
+                                    Icon={Icon}
+                                    highlightRef={
+                                        highlightedItem === availableCommandIds.indexOf(commandId)
+                                            ? selectedElementRef
+                                            : null
+                                    }
+                                    command={commands[commandId]}
+                                    onItemSelect={executeCommand}
+                                    highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
+                                    runningCommandId={activeCommandId}
+                                    disabled={!searchWord && commands[commandId].canHandleQueries}
+                                    isFavourite={favourites.includes(commandId)}
+                                    onToggleFavourite={handleToggleFavourite}
+                                />
+                            ))}
+                    </ul>
+                </>
             )}
+            {availableCommandIdsWithRecentlyUsed.length > 0 && (
+                <>
+                    {heading && <h6>{heading}</h6>}
+                    <ul>
+                        {availableCommandIdsWithRecentlyUsed.map((commandId) => (
+                            <CommandListItem
+                                key={commandId}
+                                Icon={Icon}
+                                highlightRef={
+                                    highlightedItem === availableCommandIds.indexOf(commandId)
+                                        ? selectedElementRef
+                                        : null
+                                }
+                                command={commands[commandId]}
+                                onItemSelect={executeCommand}
+                                highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
+                                runningCommandId={activeCommandId}
+                                disabled={!searchWord && commands[commandId].canHandleQueries}
+                                isFavourite={favourites.includes(commandId)}
+                                onToggleFavourite={handleToggleFavourite}
+                            />
+                        ))}
+                    </ul>
+                </>
+            )}
+            {availableCommandIds.length === 0 && <small className={styles.noResults}>{noCommandsMessage}</small>}
         </nav>
     );
 };
