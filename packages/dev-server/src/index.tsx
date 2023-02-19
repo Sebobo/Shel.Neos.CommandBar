@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-import { CommandBar, logger } from '@neos-commandbar/commandbar';
+import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 
 (() => {
     const initialContent = {
@@ -201,6 +201,7 @@ import { CommandBar, logger } from '@neos-commandbar/commandbar';
             <div className="app-grid">
                 <header className="header">
                     <span>Neos commandbar test</span>
+                    <ToggleButton handleToggle={() => setCommandBarOpen((prev) => !prev)} />
                     <button disabled={published}>Publish all</button>
                 </header>
                 {sideBarLeftOpen && (
