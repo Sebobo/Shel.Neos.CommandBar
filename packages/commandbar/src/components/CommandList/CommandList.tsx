@@ -24,8 +24,8 @@ const CommandList: React.FC<CommandListingProps> = ({
             activeCommandId,
             status,
             searchWord,
-            favourites,
-            recentlyUsed,
+            favouriteCommands,
+            recentCommands,
         },
         actions: { ADD_FAVOURITE, REMOVE_FAVOURITE },
         Icon,
@@ -39,27 +39,27 @@ const CommandList: React.FC<CommandListingProps> = ({
 
     const handleToggleFavourite = useCallback(
         (commandId: CommandId) => {
-            if (favourites.includes(commandId)) {
+            if (favouriteCommands.includes(commandId)) {
                 REMOVE_FAVOURITE(commandId);
             } else {
                 ADD_FAVOURITE(commandId);
             }
         },
-        [favourites]
+        [favouriteCommands]
     );
 
     const availableCommandIdsWithRecentlyUsed = availableCommandIds.filter(
-        (commandId) => !recentlyUsed.includes(commandId)
+        (commandId) => !recentCommands.includes(commandId)
     );
 
     return (
         <nav className={classnames(styles.results, status !== STATUS.IDLE && styles.disabled)}>
-            {availableCommandIds.some((commandId) => recentlyUsed.includes(commandId)) && (
+            {availableCommandIds.some((commandId) => recentCommands.includes(commandId)) && (
                 <>
                     <h6>Suggestions</h6>
                     <ul>
                         {availableCommandIds
-                            .filter((commandId) => recentlyUsed.includes(commandId))
+                            .filter((commandId) => recentCommands.includes(commandId))
                             .map((commandId) => (
                                 <CommandListItem
                                     key={commandId}
@@ -74,7 +74,7 @@ const CommandList: React.FC<CommandListingProps> = ({
                                     highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
                                     runningCommandId={activeCommandId}
                                     disabled={!searchWord && commands[commandId].canHandleQueries}
-                                    isFavourite={favourites.includes(commandId)}
+                                    isFavourite={favouriteCommands.includes(commandId)}
                                     onToggleFavourite={handleToggleFavourite}
                                 />
                             ))}
@@ -99,7 +99,7 @@ const CommandList: React.FC<CommandListingProps> = ({
                                 highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
                                 runningCommandId={activeCommandId}
                                 disabled={!searchWord && commands[commandId].canHandleQueries}
-                                isFavourite={favourites.includes(commandId)}
+                                isFavourite={favouriteCommands.includes(commandId)}
                                 onToggleFavourite={handleToggleFavourite}
                             />
                         ))}

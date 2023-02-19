@@ -3,9 +3,10 @@ import FuzzySearch from 'fuzzy-search';
 function sortCommands(
     a: ProcessedCommandItem,
     b: ProcessedCommandItem,
-    favourites: CommandId[],
+    favouriteCommands: CommandId[],
     recentCommands: CommandId[]
 ): number {
+    // Sort by recent first
     const aIsRecent = recentCommands.includes(a.id);
     const bIsRecent = recentCommands.includes(b.id);
 
@@ -21,8 +22,9 @@ function sortCommands(
         return recentCommands.indexOf(a.id) - recentCommands.indexOf(b.id);
     }
 
-    const aIsFavourite = favourites.includes(a.id);
-    const bIsFavourite = favourites.includes(b.id);
+    // Sort by favourites second
+    const aIsFavourite = favouriteCommands.includes(a.id);
+    const bIsFavourite = favouriteCommands.includes(b.id);
 
     if (aIsFavourite && !bIsFavourite) {
         return -1;
@@ -32,6 +34,7 @@ function sortCommands(
         return 1;
     }
 
+    // Sort by name third
     return a.name.localeCompare(b.name);
 }
 
@@ -59,7 +62,7 @@ export default function filterCommands(
     const searcher = new FuzzySearch(availableCommands, ['name', 'description'], {
         sort: true,
     });
-    const matchingCommands = searcher.search(searchWord);
+    const matchingCommands = searcher.search(searchWord.toLowerCase());
 
     // Add all commands that can handle queries to the result, the Set removes duplicates
     return [

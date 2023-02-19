@@ -111,9 +111,9 @@ type EditPreviewMode = {
 
 type EditPreviewModes = Record<string, EditPreviewMode>;
 
-interface UserPreferencesService {
-    getFavourites: () => CommandId[];
-    setFavourites: (commandIds: CommandId[]) => Promise<void>;
-    getRecentlyUsed: () => CommandId[];
-    setRecentlyUsed: (commandIds: CommandId[]) => Promise<void>;
+interface UserPreferences {
+    favouriteCommands: CommandId[];
+    recentCommands: CommandId[];
+    setFavouriteCommands: (commandIds: CommandId[]) => Promise<void>;
+    setRecentCommands: (commandIds: CommandId[]) => Promise<void>;
 }

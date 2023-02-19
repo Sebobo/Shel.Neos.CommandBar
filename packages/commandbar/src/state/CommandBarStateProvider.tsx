@@ -9,7 +9,7 @@ interface CommandBarContextProps {
     commands: HierarchicalCommandList;
     children: JSX.Element;
     IconComponent: React.FC<IconProps>;
-    userPreferencesService: UserPreferencesService;
+    userPreferences: UserPreferences;
 }
 
 interface CommandBarContextValues {
@@ -25,7 +25,7 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
     commands,
     children,
     IconComponent,
-    userPreferencesService,
+    userPreferences,
 }) => {
     const [state, dispatch] = useReducer(commandBarReducer, {
         status: STATUS.COLLAPSED,
@@ -39,12 +39,12 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
         activeCommandMessage: null,
         searchWord: '',
         selectedCommandGroup: null,
-        favourites: userPreferencesService.getFavourites(),
-        recentlyUsed: userPreferencesService.getRecentlyUsed(),
+        favouriteCommands: userPreferences.favouriteCommands,
+        recentCommands: userPreferences.recentCommands,
     });
 
     // Provide all actions as shorthand functions
-    const actions: Record<TRANSITION, (...any) => void> = useMemo(() => {
+    const actions: Record<TRANSITION, (...any) => void | Promise<void>> = useMemo(() => {
         return {
             [TRANSITION.RESET_SEARCH]: () => dispatch({ type: TRANSITION.RESET_SEARCH }),
             [TRANSITION.HIGHLIGHT_NEXT_ITEM]: () => dispatch({ type: TRANSITION.HIGHLIGHT_NEXT_ITEM }),
@@ -54,12 +54,17 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
             [TRANSITION.GO_TO_PARENT_GROUP]: () => dispatch({ type: TRANSITION.GO_TO_PARENT_GROUP }),
             [TRANSITION.UPDATE_SEARCH]: (searchWord: string) =>
                 dispatch({ type: TRANSITION.UPDATE_SEARCH, searchWord }),
-            [TRANSITION.EXECUTE_COMMAND]: (commandId: CommandId, argument: string) =>
+            [TRANSITION.EXECUTE_COMMAND]: async (commandId: CommandId, argument: string) => {
                 dispatch({
                     type: TRANSITION.EXECUTE_COMMAND,
                     commandId,
                     argument,
-                }),
+                });
+                // Update recent commands in the user preferences when a command is executed
+                return userPreferences
+                    .setRecentCommands(state.recentCommands)
+                    .catch((e) => logger.error('Could not update recent commands', e));
+            },
             [TRANSITION.FINISH_COMMAND]: () => dispatch({ type: TRANSITION.FINISH_COMMAND }),
             [TRANSITION.UPDATE_RESULT]: (result: CommandResult) => dispatch({ type: TRANSITION.UPDATE_RESULT, result }),
             [TRANSITION.EXPAND]: () => dispatch({ type: TRANSITION.EXPAND }),
@@ -70,17 +75,13 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
         };
     }, []);
 
+    // Update the user preferences on the server when the favourite commands change
     useEffect(() => {
-        userPreferencesService
-            .setFavourites(state.favourites)
-            .catch((e) => logger.error('Could not load favourites', e));
-    }, [state.favourites]);
-
-    useEffect(() => {
-        userPreferencesService
-            .setRecentlyUsed(state.recentlyUsed)
-            .catch((e) => logger.error('Could not load recently used commands', e));
-    }, [state.recentlyUsed]);
+        if (state.status === STATUS.COLLAPSED) return;
+        userPreferences
+            .setFavouriteCommands(state.favouriteCommands)
+            .catch((e) => logger.error('Could not update favourite commands', e));
+    }, [JSON.stringify(state.favouriteCommands)]);
 
     const Icon: React.FC<IconProps> = useCallback(({ icon, spin = false }) => {
         return (

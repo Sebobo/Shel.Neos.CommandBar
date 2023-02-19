@@ -48,7 +48,7 @@
     cursor: pointer;
     transition: color 0.1s ease-in-out;
     color: var(--textSubtleLight);
-    align-self: stretch;
+    align-self: baseline;
     padding: 0 0.3rem;
 }
 .favouriteButton:hover {

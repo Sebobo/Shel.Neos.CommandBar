@@ -12,91 +12,82 @@ namespace Shel\Neos\CommandBar\Controller;
  * source code.
  */
 
+use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
+use Neos\Neos\Domain\Model\UserPreferences;
 use Neos\Neos\Service\UserService;
 
 class PreferencesController extends ActionController
 {
     protected const FAVOURITES_PREFERENCE = 'commandBar.favourites';
-    protected const RECENT_PREFERENCE = 'commandBar.recent';
-    protected const MAX_RECENT_ITEMS = 5;
+    protected const RECENT_COMMANDS_PREFERENCE = 'commandBar.recentCommands';
+    protected const RECENT_DOCUMENTS_PREFERENCE = 'commandBar.recentDocuments';
     protected $defaultViewObjectName = JsonView::class;
+    protected $supportedMediaTypes = ['application/json'];
 
-    /**
-     * @var UserService
-     */
-    #[Flow\Inject]
-    protected $userService;
-
-    /**
-     * This action adds the given command to the favourites list stored in the users preferences.
-     */
-    public function addFavouriteAction(string $commandId): void
+    public function __construct(protected UserService $userService, protected EntityManagerInterface $entityManager)
     {
-        $user = $this->userService->getBackendUser();
+    }
 
-        if (!$user) {
-            $this->view->assign('success', false);
-            return;
-        }
-
-        $preferences = $user->getPreferences();
-        $favourites = $preferences->get(self::FAVOURITES_PREFERENCE) ?? [];
-        $favourites[] = $commandId;
-
-        $this->view->assignMultiple([
-            'success' => true,
-            'favourites' => $favourites,
+    public function getPreferencesAction(): void
+    {
+        $preferences = $this->getUserPreferences();
+        $this->view->assign('value', [
+            'favouriteCommands' => $preferences->get(self::FAVOURITES_PREFERENCE) ?? [],
+            'recentCommands' => $preferences->get(self::RECENT_COMMANDS_PREFERENCE) ?? [],
+            'recentDocuments' => $preferences->get(self::RECENT_DOCUMENTS_PREFERENCE)?? [],
         ]);
     }
 
     /**
-     * This action removes the given command from the favourites list stored in the users preferences.
+     * Updates the list of favourite commands in the user preferences
+     *
+     * @Flow\SkipCsrfProtection
      */
-    public function removeFavouriteAction(string $commandId): void
+    public function setFavouritesAction(array $commandIds): void
     {
-        $user = $this->userService->getBackendUser();
-
-        if (!$user) {
-            $this->view->assign('success', false);
-            return;
-        }
-
-        $preferences = $user->getPreferences();
-        $favourites = $preferences->get(self::FAVOURITES_PREFERENCE) ?? [];
-        $favourites = array_diff($favourites, [$commandId]);
-
-        $this->view->assignMultiple([
-            'success' => true,
-            'favourites' => $favourites,
-        ]);
+        $preferences = $this->getUserPreferences();
+        $preferences->set(self::FAVOURITES_PREFERENCE, $commandIds);
+        $this->entityManager->persist($preferences);
+        $this->view->assign('value', $commandIds);
     }
 
     /**
-     * This action prepends the given command to the recent commands list stored
-     * in the users preferences. If the command is already in the list, it is moved to the top.
-     * The list is limited to a maximum of MAX_RECENT_ITEMS items.
+     * Updates the list of recently used commands in the user preferences
+     *
+     * @Flow\SkipCsrfProtection
      */
-    public function addRecentAction(string $commandId): void
+    public function setRecentCommandsAction(array $commandIds): void
+    {
+        $preferences = $this->getUserPreferences();
+        $preferences->set(self::RECENT_COMMANDS_PREFERENCE, $commandIds);
+        $this->entityManager->persist($preferences);
+        $this->view->assign('value', $commandIds);
+    }
+
+    /**
+     * Updates the list of recently used documents in the user preferences
+     *
+     * @Flow\SkipCsrfProtection
+     * @param string[] $nodeContextPaths a list of context paths to uniquely define nodes
+     */
+    public function setRecentDocumentsAction(array $nodeContextPaths): void
+    {
+        $preferences = $this->getUserPreferences();
+        $preferences->set(self::RECENT_DOCUMENTS_PREFERENCE, $nodeContextPaths);
+        $this->entityManager->persist($preferences);
+        $this->view->assign('value', $nodeContextPaths);
+    }
+
+    protected function getUserPreferences(): UserPreferences
     {
         $user = $this->userService->getBackendUser();
-
         if (!$user) {
-            $this->view->assign('success', false);
-            return;
+            throw new \RuntimeException('No user found', 1676812156);
         }
-
-        $preferences = $user->getPreferences();
-        $recent = $preferences->get(self::RECENT_PREFERENCE) ?? [];
-        array_unshift($recent, $commandId);
-        $recent = array_slice(array_unique($recent), 0, self::MAX_RECENT_ITEMS);
-
-        $this->view->assignMultiple([
-            'success' => true,
-            'recent' => $recent,
-        ]);
+        return $user->getPreferences();
     }
 
 }

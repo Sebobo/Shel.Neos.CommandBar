@@ -4,3 +4,4 @@
     '@package':    'Shel.Neos.CommandBar'
     '@controller': 'Preferences'
     '@format':     'json'
+  allowedMethods: ['GET', 'POST']

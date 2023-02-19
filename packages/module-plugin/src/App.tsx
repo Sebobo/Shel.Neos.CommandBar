@@ -5,68 +5,138 @@ import IconComponent from './IconComponent';
 
 import * as styles from './ModulePlugin.module.css';
 
-const ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
+/**
+ * This is a custom element that is used to render the command bar inside a shadow dom to prevent Neos and module
+ * styles from leaking into the component
+ */
+export default class App extends Component<
+    {
+        styleuri: string;
+    },
+    {
+        initialized: boolean;
+        open: boolean;
+        dragging: boolean;
+        commands: HierarchicalCommandList;
+        preferences: { favouriteCommands: CommandId[]; recentCommands: CommandId[] };
+    }
+> {
+    static tagName = 'command-bar-container';
+    // static observedAttributes = ['styleuri'];
+    static options = { shadow: true };
 
-let favourites: CommandId[] = [];
-let recentCommands: CommandId[] = [];
+    static ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
+    static ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
+    static ENDPOINT_SET_FAVOURITES = '/neos/shel-neos-commandbar/preferences/setfavourites';
+    static ENDPOINT_SET_RECENT_COMMANDS = '/neos/shel-neos-commandbar/preferences/setrecentcommands';
 
-const userPreferencesService: UserPreferencesService = {
-    getFavourites: () => [...favourites],
-    setFavourites: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
-    getRecentlyUsed: () => [...recentCommands],
-    setRecentlyUsed: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
-};
+    constructor() {
+        super();
+        this.state = {
+            initialized: false,
+            open: false,
+            dragging: false,
+            commands: {},
+            preferences: { favouriteCommands: [], recentCommands: [] },
+        };
+    }
 
-const App: React.FC = () => {
-    const [initialized, setInitialized] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [dragging, setDragging] = useState(false);
-    const [commands, setCommands] = useState<HierarchicalCommandList>({});
+    /**
+     * Load the commands and preferences from the server and set the state to initialized
+     */
+    async componentDidMount() {
+        try {
+            await fetch(App.ENDPOINT_GET_PREFERENCES, { credentials: 'include', method: 'GET' })
+                .then((res) => res.json())
+                .then((preferences) => {
+                    this.setState({ preferences: preferences });
+                });
 
-    const handleToggle = useCallback(() => {
-        setOpen((open) => !open);
-    }, []);
-
-    // Load commands
-    useEffect(() => {
-        fetch(ENDPOINT_COMMANDS, {
-            credentials: 'include',
-        })
-            .then((res) => res.json())
-            .then((commands: ModuleCommands) => {
-                setCommands({ ...commands });
-                setInitialized(true);
-                logger.debug(
-                    '[CommandBar] Initialized command bar for backend modules with the following commands:',
-                    Object.keys(commands)
-                );
+            await fetch(App.ENDPOINT_COMMANDS, {
+                credentials: 'include',
             })
-            .catch((e) => {
-                logger.error('[CommandBar]', e);
+                .then((res) => res.json())
+                .then((commands) => {
+                    this.setState({ commands: commands });
+                });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'k' && e.metaKey) {
+                    e.preventDefault();
+                    this.handleToggle();
+                }
             });
-    }, []);
 
-    return (
-        <div className={styles.pluginWrap}>
-            <ToggleButton handleToggle={handleToggle} disabled={!initialized} />
-            {initialized && (
-                <div
-                    className={[styles.fullScreenLayer, open && styles.open].join(' ')}
-                    onDragOver={(e) => e.preventDefault()}
-                    style={dragging ? { pointerEvents: 'all' } : null}
-                >
-                    <CommandBar
-                        commands={commands}
-                        open={open}
-                        toggleOpen={handleToggle}
-                        onDrag={setDragging}
-                        IconComponent={IconComponent}
-                        userPreferencesService={userPreferencesService}
-                    />
+            this.setState({ initialized: true });
+        } catch (e) {
+            logger.error(e);
+        }
+    }
+
+    handleToggle = () => {
+        this.setState(({ open }) => ({
+            open: !open,
+        }));
+    };
+
+    handleDrag = (dragging: boolean) => {
+        this.setState({ dragging: dragging });
+    };
+
+    async setFavouriteCommands(commandIds: CommandId[]) {
+        return await fetch(App.ENDPOINT_SET_FAVOURITES, {
+            method: 'POST',
+            body: JSON.stringify({ commandIds: commandIds }),
+            credentials: 'include',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => res.json());
+    }
+
+    async setRecentCommands(commandIds: CommandId[]) {
+        return await fetch(App.ENDPOINT_SET_RECENT_COMMANDS, {
+            method: 'POST',
+            body: JSON.stringify({ commandIds: commandIds }),
+            credentials: 'include',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => res.json());
+    }
+
+    render() {
+        const { initialized, open, dragging, commands, preferences } = this.state;
+
+        return (
+            <>
+                <style>{'@import "' + this.props.styleuri + '";'}</style>
+                <div className={styles.pluginWrap}>
+                    <ToggleButton handleToggle={this.handleToggle} disabled={!initialized} />
+                    {initialized && (
+                        <div
+                            className={[styles.fullScreenLayer, open && styles.open].join(' ')}
+                            onDragOver={(e) => e.preventDefault()}
+                            style={dragging ? { pointerEvents: 'all' } : null}
+                        >
+                            <CommandBar
+                                commands={commands}
+                                open={open}
+                                toggleOpen={this.handleToggle}
+                                onDrag={this.handleDrag}
+                                IconComponent={IconComponent}
+                                userPreferences={{
+                                    ...preferences,
+                                    setFavouriteCommands: this.setFavouriteCommands,
+                                    setRecentCommands: this.setRecentCommands,
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
-            )}
-        </div>
-    );
-};
-
-export default App;
+            </>
+        );
+    }
+}

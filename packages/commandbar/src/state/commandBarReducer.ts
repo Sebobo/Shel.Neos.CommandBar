@@ -27,8 +27,8 @@ export type CommandBarState = MachineState & {
     activeCommandMessage: string;
     result: CommandResult | null;
     highlightedOption: number;
-    favourites: CommandId[];
-    recentlyUsed: CommandId[];
+    favouriteCommands: CommandId[];
+    recentCommands: CommandId[];
 };
 
 const MAX_RECENTLY_USED = 5;
@@ -46,8 +46,8 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
                 nextState.selectedCommandGroup,
                 nextState.searchWord,
                 nextState.commands,
-                nextState.favourites,
-                nextState.recentlyUsed
+                nextState.favouriteCommands,
+                nextState.recentCommands
             );
             break;
         case ACTION.HIGHLIGHT_NEXT_COMMAND:
@@ -80,7 +80,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             break;
         case ACTION.SET_SEARCH_WORD:
             assert(event.type === TRANSITION.UPDATE_SEARCH);
-            nextState.searchWord = event.searchWord.toLowerCase();
+            nextState.searchWord = event.searchWord;
             break;
         case ACTION.EXPAND:
             nextState.expanded = true;
@@ -127,13 +127,13 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             break;
         case ACTION.ADD_FAVOURITE:
             assert(event.type === TRANSITION.ADD_FAVOURITE);
-            if (!nextState.favourites.includes(event.commandId)) {
-                nextState.favourites.push(event.commandId);
+            if (!nextState.favouriteCommands.includes(event.commandId)) {
+                nextState.favouriteCommands.push(event.commandId);
             }
             break;
         case ACTION.REMOVE_FAVOURITE:
             assert(event.type === TRANSITION.REMOVE_FAVOURITE);
-            nextState.favourites = nextState.favourites.filter((id) => id !== event.commandId);
+            nextState.favouriteCommands = nextState.favouriteCommands.filter((id) => id !== event.commandId);
             break;
         case ACTION.ADD_RECENTLY_USED:
             assert(event.type === TRANSITION.EXECUTE_COMMAND);
@@ -141,12 +141,12 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             if (!nextState.commands[event.commandId].action) {
                 break;
             }
-            if (nextState.recentlyUsed.includes(event.commandId)) {
-                nextState.recentlyUsed = nextState.recentlyUsed.filter((id) => id !== event.commandId);
+            if (nextState.recentCommands.includes(event.commandId)) {
+                nextState.recentCommands = nextState.recentCommands.filter((id) => id !== event.commandId);
             }
-            nextState.recentlyUsed.unshift(event.commandId);
-            if (nextState.recentlyUsed.length > MAX_RECENTLY_USED) {
-                nextState.recentlyUsed.pop();
+            nextState.recentCommands.unshift(event.commandId);
+            if (nextState.recentCommands.length > MAX_RECENTLY_USED) {
+                nextState.recentCommands.pop();
             }
             break;
         default:

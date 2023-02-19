@@ -41,7 +41,7 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
         { command, onItemSelect, highlighted, disabled, Icon, isFavourite, onToggleFavourite },
         highlightRef: LegacyRef<HTMLLIElement>
     ) => {
-        const { id, name, description, icon } = command;
+        const { id, name, description, icon, action } = command;
 
         const commandType = getCommandType(command);
 
@@ -64,7 +64,7 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                         </span>
                     )}
                 </span>
-                {onToggleFavourite && (
+                {onToggleFavourite && action && (
                     <button
                         type="button"
                         className={classnames(styles.favouriteButton, isFavourite && styles.isFavourite)}

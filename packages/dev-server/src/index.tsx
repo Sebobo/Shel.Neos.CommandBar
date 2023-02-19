@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'preact';
+import React, { useCallback, useMemo, useState } from 'preact/compat';
 
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 
@@ -41,11 +41,11 @@ import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
     let favourites: CommandId[] = [];
     let recentCommands: CommandId[] = [];
 
-    const userPreferencesService: UserPreferencesService = {
-        getFavourites: () => [...favourites],
-        setFavourites: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
-        getRecentlyUsed: () => [...recentCommands],
-        setRecentlyUsed: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
+    const userPreferencesService: UserPreferences = {
+        favouriteCommands: [...favourites],
+        setFavouriteCommands: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
+        recentCommands: [...recentCommands],
+        setRecentCommands: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
     };
 
     const App = () => {
@@ -248,11 +248,11 @@ import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
                     open={commandBarOpen}
                     toggleOpen={() => setCommandBarOpen((prev) => !prev)}
                     IconComponent={IconComponent}
-                    userPreferencesService={userPreferencesService}
+                    userPreferences={userPreferencesService}
                 />
             </div>
         );
     };
 
-    ReactDOM.render(<App />, document.getElementById('app'));
+    render(<App />, document.getElementById('app'));
 })();
