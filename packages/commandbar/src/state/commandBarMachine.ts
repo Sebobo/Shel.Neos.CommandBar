@@ -73,11 +73,11 @@ export const machine: MachineDefinition = {
                 },
                 HIGHLIGHT_NEXT_ITEM: {
                     target: STATUS.IDLE,
-                    actions: [ACTION.EXPAND, ACTION.HIGHLIGHT_NEXT_COMMAND],
+                    actions: [ACTION.REFRESH_COMMANDS, ACTION.EXPAND, ACTION.HIGHLIGHT_NEXT_COMMAND],
                 },
                 EXPAND: {
                     target: STATUS.IDLE,
-                    actions: [ACTION.EXPAND],
+                    actions: [ACTION.REFRESH_COMMANDS, ACTION.EXPAND],
                 },
             },
         },
@@ -113,11 +113,11 @@ export const machine: MachineDefinition = {
                 },
                 ADD_FAVOURITE: {
                     target: STATUS.IDLE,
-                    actions: [ACTION.ADD_FAVOURITE],
+                    actions: [ACTION.ADD_FAVOURITE, ACTION.REFRESH_COMMANDS],
                 },
                 REMOVE_FAVOURITE: {
                     target: STATUS.IDLE,
-                    actions: [ACTION.REMOVE_FAVOURITE],
+                    actions: [ACTION.REMOVE_FAVOURITE, ACTION.REFRESH_COMMANDS],
                 },
             },
         },

@@ -1,9 +1,25 @@
 import FuzzySearch from 'fuzzy-search';
 
+function sortCommands(a: ProcessedCommandItem, b: ProcessedCommandItem, favourites: CommandId[]): number {
+    const aIsFavourite = favourites.includes(a.id);
+    const bIsFavourite = favourites.includes(b.id);
+
+    if (aIsFavourite && !bIsFavourite) {
+        return -1;
+    }
+
+    if (!aIsFavourite && bIsFavourite) {
+        return 1;
+    }
+
+    return a.name.localeCompare(b.name);
+}
+
 export default function filterCommands(
     selectedCommandGroup: CommandId,
     searchWord: string,
-    commands: FlatCommandList
+    commands: FlatCommandList,
+    favourites: CommandId[]
 ): CommandId[] {
     // Filter available commands for the current context
     let availableCommands = Object.values(commands);
@@ -11,12 +27,13 @@ export default function filterCommands(
         ? availableCommands
         : availableCommands.filter((command) => command.parentId === selectedCommandGroup);
 
+    // If there is no search word, return all commands in the current context with favourites first
     if (!searchWord) {
-        return availableCommands.map((command) => command.id);
+        return availableCommands.sort((a, b) => sortCommands(a, b, favourites)).map((command) => command.id);
     }
 
     // TODO: Try @leeoniya/ufuzzy for fuzzy search which makes it easier to use custom sorting functions
-    const searcher = new FuzzySearch(availableCommands, ['name'], {
+    const searcher = new FuzzySearch(availableCommands, ['name', 'description'], {
         sort: true,
     });
     const matchingCommands = searcher.search(searchWord);

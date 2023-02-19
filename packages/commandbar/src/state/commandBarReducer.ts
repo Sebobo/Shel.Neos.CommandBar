@@ -45,7 +45,8 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             nextState.availableCommandIds = filterCommands(
                 nextState.selectedCommandGroup,
                 nextState.searchWord,
-                nextState.commands
+                nextState.commands,
+                nextState.favourites
             );
             break;
         case ACTION.HIGHLIGHT_NEXT_COMMAND:
@@ -130,7 +131,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             }
             break;
         case ACTION.REMOVE_FAVOURITE:
-            assert(event.type === TRANSITION.ADD_FAVOURITE);
+            assert(event.type === TRANSITION.REMOVE_FAVOURITE);
             nextState.favourites = nextState.favourites.filter((id) => id !== event.commandId);
             break;
         case ACTION.ADD_RECENTLY_USED:
