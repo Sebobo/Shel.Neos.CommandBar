@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "dependencies": {
     "@neos-commandbar/commandbar": "*",
-    "@neos-project/react-ui-components": "^8.2.6",
-    "react-redux": "^7.2.9",
-    "redux-actions": "^0.12.0"
+    "@neos-project/react-ui-components": "^8.2.6"
   },
   "devDependencies": {
     "@neos-project/build-essentials": "^8.2.6",
     "@neos-project/neos-ui-extensibility": "^8.2.6",
-    "@types/react-redux": "^7.1.25"
+    "@types/react": "^16.14.35",
+    "@types/react-redux": "^7.1.25",
+    "@types/redux-actions": "^2.6.2"
   },
   "source": "src/index.html",
   "scripts": {

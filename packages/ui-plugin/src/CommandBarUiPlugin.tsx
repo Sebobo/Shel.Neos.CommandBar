@@ -59,11 +59,11 @@ const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => <Icon ico
 let favourites: CommandId[] = [];
 let recentCommands: CommandId[] = [];
 
-const userPreferencesService: UserPreferencesService = {
-    getFavourites: () => [...favourites],
-    setFavourites: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
-    getRecentlyUsed: () => [...recentCommands],
-    setRecentlyUsed: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
+const userPreferencesService: UserPreferences = {
+    favouriteCommands: [...favourites],
+    recentCommands: [...recentCommands],
+    setFavouriteCommands: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
+    setRecentCommands: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
 };
 
 class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
@@ -396,7 +396,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                             toggleOpen={toggleCommandBar}
                             onDrag={this.setDragging}
                             IconComponent={IconComponent}
-                            userPreferencesService={userPreferencesService}
+                            userPreferences={userPreferencesService}
                         />
                     </div>
                 )}

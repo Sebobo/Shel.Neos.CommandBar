@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { Component } from 'preact';
+import React from 'preact/compat';
 
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 import IconComponent from './IconComponent';
