@@ -61,6 +61,7 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
                     argument,
                 });
                 // Update recent commands in the user preferences when a command is executed
+                // TODO: Check if sendBeacon is a better option here
                 return userPreferences
                     .setRecentCommands(state.recentCommands)
                     .catch((e) => logger.error('Could not update recent commands', e));

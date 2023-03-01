@@ -47,24 +47,19 @@ type CommandBarUiPluginProps = {
 type CommandBarUiPluginState = {
     loaded: boolean;
     dragging: boolean;
+    favouriteCommands: CommandId[];
+    recentCommands: CommandId[];
     commands: HierarchicalCommandList;
 };
 
 const ENDPOINT_COMMANDS = 'service/data-source/shel-neos-commandbar-commands';
 const ENDPOINT_SEARCH_NODES = 'service/data-source/shel-neos-commandbar-search-nodes';
 const ENDPOINT_SEARCH_NEOS_DOCS = 'service/data-source/shel-neos-commandbar-search-neos-docs';
+const ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
+const ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
+const ENDPOINT_SET_RECENT_COMMANDS = '/neos/shel-neos-commandbar/preferences/setrecentcommands';
 
 const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => <Icon icon={icon} spin={spin} />;
-
-let favourites: CommandId[] = [];
-let recentCommands: CommandId[] = [];
-
-const userPreferencesService: UserPreferences = {
-    favouriteCommands: [...favourites],
-    recentCommands: [...recentCommands],
-    setFavouriteCommands: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
-    setRecentCommands: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
-};
 
 class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
     static propTypes = {
@@ -96,28 +91,9 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.state = {
             loaded: false,
             dragging: false,
+            favouriteCommands: [],
+            recentCommands: [],
             commands: {
-                // testGenerator: {
-                //     name: 'Test generator',
-                //     icon: 'vial',
-                //     description: 'Wait and return iterate on command results',
-                //     action: async function* () {
-                //         yield {
-                //             success: true,
-                //             message: 'Doing some testing step 1',
-                //         };
-                //         await new Promise((resolve) => setTimeout(resolve, 2000));
-                //         yield {
-                //             success: true,
-                //             message: 'Doing some more testing step 2',
-                //         };
-                //         await new Promise((resolve) => setTimeout(resolve, 2000));
-                //         return {
-                //             success: true,
-                //             message: 'Finished testing',
-                //         };
-                //     },
-                // },
                 addNode: {
                     name: 'Add node',
                     icon: 'plus',
@@ -216,7 +192,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     const pluginCommands = plugins[pluginName]();
                     this.setState((prev) => ({ commands: { ...prev.commands, ...pluginCommands } }));
                 } catch (e) {
-                    logger.error(`[CommandBar] Could not load commands from plugin ${pluginName}`, e);
+                    logger.error(`Could not load commands from plugin ${pluginName}`, e);
                 }
             });
         }
@@ -227,7 +203,18 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
             })
             .catch((error) => {
-                logger.error('[CommandBar] Failed to load commands', error);
+                logger.error('Failed to load commands', error);
+            });
+
+        fetchData(ENDPOINT_GET_PREFERENCES)
+            .then(({ favouriteCommands, recentCommands }) => {
+                this.setState({
+                    favouriteCommands,
+                    recentCommands,
+                });
+            })
+            .catch((error) => {
+                logger.error('Failed to load user preferences', error);
             });
     }
 
@@ -377,9 +364,17 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.setState({ ...this.state, dragging });
     };
 
+    setFavouriteCommands = async (commandIds: CommandId[]) => {
+        return fetchData(ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds }, 'POST');
+    };
+
+    setRecentCommands = async (commandIds: CommandId[]) => {
+        return fetchData(ENDPOINT_SET_RECENT_COMMANDS, { commandIds }, 'POST');
+    };
+
     render() {
         const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiPluginProps;
-        const { commands, loaded, dragging } = this.state;
+        const { commands, loaded, dragging, favouriteCommands, recentCommands } = this.state;
 
         return (
             <div className={styles.commandBarToolbarComponent}>
@@ -396,7 +391,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                             toggleOpen={toggleCommandBar}
                             onDrag={this.setDragging}
                             IconComponent={IconComponent}
-                            userPreferences={userPreferencesService}
+                            userPreferences={{
+                                favouriteCommands,
+                                recentCommands,
+                                setRecentCommands: this.setRecentCommands,
+                                setFavouriteCommands: this.setFavouriteCommands,
+                            }}
                         />
                     </div>
                 )}

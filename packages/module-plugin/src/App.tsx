@@ -28,7 +28,7 @@ export default class App extends Component<
 
     static ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
     static ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
-    static ENDPOINT_SET_FAVOURITES = '/neos/shel-neos-commandbar/preferences/setfavourites';
+    static ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
     static ENDPOINT_SET_RECENT_COMMANDS = '/neos/shel-neos-commandbar/preferences/setrecentcommands';
 
     constructor() {
@@ -46,13 +46,16 @@ export default class App extends Component<
      * Load the commands and preferences from the server and set the state to initialized
      */
     async componentDidMount() {
+        // TODO: Create custom fetch method that handles errors and credentials
         try {
+            // TODO: Add typings for preferences
             await fetch(App.ENDPOINT_GET_PREFERENCES, { credentials: 'include', method: 'GET' })
                 .then((res) => res.json())
                 .then((preferences) => {
                     this.setState({ preferences: preferences });
                 });
 
+            // TODO: Add typings for commands
             await fetch(App.ENDPOINT_COMMANDS, {
                 credentials: 'include',
             })
@@ -84,10 +87,10 @@ export default class App extends Component<
         this.setState({ dragging: dragging });
     };
 
-    async setFavouriteCommands(commandIds: CommandId[]) {
-        return await fetch(App.ENDPOINT_SET_FAVOURITES, {
+    async setPreference(endpoint: string, data: any): Promise<void> {
+        return await fetch(endpoint, {
             method: 'POST',
-            body: JSON.stringify({ commandIds: commandIds }),
+            body: JSON.stringify(data),
             credentials: 'include',
             headers: {
                 Accept: 'application/json',
@@ -96,16 +99,12 @@ export default class App extends Component<
         }).then((res) => res.json());
     }
 
+    async setFavouriteCommands(commandIds: CommandId[]) {
+        return this.setPreference(App.ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds: commandIds });
+    }
+
     async setRecentCommands(commandIds: CommandId[]) {
-        return await fetch(App.ENDPOINT_SET_RECENT_COMMANDS, {
-            method: 'POST',
-            body: JSON.stringify({ commandIds: commandIds }),
-            credentials: 'include',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then((res) => res.json());
+        return this.setPreference(App.ENDPOINT_SET_RECENT_COMMANDS, { commandIds: commandIds });
     }
 
     render() {

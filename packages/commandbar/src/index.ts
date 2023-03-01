@@ -1,5 +1,5 @@
 import CommandBar from './CommandBar';
-import { ToggleButton } from './components';
-import { logger } from './helpers';
 
-export { CommandBar, ToggleButton, logger };
+export { CommandBar };
+export { ToggleButton } from './components';
+export { logger } from './helpers';

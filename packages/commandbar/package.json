@@ -4,8 +4,9 @@
   "dependencies": {
     "fuzzy-search": "^3.2.1"
   },
-  "peerDependencies": {
-    "preact": "*"
+  "optionalDependencies": {
+    "preact": "*",
+    "react": "*"
   },
   "main": "src/index.ts",
   "scripts": {
