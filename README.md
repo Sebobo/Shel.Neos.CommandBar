@@ -22,6 +22,8 @@ This package provides a command bar plugin for Neos CMS.
 * 📰 Publishing
   * Publish / discard changes on current page
   * Publish / discard all changes
+* ⭐️Mark commands as favourites (stored in Neos user preferences)
+* 🗄️Store recent commands (stored in Neos user preferences)
 * 🪛 Extensibility
   * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
 * 🧩 Backend module integration
@@ -50,6 +52,25 @@ Then you can install the package via composer:
 
 ```console
 composer require shel/neos-commandbar:@dev
+```
+
+## Enabling the command bar in additional backend modules
+
+By default, only the core Neos modules have the command bar enabled as a global inclusion will only be possible with Neos 8.3. 
+If you want to enable the command bar in a backend module, you can do so by adding the following setting:
+
+```yaml
+Neos:
+  Neos:
+    modules:
+      <MODULE_PATH>:
+        submodules:
+          <MODULE_NAME>:
+            additionalResources: 
+              javaScripts:
+                Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.js'
+              styleSheets:
+                Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.css'
 ```
 
 ## Development
