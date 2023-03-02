@@ -187,14 +187,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         return 'neos';
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const { plugins } = this.props;
+
         // Load 3rd party commands
+        let pluginCommands = {};
         if (plugins) {
             Object.keys(plugins).forEach((pluginName) => {
                 try {
-                    const pluginCommands = plugins[pluginName]();
-                    this.setState((prev) => ({ commands: { ...prev.commands, ...pluginCommands } }));
+                    pluginCommands = { ...pluginCommands, ...plugins[pluginName]() };
                 } catch (e) {
                     logger.error(`Could not load commands from plugin ${pluginName}`, e);
                 }
@@ -202,26 +203,20 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }
 
         // Load commands from data source which are not available via the UI API
-        fetchData(ENDPOINT_COMMANDS)
-            .then((commands: ModuleCommands) => {
-                this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
-            })
-            .catch((error) => {
-                logger.error('Failed to load commands', error);
-            });
+        const commands = await fetchData(ENDPOINT_COMMANDS).catch((error) => {
+            logger.error('Failed to load commands', error);
+        });
 
-        fetchData(ENDPOINT_GET_PREFERENCES)
-            .then(({ favouriteCommands, recentCommands, recentDocuments, showBranding }) => {
-                this.setState({
-                    favouriteCommands,
-                    recentCommands,
-                    recentDocuments,
-                    showBranding,
-                });
-            })
-            .catch((error) => {
-                logger.error('Failed to load user preferences', error);
-            });
+        // Load user preferences
+        const preferences = await fetchData(ENDPOINT_GET_PREFERENCES).catch((error) => {
+            logger.error('Failed to load user preferences', error);
+        });
+
+        this.setState((prev) => ({
+            loaded: true,
+            ...preferences,
+            commands: { ...prev.commands, ...commands, ...pluginCommands },
+        }));
     }
 
     buildCommandsFromHotkeys = (): HierarchicalCommandList => {
@@ -366,7 +361,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         };
     };
 
-    setDragging = (dragging) => {
+    setDragging = (dragging: boolean) => {
         this.setState({ ...this.state, dragging });
     };
 

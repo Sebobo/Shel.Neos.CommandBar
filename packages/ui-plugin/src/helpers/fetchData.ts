@@ -15,6 +15,8 @@ const fetchData = async (endpoint: string, params?: Record<string, any>, method 
             body: params && method === 'POST' ? JSON.stringify(params) : undefined,
             headers: {
                 'X-Flow-Csrftoken': csrfToken,
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
             },
         }))
         .then((response: Response) => {

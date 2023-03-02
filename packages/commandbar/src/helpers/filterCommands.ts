@@ -45,11 +45,16 @@ export default function filterCommands(
     favourites: CommandId[],
     recentCommands: CommandId[]
 ): CommandId[] {
-    // Filter available commands for the current context
+    // If there is a search word, return all commands to allow deep search
+    // If no search word is given, return all commands in the currently selected group or all recent commands if no group is selected
     let availableCommands = Object.values(commands);
     availableCommands = searchWord
         ? availableCommands
-        : availableCommands.filter((command) => command.parentId === selectedCommandGroup);
+        : availableCommands.filter(
+              (command) =>
+                  command.parentId === selectedCommandGroup ||
+                  (!selectedCommandGroup && recentCommands.includes(command.id))
+          );
 
     // If there is no search word, return all commands in the current context with favourites first
     if (!searchWord) {

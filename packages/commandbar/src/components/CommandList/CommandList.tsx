@@ -48,16 +48,17 @@ const CommandList: React.FC<CommandListingProps> = ({
         [favouriteCommands]
     );
 
-    const availableCommandIdsWithRecentlyUsed = availableCommandIds.filter(
-        (commandId) => !recentCommands.includes(commandId)
-    );
+    const suggestions = searchWord ? [] : availableCommandIds.filter((commandId) => recentCommands.includes(commandId));
+    const availableCommands = searchWord
+        ? availableCommandIds
+        : availableCommandIds.filter((commandId) => !recentCommands.includes(commandId));
 
     return (
         <nav
             className={classnames(styles.results, status !== STATUS.IDLE && styles.disabled)}
             data-testid="CommandList"
         >
-            {availableCommandIds.some((commandId) => recentCommands.includes(commandId)) && (
+            {suggestions.length > 0 && (
                 <>
                     <h6>Suggestions</h6>
                     <ul>
@@ -84,11 +85,11 @@ const CommandList: React.FC<CommandListingProps> = ({
                     </ul>
                 </>
             )}
-            {availableCommandIdsWithRecentlyUsed.length > 0 && (
+            {availableCommands.length > 0 && (
                 <>
                     {heading && <h6>{heading}</h6>}
                     <ul>
-                        {availableCommandIdsWithRecentlyUsed.map((commandId) => (
+                        {availableCommands.map((commandId) => (
                             <CommandListItem
                                 key={commandId}
                                 Icon={Icon}
