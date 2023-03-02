@@ -46,6 +46,7 @@ const SearchBox: React.FC = () => {
                 onKeyUp={handleKeyPress}
                 value={searchWord}
                 disabled={status !== STATUS.IDLE && status !== STATUS.COLLAPSED}
+                data-testid="SearchBox"
             />
             {!expanded && (
                 <button className={styles.expandButton} onClick={actions.EXPAND} title="Expand to show all commands">

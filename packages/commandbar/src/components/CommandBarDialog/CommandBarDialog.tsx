@@ -89,6 +89,7 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
             onDrag={() => setIsDragging(true)}
             onDragEnd={handleDragEnd}
             style={dialogStyle}
+            data-testid="CommandBarDialog"
         >
             <CommandBarInputProvider toggleOpen={toggleOpen} dialogRef={dialogRef}>
                 <CommandBarHeader />

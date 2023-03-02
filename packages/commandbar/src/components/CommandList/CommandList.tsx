@@ -53,7 +53,10 @@ const CommandList: React.FC<CommandListingProps> = ({
     );
 
     return (
-        <nav className={classnames(styles.results, status !== STATUS.IDLE && styles.disabled)}>
+        <nav
+            className={classnames(styles.results, status !== STATUS.IDLE && styles.disabled)}
+            data-testid="CommandList"
+        >
             {availableCommandIds.some((commandId) => recentCommands.includes(commandId)) && (
                 <>
                     <h6>Suggestions</h6>

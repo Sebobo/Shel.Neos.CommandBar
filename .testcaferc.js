@@ -1,5 +1,3 @@
-const { waitForReact } = require('testcafe-react-selectors');
-
 const BASE_URL = 'http://localhost:1234';
 
 module.exports = {
@@ -18,11 +16,4 @@ module.exports = {
     'retryTestPages': true,
     'pageLoadTimeout': 10000,
     'pageRequestTimeout': 60000,
-    hooks: {
-        test: {
-            before: async () => {
-                await waitForReact();
-            }
-        }
-    }
 };

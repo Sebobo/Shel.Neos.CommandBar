@@ -54,6 +54,7 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                 )}
                 onClick={disabled ? null : () => onItemSelect(id)}
                 ref={highlightRef}
+                data-testid="CommandListItem"
             >
                 <Icon icon={icon} />
                 <span className={styles.label}>
