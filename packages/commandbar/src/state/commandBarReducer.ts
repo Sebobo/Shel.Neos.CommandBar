@@ -1,4 +1,4 @@
-import { assert, clamp, filterCommands } from '../helpers';
+import { assert, clamp, filterCommands, logger } from '../helpers';
 import { ACTION, MachineState, TRANSITION, transition } from './commandBarMachine';
 
 export type CommandBarEvent =
@@ -9,7 +9,7 @@ export type CommandBarEvent =
     | { type: TRANSITION.SELECT_GROUP; commandId: string }
     | { type: TRANSITION.GO_TO_PARENT_GROUP }
     | { type: TRANSITION.UPDATE_SEARCH; searchWord: string }
-    | { type: TRANSITION.EXECUTE_COMMAND; commandId: CommandId; argument: string }
+    | { type: TRANSITION.EXECUTE_COMMAND; commandId: CommandId; message: string }
     | { type: TRANSITION.FINISH_COMMAND }
     | { type: TRANSITION.UPDATE_RESULT; result: CommandResult }
     | { type: TRANSITION.EXPAND }
@@ -89,7 +89,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
         case ACTION.SET_ACTIVE_COMMAND:
             assert(event.type === TRANSITION.EXECUTE_COMMAND);
             nextState.activeCommandId = event.commandId;
-            nextState.activeCommandMessage = event.argument;
+            nextState.activeCommandMessage = event.message;
             break;
         case ACTION.UNSET_ACTIVE_COMMAND:
             nextState.activeCommandId = null;

@@ -34,7 +34,7 @@ export default class App extends Component<
     static ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
     static ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
     static ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
-    static ENDPOINT_SET_RECENT_COMMANDS = '/neos/shel-neos-commandbar/preferences/setrecentcommands';
+    static ENDPOINT_ADD_RECENT_COMMAND = '/neos/shel-neos-commandbar/preferences/addrecentcommand';
 
     constructor() {
         super();
@@ -92,7 +92,7 @@ export default class App extends Component<
         this.setState({ dragging: dragging });
     };
 
-    async setPreference(endpoint: string, data: any): Promise<void> {
+    setPreference = async (endpoint: string, data: any): Promise<void> => {
         return await fetch(endpoint, {
             method: 'POST',
             body: JSON.stringify(data),
@@ -102,15 +102,16 @@ export default class App extends Component<
                 'Content-Type': 'application/json',
             },
         }).then((res) => res.json());
-    }
+    };
 
-    async setFavouriteCommands(commandIds: CommandId[]) {
+    setFavouriteCommands = async (commandIds: CommandId[]) => {
         return this.setPreference(App.ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds: commandIds });
-    }
+    };
 
-    async setRecentCommands(commandIds: CommandId[]) {
-        return this.setPreference(App.ENDPOINT_SET_RECENT_COMMANDS, { commandIds: commandIds });
-    }
+    addRecentCommand = async (commandId: CommandId) => {
+        // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
+        return this.setPreference(App.ENDPOINT_ADD_RECENT_COMMAND, { commandId: commandId });
+    };
 
     render() {
         const { initialized, open, dragging, commands, preferences } = this.state;
@@ -135,7 +136,7 @@ export default class App extends Component<
                                 userPreferences={{
                                     ...preferences,
                                     setFavouriteCommands: this.setFavouriteCommands,
-                                    setRecentCommands: this.setRecentCommands,
+                                    addRecentCommand: this.addRecentCommand,
                                 }}
                             />
                         </div>

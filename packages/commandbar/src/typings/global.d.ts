@@ -120,5 +120,5 @@ interface UserPreferences {
     recentDocuments: NodeContextPath[];
     showBranding: boolean;
     setFavouriteCommands: (commandIds: CommandId[]) => Promise<void>;
-    setRecentCommands: (commandIds: CommandId[]) => Promise<void>;
+    addRecentCommand: (commandId: CommandId) => Promise<void>;
 }

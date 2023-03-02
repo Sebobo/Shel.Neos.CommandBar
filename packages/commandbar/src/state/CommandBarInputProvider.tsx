@@ -18,6 +18,11 @@ interface CommandInputContextValues {
 const CommandInputContext = React.createContext({} as CommandInputContextValues);
 export const useCommandInput = (): CommandInputContextValues => React.useContext(CommandInputContext);
 
+/**
+ * Context provider for the command bar input and command execution
+ *
+ * TODO: Rename to something matching its purpose of handling keypress and execution of commands
+ */
 export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ children, toggleOpen, dialogRef }) => {
     const { state, actions } = useCommandBarState();
 

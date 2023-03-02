@@ -60,12 +60,25 @@ class PreferencesController extends ActionController
      *
      * @Flow\SkipCsrfProtection
      */
-    public function setRecentCommandsAction(array $commandIds): void
+    public function addRecentCommandAction(string $commandId): void
     {
         $preferences = $this->getUserPreferences();
-        $preferences->set(self::RECENT_COMMANDS_PREFERENCE, $commandIds);
+        $recentCommands = $preferences->get(self::RECENT_COMMANDS_PREFERENCE);
+        if ($recentCommands === null) {
+            $recentCommands = [];
+        }
+
+        // Remove the command from the list if it is already in there (to move it to the top)
+        $recentCommands = array_filter($recentCommands, static fn($id) => $id !== $commandId);
+        // Add the command to the top of the list
+        array_unshift($recentCommands, $commandId);
+        // Limit the list to 5 items
+        $recentCommands = array_slice($recentCommands, 0, 5);
+
+        // Save the list
+        $preferences->set(self::RECENT_COMMANDS_PREFERENCE, $recentCommands);
         $this->entityManager->persist($preferences);
-        $this->view->assign('value', $commandIds);
+        $this->view->assign('value', $recentCommands);
     }
 
     /**

@@ -59,7 +59,7 @@ const ENDPOINT_SEARCH_NODES = 'service/data-source/shel-neos-commandbar-search-n
 const ENDPOINT_SEARCH_NEOS_DOCS = 'service/data-source/shel-neos-commandbar-search-neos-docs';
 const ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
 const ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
-const ENDPOINT_SET_RECENT_COMMANDS = '/neos/shel-neos-commandbar/preferences/setrecentcommands';
+const ENDPOINT_ADD_RECENT_COMMAND = '/neos/shel-neos-commandbar/preferences/addrecentcommand';
 
 const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => <Icon icon={icon} spin={spin} />;
 
@@ -369,8 +369,9 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         return fetchData(ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds }, 'POST');
     };
 
-    setRecentCommands = async (commandIds: CommandId[]) => {
-        return fetchData(ENDPOINT_SET_RECENT_COMMANDS, { commandIds }, 'POST');
+    addRecentCommand = async (commandId: CommandId) => {
+        // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
+        return fetchData(ENDPOINT_ADD_RECENT_COMMAND, { commandId }, 'POST');
     };
 
     render() {
@@ -398,7 +399,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                                 recentCommands,
                                 recentDocuments,
                                 showBranding,
-                                setRecentCommands: this.setRecentCommands,
+                                addRecentCommand: this.addRecentCommand,
                                 setFavouriteCommands: this.setFavouriteCommands,
                             }}
                         />

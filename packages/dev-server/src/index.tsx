@@ -45,7 +45,8 @@ import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
         favouriteCommands: [...favourites],
         setFavouriteCommands: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
         recentCommands: [...recentCommands],
-        setRecentCommands: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
+        addRecentCommand: async (commandId: CommandId) =>
+            void (recentCommands = [commandId, ...recentCommands.filter((id) => id !== commandId).slice(0, 4)]),
         recentDocuments: [],
         showBranding: true,
     };

@@ -55,17 +55,16 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
             [TRANSITION.GO_TO_PARENT_GROUP]: () => dispatch({ type: TRANSITION.GO_TO_PARENT_GROUP }),
             [TRANSITION.UPDATE_SEARCH]: (searchWord: string) =>
                 dispatch({ type: TRANSITION.UPDATE_SEARCH, searchWord }),
-            [TRANSITION.EXECUTE_COMMAND]: async (commandId: CommandId, argument: string) => {
+            [TRANSITION.EXECUTE_COMMAND]: async (commandId: CommandId, message: string) => {
                 dispatch({
                     type: TRANSITION.EXECUTE_COMMAND,
                     commandId,
-                    argument,
+                    message,
                 });
                 // Update recent commands in the user preferences when a command is executed
-                // TODO: Check if sendBeacon is a better option here
                 return userPreferences
-                    .setRecentCommands(state.recentCommands)
-                    .catch((e) => logger.error('Could not update recent commands', e));
+                    .addRecentCommand(commandId)
+                    .catch((e) => logger.error('Could not add recent command', e));
             },
             [TRANSITION.FINISH_COMMAND]: () => dispatch({ type: TRANSITION.FINISH_COMMAND }),
             [TRANSITION.UPDATE_RESULT]: (result: CommandResult) => dispatch({ type: TRANSITION.UPDATE_RESULT, result }),
