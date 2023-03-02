@@ -1,4 +1,4 @@
-import React, { LegacyRef } from 'react';
+import React from 'react';
 
 import * as styles from './CommandListItem.module.css';
 import { IconWrapper } from '../index';
@@ -8,7 +8,7 @@ type CommandListItemProps = {
     command: ProcessedCommandItem;
     onItemSelect: (commandId: CommandId) => void;
     highlighted: boolean;
-    highlightRef?: React.Ref<HTMLLIElement>;
+    ref: React.Ref<HTMLLIElement>;
     runningCommandId?: CommandId;
     disabled?: boolean;
     Icon: React.FC<IconProps>;
@@ -39,7 +39,7 @@ function getCommandType({ subCommandIds, category, canHandleQueries, action }: P
 const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
     (
         { command, onItemSelect, highlighted, disabled, Icon, isFavourite, onToggleFavourite },
-        highlightRef: LegacyRef<HTMLLIElement>
+        ref: React.MutableRefObject<HTMLLIElement>
     ) => {
         const { id, name, description, icon, action } = command;
 
@@ -53,7 +53,7 @@ const CommandListItem: React.FC<CommandListItemProps> = React.forwardRef(
                     disabled && styles.disabled
                 )}
                 onClick={disabled ? null : () => onItemSelect(id)}
-                ref={highlightRef}
+                ref={ref}
                 data-testid="CommandListItem"
             >
                 <Icon icon={icon} />
@@ -95,7 +95,6 @@ CommandListItem.displayName = 'CommandListItem';
 export default React.memo(CommandListItem, (prev, next) => {
     return (
         prev.command.id === next.command.id &&
-        prev.highlightRef === next.highlightRef &&
         prev.runningCommandId === next.runningCommandId &&
         prev.disabled === next.disabled &&
         prev.isFavourite === next.isFavourite

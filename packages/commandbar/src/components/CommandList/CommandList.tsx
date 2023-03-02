@@ -5,7 +5,7 @@ import { useCommandBarState, useCommandInput } from '../../state';
 
 import * as styles from './CommandListing.module.css';
 import { STATUS } from '../../state/commandBarMachine';
-import { classnames } from '../../helpers';
+import { classnames, logger } from '../../helpers';
 
 type CommandListingProps = {
     heading?: string;
@@ -31,11 +31,11 @@ const CommandList: React.FC<CommandListingProps> = ({
         Icon,
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
-    const selectedElementRef = React.useRef(null);
+    const highlightedCommandRef = React.useRef<HTMLLIElement>(null);
 
     useEffect(() => {
-        selectedElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, [selectedElementRef.current]);
+        highlightedCommandRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [highlightedCommandRef.current]);
 
     const handleToggleFavourite = useCallback(
         (commandId: CommandId) => {
@@ -62,26 +62,24 @@ const CommandList: React.FC<CommandListingProps> = ({
                 <>
                     <h6>Suggestions</h6>
                     <ul>
-                        {availableCommandIds
-                            .filter((commandId) => recentCommands.includes(commandId))
-                            .map((commandId) => (
-                                <CommandListItem
-                                    key={commandId}
-                                    Icon={Icon}
-                                    highlightRef={
-                                        highlightedItem === availableCommandIds.indexOf(commandId)
-                                            ? selectedElementRef
-                                            : null
-                                    }
-                                    command={commands[commandId]}
-                                    onItemSelect={executeCommand}
-                                    highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
-                                    runningCommandId={activeCommandId}
-                                    disabled={!searchWord && commands[commandId].canHandleQueries}
-                                    isFavourite={favouriteCommands.includes(commandId)}
-                                    onToggleFavourite={handleToggleFavourite}
-                                />
-                            ))}
+                        {suggestions.map((commandId) => (
+                            <CommandListItem
+                                key={commandId}
+                                Icon={Icon}
+                                ref={
+                                    highlightedItem === availableCommandIds.indexOf(commandId)
+                                        ? highlightedCommandRef
+                                        : null
+                                }
+                                command={commands[commandId]}
+                                onItemSelect={executeCommand}
+                                highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
+                                runningCommandId={activeCommandId}
+                                disabled={!searchWord && commands[commandId].canHandleQueries}
+                                isFavourite={favouriteCommands.includes(commandId)}
+                                onToggleFavourite={handleToggleFavourite}
+                            />
+                        ))}
                     </ul>
                 </>
             )}
@@ -93,9 +91,9 @@ const CommandList: React.FC<CommandListingProps> = ({
                             <CommandListItem
                                 key={commandId}
                                 Icon={Icon}
-                                highlightRef={
+                                ref={
                                     highlightedItem === availableCommandIds.indexOf(commandId)
-                                        ? selectedElementRef
+                                        ? highlightedCommandRef
                                         : null
                                 }
                                 command={commands[commandId]}
