@@ -49,6 +49,8 @@ type CommandBarUiPluginState = {
     dragging: boolean;
     favouriteCommands: CommandId[];
     recentCommands: CommandId[];
+    recentDocuments: NodeContextPath[];
+    showBranding: boolean;
     commands: HierarchicalCommandList;
 };
 
@@ -93,6 +95,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             dragging: false,
             favouriteCommands: [],
             recentCommands: [],
+            recentDocuments: [],
+            showBranding: true,
             commands: {
                 addNode: {
                     name: 'Add node',
@@ -207,10 +211,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             });
 
         fetchData(ENDPOINT_GET_PREFERENCES)
-            .then(({ favouriteCommands, recentCommands }) => {
+            .then(({ favouriteCommands, recentCommands, recentDocuments, showBranding }) => {
                 this.setState({
                     favouriteCommands,
                     recentCommands,
+                    recentDocuments,
+                    showBranding,
                 });
             })
             .catch((error) => {
@@ -374,7 +380,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
 
     render() {
         const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiPluginProps;
-        const { commands, loaded, dragging, favouriteCommands, recentCommands } = this.state;
+        const { commands, loaded, dragging, favouriteCommands, recentCommands, recentDocuments, showBranding } =
+            this.state;
 
         return (
             <div className={styles.commandBarToolbarComponent}>
@@ -394,6 +401,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                             userPreferences={{
                                 favouriteCommands,
                                 recentCommands,
+                                recentDocuments,
+                                showBranding,
                                 setRecentCommands: this.setRecentCommands,
                                 setFavouriteCommands: this.setFavouriteCommands,
                             }}

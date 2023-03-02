@@ -46,6 +46,8 @@ import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
         setFavouriteCommands: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
         recentCommands: [...recentCommands],
         setRecentCommands: async (commandIds: CommandId[]) => void (recentCommands = [...commandIds]),
+        recentDocuments: [],
+        showBranding: true,
     };
 
     const App = () => {

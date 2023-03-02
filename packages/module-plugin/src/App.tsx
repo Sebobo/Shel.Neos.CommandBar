@@ -19,7 +19,12 @@ export default class App extends Component<
         open: boolean;
         dragging: boolean;
         commands: HierarchicalCommandList;
-        preferences: { favouriteCommands: CommandId[]; recentCommands: CommandId[] };
+        preferences: {
+            favouriteCommands: CommandId[];
+            recentCommands: CommandId[];
+            recentDocuments: NodeContextPath[];
+            showBranding: boolean;
+        };
     }
 > {
     static tagName = 'command-bar-container';
@@ -38,7 +43,7 @@ export default class App extends Component<
             open: false,
             dragging: false,
             commands: {},
-            preferences: { favouriteCommands: [], recentCommands: [] },
+            preferences: { favouriteCommands: [], recentCommands: [], recentDocuments: [], showBranding: true },
         };
     }
 

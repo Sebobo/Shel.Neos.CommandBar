@@ -38,6 +38,7 @@ class PreferencesController extends ActionController
             'favouriteCommands' => $preferences->get(self::FAVOURITES_PREFERENCE) ?? [],
             'recentCommands' => $preferences->get(self::RECENT_COMMANDS_PREFERENCE) ?? [],
             'recentDocuments' => $preferences->get(self::RECENT_DOCUMENTS_PREFERENCE)?? [],
+            'showBranding' => $this->settings['features']['showBranding'],
         ]);
     }
 

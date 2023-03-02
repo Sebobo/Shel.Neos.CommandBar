@@ -41,6 +41,7 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
         selectedCommandGroup: null,
         favouriteCommands: userPreferences.favouriteCommands,
         recentCommands: userPreferences.recentCommands,
+        showBranding: userPreferences.showBranding,
     });
 
     // Provide all actions as shorthand functions

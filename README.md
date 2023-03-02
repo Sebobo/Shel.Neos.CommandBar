@@ -73,6 +73,18 @@ Neos:
                 Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.css'
 ```
 
+## Disable branding
+
+If you supported the development of this package or you don't want to show the branding, you can disable it via the following setting:
+
+```yaml
+Shel:
+  Neos:
+    CommandBar:
+      features:
+        showBranding: false
+```
+
 ## Development
 
 ⚠️ This package offers 2 plugins. One is the Neos.UI plugin built with Neos extensibility React based API and the other 

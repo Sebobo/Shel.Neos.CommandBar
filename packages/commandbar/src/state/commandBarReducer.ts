@@ -29,6 +29,7 @@ export type CommandBarState = MachineState & {
     highlightedOption: number;
     favouriteCommands: CommandId[];
     recentCommands: CommandId[];
+    showBranding: boolean;
 };
 
 const MAX_RECENTLY_USED = 5;
