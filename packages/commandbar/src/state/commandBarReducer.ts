@@ -1,4 +1,4 @@
-import { assert, clamp, filterCommands, logger } from '../helpers';
+import { assert, clamp, filterCommands } from '../helpers';
 import { ACTION, MachineState, TRANSITION, transition } from './commandBarMachine';
 
 export type CommandBarEvent =

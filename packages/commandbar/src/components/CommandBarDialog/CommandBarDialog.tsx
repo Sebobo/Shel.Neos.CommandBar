@@ -2,7 +2,7 @@ import React, { CSSProperties, useCallback, useMemo, useRef, useState } from 're
 
 import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from '../index';
 import { CommandBarInputProvider, useCommandBarState } from '../../state';
-import { clamp, logger } from '../../helpers';
+import { clamp } from '../../helpers';
 
 import * as styles from './CommandBarDialog.module.css';
 

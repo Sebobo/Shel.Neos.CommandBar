@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect } from 'react';
 
 import CommandListItem from '../CommandListItem/CommandListItem';
-import { useCommandBarState, useCommandInput } from '../../state';
+import { useCommandBarState, useCommandInput, STATUS } from '../../state';
+import { classnames } from '../../helpers';
 
 import * as styles from './CommandListing.module.css';
-import { STATUS } from '../../state/commandBarMachine';
-import { classnames, logger } from '../../helpers';
 
 type CommandListingProps = {
     heading?: string;
