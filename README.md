@@ -75,6 +75,15 @@ Neos:
 
 ## Development
 
+⚠️ This package offers 2 plugins. One is the Neos.UI plugin built with Neos extensibility React based API and the other 
+is the backend module plugin built with ParcelJS and Preact.
+We use yarn workspaces to manage the code for the 2 plugins, the dev server and the shared components.
+Most of the code is shared and only a small wrapper is needed to make the components work in the UI and module environments.
+
+Each plugin has its own setup and build process. The following sections describe how to set up and build each plugin.
+
+### Setup
+
 First install all dependencies:
 
 ```console
@@ -90,13 +99,27 @@ yarn dev
 To develop the Neos plugin, you can run the following command to watch for changes and rebuild the plugin:
 
 ```console
-yarn start
+yarn watch
 ```
 
-To build the plugin for production, run the following command:
+Or watch them individually
+
+```console
+yarn watch-ui
+yarn watch-module
+```
+
+To build both plugins for production, run the following command:
 
 ```console
 yarn build
+```
+
+Or run the build for each plugin individually
+
+```console
+yarn build-ui
+yarn build-module
 ```
 
 ## License
