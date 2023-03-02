@@ -22,6 +22,8 @@ This package provides a command bar plugin for Neos CMS.
 * 📰 Publishing
   * Publish / discard changes on current page
   * Publish / discard all changes
+* ⭐️Mark commands as favourites (stored in Neos user preferences)
+* 🗄️Store recent commands (stored in Neos user preferences)
 * 🪛 Extensibility
   * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
 * 🧩 Backend module integration
@@ -52,7 +54,47 @@ Then you can install the package via composer:
 composer require shel/neos-commandbar:@dev
 ```
 
+## Enabling the command bar in additional backend modules
+
+By default, only the core Neos modules have the command bar enabled as a global inclusion will only be possible with Neos 8.3. 
+If you want to enable the command bar in a backend module, you can do so by adding the following setting:
+
+```yaml
+Neos:
+  Neos:
+    modules:
+      <MODULE_PATH>:
+        submodules:
+          <MODULE_NAME>:
+            additionalResources: 
+              javaScripts:
+                Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.js'
+              styleSheets:
+                Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.css'
+```
+
+## Disable branding
+
+If you supported the development of this package or you don't want to show the branding, you can disable it via the following setting:
+
+```yaml
+Shel:
+  Neos:
+    CommandBar:
+      features:
+        showBranding: false
+```
+
 ## Development
+
+⚠️ This package offers 2 plugins. One is the Neos.UI plugin built with Neos extensibility React based API and the other 
+is the backend module plugin built with ParcelJS and Preact.
+We use yarn workspaces to manage the code for the 2 plugins, the dev server and the shared components.
+Most of the code is shared and only a small wrapper is needed to make the components work in the UI and module environments.
+
+Each plugin has its own setup and build process. The following sections describe how to set up and build each plugin.
+
+### Setup
 
 First install all dependencies:
 
@@ -69,13 +111,27 @@ yarn dev
 To develop the Neos plugin, you can run the following command to watch for changes and rebuild the plugin:
 
 ```console
-yarn start
+yarn watch
 ```
 
-To build the plugin for production, run the following command:
+Or watch them individually
+
+```console
+yarn watch-ui
+yarn watch-module
+```
+
+To build both plugins for production, run the following command:
 
 ```console
 yarn build
+```
+
+Or run the build for each plugin individually
+
+```console
+yarn build-ui
+yarn build-module
 ```
 
 ## License

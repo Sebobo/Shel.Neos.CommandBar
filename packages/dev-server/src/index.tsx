@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'preact';
+import React, { useCallback, useMemo, useState } from 'preact/compat';
 
-import { CommandBar, logger } from '@neos-commandbar/commandbar';
+import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 
 (() => {
     const initialContent = {
@@ -36,6 +36,19 @@ import { CommandBar, logger } from '@neos-commandbar/commandbar';
                 />
             </svg>
         );
+    };
+
+    let favourites: CommandId[] = [];
+    let recentCommands: CommandId[] = [];
+
+    const userPreferencesService: UserPreferences = {
+        favouriteCommands: [...favourites],
+        setFavouriteCommands: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
+        recentCommands: [...recentCommands],
+        addRecentCommand: async (commandId: CommandId) =>
+            void (recentCommands = [commandId, ...recentCommands.filter((id) => id !== commandId).slice(0, 4)]),
+        recentDocuments: [],
+        showBranding: true,
     };
 
     const App = () => {
@@ -191,6 +204,7 @@ import { CommandBar, logger } from '@neos-commandbar/commandbar';
             <div className="app-grid">
                 <header className="header">
                     <span>Neos commandbar test</span>
+                    <ToggleButton handleToggle={() => setCommandBarOpen((prev) => !prev)} />
                     <button disabled={published}>Publish all</button>
                 </header>
                 {sideBarLeftOpen && (
@@ -237,10 +251,11 @@ import { CommandBar, logger } from '@neos-commandbar/commandbar';
                     open={commandBarOpen}
                     toggleOpen={() => setCommandBarOpen((prev) => !prev)}
                     IconComponent={IconComponent}
+                    userPreferences={userPreferencesService}
                 />
             </div>
         );
     };
 
-    ReactDOM.render(<App />, document.getElementById('app'));
+    render(<App />, document.getElementById('app'));
 })();

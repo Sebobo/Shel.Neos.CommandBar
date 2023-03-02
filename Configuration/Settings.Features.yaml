@@ -2,6 +2,9 @@ Shel:
   Neos:
     CommandBar:
       features:
+        # Set this to false if you don't want to see the "Made with love" message and icon
+        # Please keep in mind that this plugin is free and open source. If you like it, please consider supporting its development.
+        showBranding: true
         searchNeosDocs:
           enabled: false
           endpoint: 'https://docs.neos.io/search'

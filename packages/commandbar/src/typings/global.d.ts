@@ -110,3 +110,15 @@ type EditPreviewMode = {
 };
 
 type EditPreviewModes = Record<string, EditPreviewMode>;
+
+type NodeContextPath = string;
+
+// TODO: Split the preferences and the methods into separate types
+interface UserPreferences {
+    favouriteCommands: CommandId[];
+    recentCommands: CommandId[];
+    recentDocuments: NodeContextPath[];
+    showBranding: boolean;
+    setFavouriteCommands: (commandIds: CommandId[]) => Promise<void>;
+    addRecentCommand: (commandId: CommandId) => Promise<void>;
+}

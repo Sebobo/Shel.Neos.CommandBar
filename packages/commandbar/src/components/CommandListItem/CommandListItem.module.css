@@ -40,3 +40,26 @@
 .type {
     max-width: 30%;
 }
+
+.favouriteButton {
+    display: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: color 0.1s ease-in-out;
+    color: var(--textSubtleLight);
+    align-self: baseline;
+    padding: 0 0.3rem;
+}
+.favouriteButton:hover {
+    color: var(--primaryBlue);
+}
+
+.commandListItem:hover .favouriteButton {
+    display: block;
+}
+
+.isFavourite {
+    display: block;
+    color: var(--primaryBlue);
+}

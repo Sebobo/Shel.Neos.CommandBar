@@ -1,0 +1,7 @@
+- name: 'Shel.Neos.CommandBar:Preferences'
+  uriPattern: 'neos/shel-neos-commandbar/preferences/{@action}'
+  defaults:
+    '@package':    'Shel.Neos.CommandBar'
+    '@controller': 'Preferences'
+    '@format':     'json'
+  allowedMethods: ['GET', 'POST']

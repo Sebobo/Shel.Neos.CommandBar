@@ -13,3 +13,6 @@ node_modules
 
 # Project specific ignores
 packages/*/dist
+/parcel-bundle-reports
+*.d.ts
+!.global.d.ts

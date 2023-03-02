@@ -47,12 +47,19 @@ type CommandBarUiPluginProps = {
 type CommandBarUiPluginState = {
     loaded: boolean;
     dragging: boolean;
+    favouriteCommands: CommandId[];
+    recentCommands: CommandId[];
+    recentDocuments: NodeContextPath[];
+    showBranding: boolean;
     commands: HierarchicalCommandList;
 };
 
 const ENDPOINT_COMMANDS = 'service/data-source/shel-neos-commandbar-commands';
 const ENDPOINT_SEARCH_NODES = 'service/data-source/shel-neos-commandbar-search-nodes';
 const ENDPOINT_SEARCH_NEOS_DOCS = 'service/data-source/shel-neos-commandbar-search-neos-docs';
+const ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
+const ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
+const ENDPOINT_ADD_RECENT_COMMAND = '/neos/shel-neos-commandbar/preferences/addrecentcommand';
 
 const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => <Icon icon={icon} spin={spin} />;
 
@@ -86,28 +93,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.state = {
             loaded: false,
             dragging: false,
+            favouriteCommands: [],
+            recentCommands: [],
+            recentDocuments: [],
+            showBranding: true,
             commands: {
-                // testGenerator: {
-                //     name: 'Test generator',
-                //     icon: 'vial',
-                //     description: 'Wait and return iterate on command results',
-                //     action: async function* () {
-                //         yield {
-                //             success: true,
-                //             message: 'Doing some testing step 1',
-                //         };
-                //         await new Promise((resolve) => setTimeout(resolve, 2000));
-                //         yield {
-                //             success: true,
-                //             message: 'Doing some more testing step 2',
-                //         };
-                //         await new Promise((resolve) => setTimeout(resolve, 2000));
-                //         return {
-                //             success: true,
-                //             message: 'Finished testing',
-                //         };
-                //     },
-                // },
                 addNode: {
                     name: 'Add node',
                     icon: 'plus',
@@ -197,28 +187,36 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         return 'neos';
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const { plugins } = this.props;
+
         // Load 3rd party commands
+        let pluginCommands = {};
         if (plugins) {
             Object.keys(plugins).forEach((pluginName) => {
                 try {
-                    const pluginCommands = plugins[pluginName]();
-                    this.setState((prev) => ({ commands: { ...prev.commands, ...pluginCommands } }));
+                    pluginCommands = { ...pluginCommands, ...plugins[pluginName]() };
                 } catch (e) {
-                    logger.error(`[CommandBar] Could not load commands from plugin ${pluginName}`, e);
+                    logger.error(`Could not load commands from plugin ${pluginName}`, e);
                 }
             });
         }
 
         // Load commands from data source which are not available via the UI API
-        fetchData(ENDPOINT_COMMANDS)
-            .then((commands: ModuleCommands) => {
-                this.setState((prev) => ({ loaded: true, commands: { ...prev.commands, ...commands } }));
-            })
-            .catch((error) => {
-                logger.error('[CommandBar] Failed to load commands', error);
-            });
+        const commands = await fetchData(ENDPOINT_COMMANDS).catch((error) => {
+            logger.error('Failed to load commands', error);
+        });
+
+        // Load user preferences
+        const preferences = await fetchData(ENDPOINT_GET_PREFERENCES).catch((error) => {
+            logger.error('Failed to load user preferences', error);
+        });
+
+        this.setState((prev) => ({
+            loaded: true,
+            ...preferences,
+            commands: { ...prev.commands, ...commands, ...pluginCommands },
+        }));
     }
 
     buildCommandsFromHotkeys = (): HierarchicalCommandList => {
@@ -363,13 +361,23 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         };
     };
 
-    setDragging = (dragging) => {
+    setDragging = (dragging: boolean) => {
         this.setState({ ...this.state, dragging });
+    };
+
+    setFavouriteCommands = async (commandIds: CommandId[]) => {
+        return fetchData(ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds }, 'POST');
+    };
+
+    addRecentCommand = async (commandId: CommandId) => {
+        // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
+        return fetchData(ENDPOINT_ADD_RECENT_COMMAND, { commandId }, 'POST');
     };
 
     render() {
         const { commandBarOpen, toggleCommandBar } = this.props as CommandBarUiPluginProps;
-        const { commands, loaded, dragging } = this.state;
+        const { commands, loaded, dragging, favouriteCommands, recentCommands, recentDocuments, showBranding } =
+            this.state;
 
         return (
             <div className={styles.commandBarToolbarComponent}>
@@ -386,6 +394,14 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                             toggleOpen={toggleCommandBar}
                             onDrag={this.setDragging}
                             IconComponent={IconComponent}
+                            userPreferences={{
+                                favouriteCommands,
+                                recentCommands,
+                                recentDocuments,
+                                showBranding,
+                                addRecentCommand: this.addRecentCommand,
+                                setFavouriteCommands: this.setFavouriteCommands,
+                            }}
                         />
                     </div>
                 )}

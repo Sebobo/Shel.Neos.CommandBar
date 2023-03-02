@@ -1,6 +1,15 @@
-import CommandBarContainer from './CommandBarContainer';
+import register from 'preact-custom-element';
 
-customElements.define('command-bar-container', CommandBarContainer);
+import App from './App';
+
+// @ts-ignore
+if (process.env.NODE_ENV !== 'production') {
+    // @ts-ignore
+    require('preact/debug');
+}
+
+// Register & add the debug web component, tagName and attributes are automatically read from the component
+register(App, null, null, App.options);
 
 window.addEventListener('neoscms-i18n-initialized', () => {
     // Get the top bar left container and create a custom element to render the command bar into

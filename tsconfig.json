@@ -7,6 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "jsx": "react",
+    "composite": true,
     "plugins": [
       {
         "name": "typescript-plugin-css-modules"
@@ -14,8 +15,14 @@
     ],
     "typeRoots": ["./packages/commandbar/src/typings"]
   },
+  "references": [
+    { "path": "packages/commandbar" }
+  ],
+  "include": [
+    "packages/**/*"
+  ],
   "exclude": [
     "node_modules",
-    "Tests",
+    "Tests"
   ]
 }

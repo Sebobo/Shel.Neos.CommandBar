@@ -2,8 +2,11 @@
   "name": "@neos-commandbar/commandbar",
   "version": "1.0.0",
   "dependencies": {
-    "fuzzy-search": "^3.2.1",
-    "react": "^16.14.0"
+    "fuzzy-search": "^3.2.1"
+  },
+  "optionalDependencies": {
+    "preact": "*",
+    "react": "*"
   },
   "main": "src/index.ts",
   "scripts": {

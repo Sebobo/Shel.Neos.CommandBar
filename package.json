@@ -16,6 +16,7 @@
     "@neos-commandbar/ui-plugin": "workspace:*"
   },
   "devDependencies": {
+    "@testing-library/preact": "^3.2.3",
     "@types/react": "^16.14.35",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
@@ -26,7 +27,6 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.8.4",
     "testcafe": "^2.3.1",
-    "testcafe-react-selectors": "^5.0.2",
     "typescript": "^4.9.5",
     "typescript-plugin-css-modules": "^4.1.1"
   },
@@ -40,7 +40,8 @@
     "dev": "yarn workspace @neos-commandbar/dev-server start",
     "test": "testcafe",
     "test:github-actions": "xvfb-run --server-args=\"-screen 0 1280x720x24\" yarn testcafe chrome",
-    "lint": "eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'"
+    "lint": "eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'",
+    "analyze-module": "yarn build-module --reporter @parcel/reporter-bundle-analyzer"
   },
   "prettier": {
     "printWidth": 120,
@@ -56,5 +57,12 @@
   "flat": true,
   "resolutions": {
     "@neos-project/build-essentials@^8.2.6": "patch:@neos-project/build-essentials@npm%3A8.2.6#./.yarn/patches/@neos-project-build-essentials-npm-8.2.6-787ecaf75f.patch"
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom/test-utils": "preact/test-utils",
+    "react-dom": "preact/compat",
+    "react/jsx-runtime": "preact/jsx-runtime",
+    "preact/jsx-dev-runtime": "preact/jsx-runtime"
   }
 }

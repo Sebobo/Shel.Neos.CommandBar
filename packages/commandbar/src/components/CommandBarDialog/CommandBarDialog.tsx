@@ -2,7 +2,7 @@ import React, { CSSProperties, useCallback, useMemo, useRef, useState } from 're
 
 import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from '../index';
 import { CommandBarInputProvider, useCommandBarState } from '../../state';
-import { clamp, logger } from '../../helpers';
+import { clamp } from '../../helpers';
 
 import * as styles from './CommandBarDialog.module.css';
 
@@ -33,13 +33,11 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
     const handleDragStart = useCallback(
         (e) => {
             if (e.target.tagName === 'INPUT') {
-                logger.debug('Drag ignored because input is focused');
                 return;
             }
             e.dataTransfer.setData('text/plain', 'CommandBar');
             e.dataTransfer.dropEffect = 'move';
             e.dataTransfer.effectAllowed = 'move';
-            logger.debug('Drag started with offset');
             setDragState({
                 left: e.clientX,
                 top: e.clientY,
@@ -60,7 +58,6 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
                 left: clamp(clientX, 0, window.innerWidth - (dialogRef.current.offsetWidth / 2 + prev.offsetLeft)),
                 top: clamp(clientY, 0, window.innerHeight - (dialogRef.current.offsetHeight / 2 + prev.offsetTop)),
             }));
-            logger.debug('Drag ended', window.innerWidth, dialogRef.current.offsetWidth, clientX, clientY);
             onDrag && onDrag(false);
         },
         [dialogRef.current]
@@ -89,6 +86,7 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
             onDrag={() => setIsDragging(true)}
             onDragEnd={handleDragEnd}
             style={dialogStyle}
+            data-testid="CommandBarDialog"
         >
             <CommandBarInputProvider toggleOpen={toggleOpen} dialogRef={dialogRef}>
                 <CommandBarHeader />

@@ -31,7 +31,7 @@ const CommandResultsView: React.FC = () => {
                         {Object.keys(options).map((commandId, index) => (
                             <CommandListItem
                                 key={commandId}
-                                highlightRef={highlightedOption === index ? selectedElementRef : null}
+                                ref={highlightedOption === index ? selectedElementRef : null}
                                 command={options[commandId]}
                                 onItemSelect={executeCommand}
                                 highlighted={highlightedOption === index}

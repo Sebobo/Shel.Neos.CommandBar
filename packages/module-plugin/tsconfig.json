@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
+}

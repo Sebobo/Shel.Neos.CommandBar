@@ -1,4 +1,4 @@
-import { ReactSelector } from 'testcafe-react-selectors';
+import { Selector } from 'testcafe';
 
 class Page {
     public dialog: Selector;
@@ -6,12 +6,13 @@ class Page {
     public commandList: Selector;
     public commands: Selector;
 
-    constructor() {
-        this.dialog = ReactSelector('CommandBarDialog');
+    selectByTestId = (id: string, selector = '*') => Selector(selector).withAttribute('data-testid', id);
 
-        this.searchBox = this.dialog.findReact('SearchBox');
-        this.commandList = this.dialog.findReact('CommandList');
-        this.commands = this.commandList.findReact('CommandListItem');
+    constructor() {
+        this.dialog = this.selectByTestId('CommandBarDialog', 'dialog');
+        this.searchBox = this.selectByTestId('SearchBox', 'input');
+        this.commandList = this.selectByTestId('CommandList', 'nav');
+        this.commands = this.selectByTestId('CommandListItem', 'li');
     }
 }
 

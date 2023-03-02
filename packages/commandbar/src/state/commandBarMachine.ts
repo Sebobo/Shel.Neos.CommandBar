@@ -19,6 +19,8 @@ export enum TRANSITION {
     FINISH_COMMAND = 'FINISH_COMMAND',
     UPDATE_RESULT = 'UPDATE_RESULT',
     EXPAND = 'EXPAND',
+    ADD_FAVOURITE = 'ADD_FAVOURITE',
+    REMOVE_FAVOURITE = 'REMOVE_FAVOURITE',
 }
 
 export enum ACTION {
@@ -39,6 +41,9 @@ export enum ACTION {
     UNSET_RESULT = 'UNSET_RESULT',
     LEAVE_GROUP = 'LEAVE_GROUP',
     SET_GROUP = 'SET_GROUP',
+    ADD_FAVOURITE = 'ADD_FAVOURITE',
+    REMOVE_FAVOURITE = 'REMOVE_FAVOURITE',
+    ADD_RECENTLY_USED = 'ADD_RECENTLY_USED',
 }
 
 interface MachineDefinition {
@@ -68,11 +73,11 @@ export const machine: MachineDefinition = {
                 },
                 HIGHLIGHT_NEXT_ITEM: {
                     target: STATUS.IDLE,
-                    actions: [ACTION.EXPAND, ACTION.HIGHLIGHT_NEXT_COMMAND],
+                    actions: [ACTION.REFRESH_COMMANDS, ACTION.EXPAND, ACTION.HIGHLIGHT_NEXT_COMMAND],
                 },
                 EXPAND: {
                     target: STATUS.IDLE,
-                    actions: [ACTION.EXPAND],
+                    actions: [ACTION.REFRESH_COMMANDS, ACTION.EXPAND],
                 },
             },
         },
@@ -96,7 +101,7 @@ export const machine: MachineDefinition = {
                 },
                 EXECUTE_COMMAND: {
                     target: STATUS.EXECUTING_COMMAND,
-                    actions: [ACTION.SET_ACTIVE_COMMAND],
+                    actions: [ACTION.ADD_RECENTLY_USED, ACTION.SET_ACTIVE_COMMAND, ACTION.REFRESH_COMMANDS],
                 },
                 GO_TO_PARENT_GROUP: {
                     target: STATUS.IDLE,
@@ -105,6 +110,14 @@ export const machine: MachineDefinition = {
                 SELECT_GROUP: {
                     target: STATUS.IDLE,
                     actions: [ACTION.RESET_SEARCH, ACTION.RESET_HIGHLIGHT, ACTION.SET_GROUP, ACTION.REFRESH_COMMANDS],
+                },
+                ADD_FAVOURITE: {
+                    target: STATUS.IDLE,
+                    actions: [ACTION.ADD_FAVOURITE, ACTION.REFRESH_COMMANDS],
+                },
+                REMOVE_FAVOURITE: {
+                    target: STATUS.IDLE,
+                    actions: [ACTION.REMOVE_FAVOURITE, ACTION.REFRESH_COMMANDS],
                 },
             },
         },

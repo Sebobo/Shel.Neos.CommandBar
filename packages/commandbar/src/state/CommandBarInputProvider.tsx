@@ -18,6 +18,11 @@ interface CommandInputContextValues {
 const CommandInputContext = React.createContext({} as CommandInputContextValues);
 export const useCommandInput = (): CommandInputContextValues => React.useContext(CommandInputContext);
 
+/**
+ * Context provider for the command bar input and command execution
+ *
+ * TODO: Rename to something matching its purpose of handling keypress and execution of commands
+ */
 export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ children, toggleOpen, dialogRef }) => {
     const { state, actions } = useCommandBarState();
 
@@ -79,7 +84,8 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
 
             // If the command is a url, open it
             if (typeof action == 'string') {
-                actions.EXECUTE_COMMAND(commandId, 'Loading url');
+                // We wait for the state change to be finished before opening the url
+                await actions.EXECUTE_COMMAND(commandId, 'Loading url');
 
                 // We need to check if the url is in the same domain, otherwise we need to open it in a new tab
                 // TODO: We should add another option to a link command to define its target
@@ -88,8 +94,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
                 } else {
                     window.location.href = action;
                 }
-                actions.FINISH_COMMAND();
-                return;
+                return actions.FINISH_COMMAND();
             }
 
             // If the command is a function, execute it
