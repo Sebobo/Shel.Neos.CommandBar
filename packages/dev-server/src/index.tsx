@@ -3,6 +3,15 @@ import React, { useCallback, useMemo, useState } from 'preact/compat';
 
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 
+// @ts-ignore
+if (process.env.NODE_ENV !== 'production') {
+    // @ts-ignore
+    require('preact/debug');
+}
+
+// @ts-ignore
+if (module.hot) module.hot.accept();
+
 (() => {
     const initialContent = {
         pageA: [
