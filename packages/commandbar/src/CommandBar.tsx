@@ -11,7 +11,7 @@ type CommandBarProps = {
     toggleOpen: () => void;
     onDrag?: (state: boolean) => void;
     IconComponent: React.FC<IconProps>;
-    userPreferences: UserPreferences;
+    userPreferences: UserPreferencesService;
     translate?: TranslateFunction;
 };
 

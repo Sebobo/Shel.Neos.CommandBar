@@ -191,7 +191,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         const { plugins } = this.props;
 
         // Load 3rd party commands
-        let pluginCommands = {};
+        let pluginCommands: HierarchicalCommandList = {};
         if (plugins) {
             Object.keys(plugins).forEach((pluginName) => {
                 try {
@@ -203,14 +203,16 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }
 
         // Load commands from data source which are not available via the UI API
-        const commands = await fetchData(ENDPOINT_COMMANDS).catch((error) => {
+        const commands = await fetchData<ModuleCommands>(ENDPOINT_COMMANDS).catch((error) => {
             logger.error('Failed to load commands', error);
         });
 
         // Load user preferences
-        const preferences = await fetchData(ENDPOINT_GET_PREFERENCES).catch((error) => {
+        const preferences = await fetchData<UserPreferences>(ENDPOINT_GET_PREFERENCES).catch((error) => {
             logger.error('Failed to load user preferences', error);
         });
+
+        if (!preferences || !commands) return;
 
         this.setState((prev) => ({
             loaded: true,
@@ -365,13 +367,17 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.setState({ ...this.state, dragging });
     };
 
-    setFavouriteCommands = async (commandIds: CommandId[]) => {
+    private static async setFavouriteCommands(commandIds: CommandId[]) {
         return fetchData(ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds }, 'POST');
-    };
+    }
 
-    addRecentCommand = async (commandId: CommandId) => {
+    private static async addRecentCommand(commandId: CommandId) {
         // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
         return fetchData(ENDPOINT_ADD_RECENT_COMMAND, { commandId }, 'POST');
+    }
+
+    translate = (id: string, label = '', args = []): string => {
+        return this.props.i18nRegistry.translate(id, label, args, 'Shel.Neos.CommandBar', 'Main');
     };
 
     render() {
@@ -399,9 +405,10 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                                 recentCommands,
                                 recentDocuments,
                                 showBranding,
-                                addRecentCommand: this.addRecentCommand,
-                                setFavouriteCommands: this.setFavouriteCommands,
+                                addRecentCommand: CommandBarUiPlugin.addRecentCommand,
+                                setFavouriteCommands: CommandBarUiPlugin.setFavouriteCommands,
                             }}
+                            translate={this.translate}
                         />
                     </div>
                 )}

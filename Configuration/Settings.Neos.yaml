@@ -71,3 +71,9 @@ Neos:
         submodules:
           usersettings:
             additionalResources: *commandBarIncludes
+
+    userInterface:
+      translation:
+        autoInclude:
+          Shel.Neos.CommandBar:
+            - 'Main'

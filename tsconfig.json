@@ -15,12 +15,6 @@
     ],
     "typeRoots": ["./packages/commandbar/src/typings"]
   },
-  "references": [
-    { "path": "packages/commandbar" }
-  ],
-  "include": [
-    "packages/**/*"
-  ],
   "exclude": [
     "node_modules",
     "Tests"

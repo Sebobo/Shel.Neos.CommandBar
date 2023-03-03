@@ -47,6 +47,31 @@ export default class App extends Component<
         };
     }
 
+    private static translate(id: string, label = '', args = []): string {
+        return (window as NeosModuleWindow).NeosCMS.I18n.translate(id, label, 'Shel.Neos.CommandBar', 'Main', args);
+    }
+
+    private static async setPreference(endpoint: string, data: any): Promise<void> {
+        return await fetch(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            credentials: 'include',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => res.json());
+    }
+
+    private static async setFavouriteCommands(commandIds: CommandId[]) {
+        return App.setPreference(App.ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds: commandIds });
+    }
+
+    private static async addRecentCommand(commandId: CommandId) {
+        // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
+        return App.setPreference(App.ENDPOINT_ADD_RECENT_COMMAND, { commandId: commandId });
+    }
+
     /**
      * Load the commands and preferences from the server and set the state to initialized
      */
@@ -92,27 +117,6 @@ export default class App extends Component<
         this.setState({ dragging: dragging });
     };
 
-    setPreference = async (endpoint: string, data: any): Promise<void> => {
-        return await fetch(endpoint, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            credentials: 'include',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then((res) => res.json());
-    };
-
-    setFavouriteCommands = async (commandIds: CommandId[]) => {
-        return this.setPreference(App.ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds: commandIds });
-    };
-
-    addRecentCommand = async (commandId: CommandId) => {
-        // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
-        return this.setPreference(App.ENDPOINT_ADD_RECENT_COMMAND, { commandId: commandId });
-    };
-
     render() {
         const { initialized, open, dragging, commands, preferences } = this.state;
 
@@ -135,9 +139,10 @@ export default class App extends Component<
                                 IconComponent={IconComponent}
                                 userPreferences={{
                                     ...preferences,
-                                    setFavouriteCommands: this.setFavouriteCommands,
-                                    addRecentCommand: this.addRecentCommand,
+                                    setFavouriteCommands: App.setFavouriteCommands,
+                                    addRecentCommand: App.addRecentCommand,
                                 }}
+                                translate={App.translate}
                             />
                         </div>
                     )}

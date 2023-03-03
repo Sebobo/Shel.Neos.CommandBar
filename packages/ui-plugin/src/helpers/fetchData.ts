@@ -1,7 +1,7 @@
 // @ts-ignore
 import { fetchWithErrorHandling } from '@neos-project/neos-ui-backend-connector';
 
-const fetchData = async (endpoint: string, params?: Record<string, any>, method = 'GET') => {
+async function fetchData<T = any>(endpoint: string, params?: Record<string, any>, method = 'GET'): Promise<T> {
     if (params && method === 'GET') {
         endpoint = Object.keys(params).reduce((url, key) => {
             return url + '&' + key + '=' + encodeURIComponent(params[key]);
@@ -25,6 +25,6 @@ const fetchData = async (endpoint: string, params?: Record<string, any>, method 
             }
             return response.text();
         });
-};
+}
 
 export default fetchData;

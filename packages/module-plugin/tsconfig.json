@@ -5,5 +5,11 @@
     "baseUrl": "./",
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
-  }
+  },
+  "references": [
+    { "path": "../commandbar" }
+  ],
+  "include": [
+    "packages/**/*"
+  ]
 }

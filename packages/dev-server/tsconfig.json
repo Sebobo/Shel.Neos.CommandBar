@@ -8,5 +8,8 @@
   },
   "references": [
     { "path": "../commandbar" }
+  ],
+  "include": [
+    "packages/**/*"
   ]
 }

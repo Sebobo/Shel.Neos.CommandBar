@@ -18,7 +18,7 @@ type TranslateFunction = (
     parameters?: Record<string, string | number> | string[]
 ) => string;
 
-type AppWindow = Window &
+type NeosModuleWindow = Window &
     typeof globalThis & {
         NeosCMS: {
             I18n: NeosI18n;
@@ -137,12 +137,14 @@ type EditPreviewModes = Record<string, EditPreviewMode>;
 
 type NodeContextPath = string;
 
-// TODO: Split the preferences and the methods into separate types
 interface UserPreferences {
     favouriteCommands: CommandId[];
     recentCommands: CommandId[];
     recentDocuments: NodeContextPath[];
     showBranding: boolean;
+}
+
+interface UserPreferencesService extends UserPreferences {
     setFavouriteCommands: (commandIds: CommandId[]) => Promise<void>;
     addRecentCommand: (commandId: CommandId) => Promise<void>;
 }

@@ -50,7 +50,7 @@ if (module.hot) module.hot.accept();
     let favourites: CommandId[] = [];
     let recentCommands: CommandId[] = [];
 
-    const userPreferencesService: UserPreferences = {
+    const userPreferencesService: UserPreferencesService = {
         favouriteCommands: [...favourites],
         setFavouriteCommands: async (commandIds: CommandId[]) => void (favourites = [...commandIds]),
         recentCommands: [...recentCommands],

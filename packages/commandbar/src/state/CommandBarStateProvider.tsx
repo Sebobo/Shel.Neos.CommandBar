@@ -9,7 +9,7 @@ interface CommandBarContextProps {
     commands: HierarchicalCommandList;
     children: JSX.Element;
     IconComponent: React.FC<IconProps>;
-    userPreferences: UserPreferences;
+    userPreferences: UserPreferencesService;
 }
 
 interface CommandBarContextValues {
