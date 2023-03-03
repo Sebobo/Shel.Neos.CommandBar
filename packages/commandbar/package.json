@@ -10,6 +10,7 @@
   },
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo 'not implemented' exit 1"
+    "test": "echo 'not implemented' exit 1",
+    "build": "exit 0"
   }
 }

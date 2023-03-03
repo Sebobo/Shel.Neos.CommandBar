@@ -31,7 +31,7 @@
     "typescript-plugin-css-modules": "^4.1.1"
   },
   "scripts": {
-    "build": "yarn build-ui && yarn build-module",
+    "build": "yarn workspaces foreach -pt run build",
     "watch": "yarn watch-ui && yarn watch-module",
     "build-ui": "yarn workspace @neos-commandbar/ui-plugin build",
     "watch-ui": "yarn workspace @neos-commandbar/ui-plugin watch",
