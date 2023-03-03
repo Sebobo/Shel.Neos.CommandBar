@@ -1,17 +1,18 @@
 import React from 'react';
 
-import { useCommandBarState } from '../../state';
+import { useCommandBarState, STATUS } from '../../state';
+import IconWrapper from '../IconWrapper/IconWrapper';
 import SearchBox from '../SearchBox/SearchBox';
 
 import * as styles from './CommandBarHeader.module.css';
-import { STATUS } from '../../state/commandBarMachine';
-import IconWrapper from '../IconWrapper/IconWrapper';
 
 const CommandBarHeader: React.FC = () => {
     const {
         state: { selectedCommandGroup, status },
         actions,
     } = useCommandBarState();
+
+    // TODO: Extract icon from JSX
 
     return (
         <header className={styles.commandBarHeader}>
@@ -37,4 +38,4 @@ const CommandBarHeader: React.FC = () => {
     );
 };
 
-export default CommandBarHeader;
+export default React.memo(CommandBarHeader);

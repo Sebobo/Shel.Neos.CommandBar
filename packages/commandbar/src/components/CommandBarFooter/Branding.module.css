@@ -1,0 +1,19 @@
+.madeWithLove {
+    display: flex;
+    text-decoration: none;
+}
+
+.madeWithLove small {
+    transition: color 0.1s ease-in-out;
+}
+
+.madeWithLove:hover small {
+    color: var(--color-light-text-hover);
+}
+
+.madeWithLove svg {
+    display: inline-block;
+    width: var(--icon-size);
+    height: auto;
+    margin-left: 0.5em;
+}
