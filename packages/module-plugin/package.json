@@ -20,5 +20,8 @@
   "scripts": {
     "build": "parcel build",
     "watch": "parcel watch"
+  },
+  "alias": {
+    "@preact/signals-react": "@preact/signals"
   }
 }

@@ -1,4 +1,5 @@
-import React, { CSSProperties, useCallback, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
+import { batch, signal, useComputed } from '@preact/signals-react';
 
 import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from '../index';
 import { CommandBarInputProvider, useCommandBarState } from '../../state';
@@ -12,23 +13,50 @@ interface CommandBarDialogProps {
     toggleOpen: () => void;
 }
 
+const isDragging = signal(false);
+const dragState = signal<{
+    left: string | number;
+    top: string | number;
+    offsetLeft: number;
+    offsetTop: number;
+}>({
+    left: '50%',
+    top: '50%',
+    offsetLeft: 0,
+    offsetTop: 0,
+});
+
 const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggleOpen }) => {
     const {
         state: { result, expanded },
     } = useCommandBarState();
     const dialogRef = useRef<HTMLDialogElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragState, setDragState] = useState<{
-        left: string | number;
-        top: string | number;
-        offsetLeft: number;
-        offsetTop: number;
-    }>({
-        left: '50%',
-        top: '50%',
-        offsetLeft: 0,
-        offsetTop: 0,
+
+    const dialogStyle = useComputed(() => {
+        const { left, top, offsetLeft, offsetTop } = dragState.value;
+        return {
+            left: typeof left == 'string' ? left : left + offsetLeft + 'px',
+            top: typeof top == 'string' ? top : top + offsetTop + 'px',
+            visibility: isDragging.value ? 'hidden' : 'visible',
+        } as CSSProperties;
     });
+
+    const reposition = useCallback((left: number | string, top: number | string) => {
+        if (typeof left == 'string' || typeof top == 'string') return;
+        dragState.value = {
+            ...dragState.value,
+            left: clamp(
+                left,
+                dialogRef.current.offsetWidth / 2 - dragState.value.offsetLeft,
+                window.innerWidth - (dialogRef.current.offsetWidth / 2 + dragState.value.offsetLeft)
+            ),
+            top: clamp(
+                top,
+                dialogRef.current.offsetHeight / 2 - dragState.value.offsetTop,
+                window.innerHeight - (dialogRef.current.offsetHeight / 2 + dragState.value.offsetTop)
+            ),
+        };
+    }, []);
 
     const handleDragStart = useCallback(
         (e) => {
@@ -38,12 +66,12 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
             e.dataTransfer.setData('text/plain', 'CommandBar');
             e.dataTransfer.dropEffect = 'move';
             e.dataTransfer.effectAllowed = 'move';
-            setDragState({
+            dragState.value = {
                 left: e.clientX,
                 top: e.clientY,
                 offsetLeft: dialogRef.current.offsetLeft - e.clientX,
                 offsetTop: dialogRef.current.offsetTop - e.clientY,
-            });
+            };
             onDrag && onDrag(true);
         },
         [dialogRef.current]
@@ -52,25 +80,22 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
     const handleDragEnd = useCallback(
         (e) => {
             const { clientX, clientY } = e;
-            setIsDragging(false);
-            setDragState((prev) => ({
-                ...prev,
-                left: clamp(clientX, 0, window.innerWidth - (dialogRef.current.offsetWidth / 2 + prev.offsetLeft)),
-                top: clamp(clientY, 0, window.innerHeight - (dialogRef.current.offsetHeight / 2 + prev.offsetTop)),
-            }));
+            batch(() => {
+                isDragging.value = false;
+                reposition(clientX, clientY);
+            });
             onDrag && onDrag(false);
         },
         [dialogRef.current]
     );
 
-    const dialogStyle = useMemo(() => {
-        const { left, top, offsetLeft, offsetTop } = dragState;
-        return {
-            left: typeof left == 'string' ? left : left + offsetLeft + 'px',
-            top: typeof top == 'string' ? top : top + offsetTop + 'px',
-            visibility: isDragging ? 'hidden' : 'visible',
-        } as CSSProperties;
-    }, [dragState, isDragging, dialogRef.current]);
+    const onResize = useCallback(() => reposition(dragState.value.left, dragState.value.top), []);
+
+    useEffect(() => {
+        if (!open) return;
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, [open]);
 
     if (!open) {
         return null;
@@ -83,9 +108,9 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
             open={open}
             draggable
             onDragStart={handleDragStart}
-            onDrag={() => setIsDragging(true)}
+            onDrag={() => (isDragging.value = true)}
             onDragEnd={handleDragEnd}
-            style={dialogStyle}
+            style={dialogStyle.value}
             data-testid="CommandBarDialog"
         >
             <CommandBarInputProvider toggleOpen={toggleOpen} dialogRef={dialogRef}>
