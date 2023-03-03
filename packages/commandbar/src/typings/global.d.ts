@@ -1,6 +1,30 @@
 declare module '*.module.css';
 declare module '*.module.scss';
 
+interface NeosI18n {
+    translate: (
+        id: string,
+        fallback: string,
+        packageKey: string,
+        source: string,
+        args: Record<string, unknown> | string[]
+    ) => string;
+    initialized: boolean;
+}
+
+type TranslateFunction = (
+    id: string,
+    fallback?: string,
+    parameters?: Record<string, string | number> | string[]
+) => string;
+
+type AppWindow = Window &
+    typeof globalThis & {
+        NeosCMS: {
+            I18n: NeosI18n;
+        };
+    };
+
 // The settings read from the Setting.yaml file
 type CommandBarConfig = {
     enabled: boolean;

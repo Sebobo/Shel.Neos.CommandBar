@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CommandBarStateProvider } from './state';
+import { CommandBarStateProvider, IntlProvider } from './state';
 import CommandBarDialog from './components/CommandBarDialog/CommandBarDialog';
 
 import './Variables.module.css';
@@ -12,6 +12,7 @@ type CommandBarProps = {
     onDrag?: (state: boolean) => void;
     IconComponent: React.FC<IconProps>;
     userPreferences: UserPreferences;
+    translate?: TranslateFunction;
 };
 
 const CommandBar: React.FC<CommandBarProps> = ({
@@ -21,11 +22,18 @@ const CommandBar: React.FC<CommandBarProps> = ({
     onDrag,
     IconComponent,
     userPreferences,
+    translate = (_id, fallback) => fallback,
 }) => {
     return (
-        <CommandBarStateProvider commands={commands} IconComponent={IconComponent} userPreferences={userPreferences}>
-            <CommandBarDialog onDrag={onDrag} open={open} toggleOpen={toggleOpen} />
-        </CommandBarStateProvider>
+        <IntlProvider translate={translate}>
+            <CommandBarStateProvider
+                commands={commands}
+                IconComponent={IconComponent}
+                userPreferences={userPreferences}
+            >
+                <CommandBarDialog onDrag={onDrag} open={open} toggleOpen={toggleOpen} />
+            </CommandBarStateProvider>
+        </IntlProvider>
     );
 };
 

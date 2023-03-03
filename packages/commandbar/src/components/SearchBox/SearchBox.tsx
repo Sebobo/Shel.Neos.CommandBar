@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 
-import { useCommandBarState } from '../../state';
-import { STATUS } from '../../state/commandBarMachine';
+import { useCommandBarState, STATUS, useIntl } from '../../state';
+import IconWrapper from '../IconWrapper/IconWrapper';
 
 import * as styles from './SearchBox.module.css';
-import IconWrapper from '../IconWrapper/IconWrapper';
 
 const SearchBox: React.FC = () => {
     const {
         state: { searchWord, status, expanded },
         actions,
     } = useCommandBarState();
+    const { translate } = useIntl();
     const inputRef = useRef<HTMLInputElement>();
 
     const handleKeyPress = useCallback(
@@ -40,7 +40,7 @@ const SearchBox: React.FC = () => {
                 ref={inputRef}
                 className={styles.searchBox}
                 type="search"
-                placeholder="Search for commands…"
+                placeholder={translate('SearchBox.placeholder', 'What do you want to do today?')}
                 autoFocus
                 onChange={handleChange}
                 onKeyUp={handleKeyPress}
@@ -49,7 +49,11 @@ const SearchBox: React.FC = () => {
                 data-testid="SearchBox"
             />
             {!expanded && (
-                <button className={styles.expandButton} onClick={actions.EXPAND} title="Expand to show all commands">
+                <button
+                    className={styles.expandButton}
+                    onClick={actions.EXPAND}
+                    title={translate('SearchBox.expand.title', 'Expand to show all commands')}
+                >
                     <IconWrapper>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
                             <path
@@ -64,4 +68,4 @@ const SearchBox: React.FC = () => {
     );
 };
 
-export default SearchBox;
+export default React.memo(SearchBox);
