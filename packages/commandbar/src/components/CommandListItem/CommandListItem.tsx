@@ -1,8 +1,9 @@
 import React from 'react';
 
-import * as styles from './CommandListItem.module.css';
 import { IconWrapper } from '../index';
 import { classnames } from '../../helpers';
+
+import * as styles from './CommandListItem.module.css';
 
 type CommandListItemProps = {
     command: ProcessedCommandItem;

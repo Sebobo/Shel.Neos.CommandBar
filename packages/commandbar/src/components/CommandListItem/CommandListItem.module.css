@@ -42,7 +42,7 @@
 }
 
 .favouriteButton {
-    display: none;
+    visibility: hidden;
     border: none;
     background: none;
     cursor: pointer;
@@ -56,7 +56,7 @@
 }
 
 .commandListItem:hover .favouriteButton {
-    display: block;
+    visibility: visible;
 }
 
 .isFavourite {
