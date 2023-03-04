@@ -12,5 +12,8 @@
   "scripts": {
     "start": "parcel",
     "build": "exit 0"
+  },
+  "alias": {
+    "@preact/signals-react": "@preact/signals"
   }
 }
