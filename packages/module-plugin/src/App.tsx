@@ -2,7 +2,7 @@ import { Component } from 'preact';
 import React from 'preact/compat';
 
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
-import { PreferencesApi, CommandsApi, DocumentationApi } from '@neos-commandbar/neos-api';
+import { PreferencesApi, CommandsApi, DocumentationApi, PackagesApi } from '@neos-commandbar/neos-api';
 import IconComponent from './IconComponent';
 
 import * as styles from './ModulePlugin.module.css';
@@ -44,6 +44,13 @@ export default class App extends Component<
                     description: 'Browse or search the Neos documentation',
                     canHandleQueries: true,
                     action: this.handleSearchNeosDocs.bind(this),
+                },
+                neosPackages: {
+                    name: 'Packages',
+                    icon: 'boxes',
+                    description: 'Search for Neos packages',
+                    canHandleQueries: true,
+                    action: this.handleSearchNeosPackages.bind(this),
                 },
             },
             preferences: { favouriteCommands: [], recentCommands: [], recentDocuments: [], showBranding: true },
@@ -92,29 +99,40 @@ export default class App extends Component<
             success: true,
             message: `Searching for "${query}"`,
         };
-        const results = await DocumentationApi.searchNeosDocs(query).catch((e) =>
+        const options = await DocumentationApi.searchNeosDocs(query).catch((e) =>
             logger.error('Could not search Neos docs', e)
         );
-        if (!results) {
-            return {
-                success: false,
-                message: 'Search failed',
+        if (options) {
+            yield {
+                success: true,
+                message: `${options.length} options match your query`,
+                options,
             };
         }
+        return {
+            success: !!options,
+            message: options ? 'Finished search' : 'Search failed',
+        };
+    };
+
+    handleSearchNeosPackages = async function* (query: string): CommandGeneratorResult {
         yield {
             success: true,
-            message: `${results.length} options match your query`,
-            options: results.reduce((carry, item: Command, i) => {
-                carry[`result_${i}`] = {
-                    id: `result_${i}`,
-                    ...item,
-                };
-                return carry;
-            }, {} as FlatCommandList),
+            message: `Searching for "${query}"`,
         };
+        const options = await PackagesApi.searchNeosPackages(query).catch((e) =>
+            logger.error('Could not search Neos packages', e)
+        );
+        if (options) {
+            yield {
+                success: true,
+                message: `${options.length} options match your query`,
+                options,
+            };
+        }
         return {
-            success: true,
-            message: 'Finished search',
+            success: !!options,
+            message: options ? 'Finished search' : 'Search failed',
         };
     };
 

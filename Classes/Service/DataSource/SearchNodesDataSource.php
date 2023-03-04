@@ -42,7 +42,7 @@ class SearchNodesDataSource extends AbstractDataSource
             'Neos.Neos:Shortcut',
         ], $node->getContext(), $node);
 
-        return array_map(function (NodeInterface $matchingNode) {
+        return array_values(array_filter(array_map(function (NodeInterface $matchingNode) {
             return [
                 'name' => $matchingNode->getLabel(),
                 'nodetype' => TranslationHelper::translateByShortHandString($matchingNode->getNodeType()->getLabel()),
@@ -50,7 +50,7 @@ class SearchNodesDataSource extends AbstractDataSource
                 'icon' => $matchingNode->getNodeType()->getFullConfiguration()['ui']['icon'] ?? 'file',
                 'uri' => $this->getNodeUri($matchingNode),
             ];
-        }, array_values($matchingNodes));
+        }, $matchingNodes), static fn($item) => $item['uri']));
     }
 
     protected function getNodeUri(NodeInterface $node): string

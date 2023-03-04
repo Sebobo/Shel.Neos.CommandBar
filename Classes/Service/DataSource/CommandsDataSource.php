@@ -38,7 +38,13 @@ class CommandsDataSource extends AbstractDataSource
             static function (array $carry, array $site) {
                 // Skip the currently active site
                 if (!$site['active']) {
-                    $carry[$site['nodeName']] = new CommandDto($site['name'], '', $site['uri'], 'globe');
+                    $carry[$site['nodeName']] = new CommandDto(
+                        $site['name'],
+                        $site['name'],
+                        '',
+                        $site['uri'],
+                        'globe'
+                    );
                 }
                 return $carry;
             }, []);
@@ -59,6 +65,7 @@ class CommandsDataSource extends AbstractDataSource
                                 return $carry;
                             }
                             $carry[$submodule['module']] = new CommandDto(
+                                $submodule['modulePath'],
                                 TranslationHelper::translateByShortHandString($submodule['label']),
                                 TranslationHelper::translateByShortHandString($submodule['description']),
                                 $this->uriBuilder->uriFor(

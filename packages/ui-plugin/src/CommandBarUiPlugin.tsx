@@ -11,7 +11,7 @@ import { Icon } from '@neos-project/react-ui-components';
 
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
-import { CommandsApi, PreferencesApi, DocumentationApi, NodesApi } from '@neos-commandbar/neos-api';
+import { CommandsApi, PreferencesApi, DocumentationApi, NodesApi, PackagesApi } from '@neos-commandbar/neos-api';
 
 import * as styles from './CommandBarUiPlugin.module.css';
 
@@ -148,15 +148,26 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     description: 'Switch between edit and preview modes',
                     subCommands: this.buildCommandsFromEditPreviewModes(),
                 },
-                neosDocs: {
-                    name: 'Documentation',
-                    icon: 'book',
-                    description: 'Browse or search the Neos documentation',
-                    canHandleQueries: true,
-                    action: this.handleSearchNeosDocs.bind(this),
-                },
             },
         };
+        if (props.config.features.searchNeosDocs) {
+            this.state.commands.searchNeosDocs = {
+                name: 'Documentation',
+                icon: 'book',
+                description: 'Browse or search the Neos documentation',
+                canHandleQueries: true,
+                action: this.handleSearchNeosDocs.bind(this),
+            };
+        }
+        if (props.config.features.searchNeosPackages) {
+            this.state.commands.searchNeosPackages = {
+                name: 'Packages',
+                icon: 'boxes',
+                description: 'Search for Neos packages',
+                canHandleQueries: true,
+                action: this.handleSearchNeosPackages.bind(this),
+            };
+        }
     }
 
     mapHotkeyIdToIcon(id: string) {
@@ -271,8 +282,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         yield {
             success: true,
             message: `${results.length} options match your query`,
-            // TODO: Already provide commands in the response so we only have to adjust the action
-            options: results.reduce((carry, { name, nodetype, icon, contextPath, uri }) => {
+            options: results.reduce((carry, { name, nodetype, contextPath, uri, icon }) => {
                 if (!uri) {
                     // TODO: Show hint that document cannot be opened?
                     return carry;
@@ -302,29 +312,40 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             success: true,
             message: `Searching for "${query}"`,
         };
-        const results = await DocumentationApi.searchNeosDocs(query).catch((e) =>
+        const options = await DocumentationApi.searchNeosDocs(query).catch((e) =>
             logger.error('Could not search Neos docs', e)
         );
-        if (!results) {
-            return {
-                success: false,
-                message: 'Search failed',
+        if (options) {
+            yield {
+                success: true,
+                message: `${options.length} options match your query`,
+                options,
             };
         }
+        return {
+            success: !!options,
+            message: options ? 'Finished search' : 'Search failed',
+        };
+    };
+
+    handleSearchNeosPackages = async function* (query: string): CommandGeneratorResult {
         yield {
             success: true,
-            message: `${results.length} options match your query`,
-            options: results.reduce((carry, item: Command, i) => {
-                carry[`result_${i}`] = {
-                    id: `result_${i}`,
-                    ...item,
-                };
-                return carry;
-            }, {} as FlatCommandList),
+            message: `Searching for "${query}"`,
         };
+        const options = await PackagesApi.searchNeosPackages(query).catch((e) =>
+            logger.error('Could not search Neos packages', e)
+        );
+        if (options) {
+            yield {
+                success: true,
+                message: `${options.length} options match your query`,
+                options,
+            };
+        }
         return {
-            success: true,
-            message: 'Finished search',
+            success: !!options,
+            message: options ? 'Finished search' : 'Search failed',
         };
     };
 

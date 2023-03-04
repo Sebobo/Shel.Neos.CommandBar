@@ -25,14 +25,6 @@ type NeosModuleWindow = Window &
         };
     };
 
-// The settings read from the Setting.yaml file
-type CommandBarConfig = {
-    enabled: boolean;
-    hotkeys: {
-        filter: string[];
-    };
-};
-
 type Renderable<Props> = React.FC<Props>;
 type IconProps = { icon: string; spin?: boolean };
 

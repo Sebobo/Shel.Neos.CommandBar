@@ -19,6 +19,7 @@ class CommandDto implements \JsonSerializable
 {
 
     public function __construct(
+        public readonly string $id,
         public readonly string $name,
         public readonly string $description,
         public readonly string $action,
@@ -30,6 +31,7 @@ class CommandDto implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
             'action' => $this->action,
