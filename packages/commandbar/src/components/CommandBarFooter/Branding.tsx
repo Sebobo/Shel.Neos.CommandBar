@@ -47,4 +47,4 @@ const Branding: React.FC = () => {
     );
 };
 
-export default Branding;
+export default React.memo(Branding);
