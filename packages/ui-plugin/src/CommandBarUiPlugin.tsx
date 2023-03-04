@@ -9,10 +9,11 @@ import { neos } from '@neos-project/neos-ui-decorators';
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 import { Icon } from '@neos-project/react-ui-components';
 
-import * as styles from './CommandBarUiPlugin.module.css';
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
-import fetchData from './helpers/fetchData';
+import { CommandsApi, PreferencesApi, DocumentationApi, NodesApi } from '@neos-commandbar/neos-api';
+
+import * as styles from './CommandBarUiPlugin.module.css';
 
 type CommandBarUiPluginProps = {
     config: CommandBarConfig;
@@ -53,13 +54,6 @@ type CommandBarUiPluginState = {
     showBranding: boolean;
     commands: HierarchicalCommandList;
 };
-
-const ENDPOINT_COMMANDS = 'service/data-source/shel-neos-commandbar-commands';
-const ENDPOINT_SEARCH_NODES = 'service/data-source/shel-neos-commandbar-search-nodes';
-const ENDPOINT_SEARCH_NEOS_DOCS = 'service/data-source/shel-neos-commandbar-search-neos-docs';
-const ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
-const ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
-const ENDPOINT_ADD_RECENT_COMMAND = '/neos/shel-neos-commandbar/preferences/addrecentcommand';
 
 const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => <Icon icon={icon} spin={spin} />;
 
@@ -203,12 +197,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }
 
         // Load commands from data source which are not available via the UI API
-        const commands = await fetchData<ModuleCommands>(ENDPOINT_COMMANDS).catch((error) => {
+        const commands = await CommandsApi.getCommands().catch((error) => {
             logger.error('Failed to load commands', error);
         });
 
         // Load user preferences
-        const preferences = await fetchData<UserPreferences>(ENDPOINT_GET_PREFERENCES).catch((error) => {
+        const preferences = await PreferencesApi.getPreferences().catch((error) => {
             logger.error('Failed to load user preferences', error);
         });
 
@@ -265,10 +259,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             success: true,
             message: `Searching for "${query}"`,
         };
-        const results = (await fetchData(ENDPOINT_SEARCH_NODES, {
-            query,
-            node: siteNode.contextPath,
-        })) as SearchNodeResult[];
+        const results = await NodesApi.searchNodes(query, siteNode.contextPath).catch((e) =>
+            logger.error('Could not search nodes', e)
+        );
+        if (!results) {
+            return {
+                success: false,
+                message: 'Search failed',
+            };
+        }
         yield {
             success: true,
             message: `${results.length} options match your query`,
@@ -303,7 +302,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             success: true,
             message: `Searching for "${query}"`,
         };
-        const results = (await fetchData(ENDPOINT_SEARCH_NEOS_DOCS, { query })) as Command[];
+        const results = await DocumentationApi.searchNeosDocs(query).catch((e) =>
+            logger.error('Could not search Neos docs', e)
+        );
+        if (!results) {
+            return {
+                success: false,
+                message: 'Search failed',
+            };
+        }
         yield {
             success: true,
             message: `${results.length} options match your query`,
@@ -367,15 +374,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.setState({ ...this.state, dragging });
     };
 
-    private static async setFavouriteCommands(commandIds: CommandId[]) {
-        return fetchData(ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds }, 'POST');
-    }
-
-    private static async addRecentCommand(commandId: CommandId) {
-        // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
-        return fetchData(ENDPOINT_ADD_RECENT_COMMAND, { commandId }, 'POST');
-    }
-
     translate = (id: string, label = '', args = []): string => {
         return this.props.i18nRegistry.translate(id, label, args, 'Shel.Neos.CommandBar', 'Main');
     };
@@ -405,8 +403,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                                 recentCommands,
                                 recentDocuments,
                                 showBranding,
-                                addRecentCommand: CommandBarUiPlugin.addRecentCommand,
-                                setFavouriteCommands: CommandBarUiPlugin.setFavouriteCommands,
+                                addRecentCommand: PreferencesApi.addRecentCommand,
+                                setFavouriteCommands: PreferencesApi.setFavouriteCommands,
                             }}
                             translate={this.translate}
                         />

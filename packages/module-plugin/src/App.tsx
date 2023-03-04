@@ -2,6 +2,7 @@ import { Component } from 'preact';
 import React from 'preact/compat';
 
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
+import { PreferencesApi, CommandsApi, DocumentationApi } from '@neos-commandbar/neos-api';
 import IconComponent from './IconComponent';
 
 import * as styles from './ModulePlugin.module.css';
@@ -28,13 +29,7 @@ export default class App extends Component<
     }
 > {
     static tagName = 'command-bar-container';
-    // static observedAttributes = ['styleuri'];
     static options = { shadow: true };
-
-    static ENDPOINT_COMMANDS = '/neos/service/data-source/shel-neos-commandbar-commands';
-    static ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
-    static ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
-    static ENDPOINT_ADD_RECENT_COMMAND = '/neos/shel-neos-commandbar/preferences/addrecentcommand';
 
     constructor() {
         super();
@@ -42,57 +37,34 @@ export default class App extends Component<
             initialized: false,
             open: false,
             dragging: false,
-            commands: {},
+            commands: {
+                neosDocs: {
+                    name: 'Documentation',
+                    icon: 'book',
+                    description: 'Browse or search the Neos documentation',
+                    canHandleQueries: true,
+                    action: this.handleSearchNeosDocs.bind(this),
+                },
+            },
             preferences: { favouriteCommands: [], recentCommands: [], recentDocuments: [], showBranding: true },
         };
     }
 
+    /**
+     * Wrapper for the Neos backend translation api
+     */
     private static translate(id: string, label = '', args = []): string {
         return (window as NeosModuleWindow).NeosCMS.I18n.translate(id, label, 'Shel.Neos.CommandBar', 'Main', args);
-    }
-
-    private static async setPreference(endpoint: string, data: any): Promise<void> {
-        return await fetch(endpoint, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            credentials: 'include',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }).then((res) => res.json());
-    }
-
-    private static async setFavouriteCommands(commandIds: CommandId[]) {
-        return App.setPreference(App.ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds: commandIds });
-    }
-
-    private static async addRecentCommand(commandId: CommandId) {
-        // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
-        return App.setPreference(App.ENDPOINT_ADD_RECENT_COMMAND, { commandId: commandId });
     }
 
     /**
      * Load the commands and preferences from the server and set the state to initialized
      */
     async componentDidMount() {
-        // TODO: Create custom fetch method that handles errors and credentials
         try {
-            // TODO: Add typings for preferences
-            await fetch(App.ENDPOINT_GET_PREFERENCES, { credentials: 'include', method: 'GET' })
-                .then((res) => res.json())
-                .then((preferences) => {
-                    this.setState({ preferences: preferences });
-                });
-
-            // TODO: Add typings for commands
-            await fetch(App.ENDPOINT_COMMANDS, {
-                credentials: 'include',
-            })
-                .then((res) => res.json())
-                .then((commands) => {
-                    this.setState({ commands: commands });
-                });
+            const preferences = await PreferencesApi.getPreferences();
+            const commands = await CommandsApi.getCommands();
+            this.setState((prev) => ({ initialized: true, preferences, commands: { ...prev.commands, ...commands } }));
 
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'k' && e.metaKey) {
@@ -100,8 +72,6 @@ export default class App extends Component<
                     this.handleToggle();
                 }
             });
-
-            this.setState({ initialized: true });
         } catch (e) {
             logger.error(e);
         }
@@ -115,6 +85,37 @@ export default class App extends Component<
 
     handleDrag = (dragging: boolean) => {
         this.setState({ dragging: dragging });
+    };
+
+    handleSearchNeosDocs = async function* (query: string): CommandGeneratorResult {
+        yield {
+            success: true,
+            message: `Searching for "${query}"`,
+        };
+        const results = await DocumentationApi.searchNeosDocs(query).catch((e) =>
+            logger.error('Could not search Neos docs', e)
+        );
+        if (!results) {
+            return {
+                success: false,
+                message: 'Search failed',
+            };
+        }
+        yield {
+            success: true,
+            message: `${results.length} options match your query`,
+            options: results.reduce((carry, item: Command, i) => {
+                carry[`result_${i}`] = {
+                    id: `result_${i}`,
+                    ...item,
+                };
+                return carry;
+            }, {} as FlatCommandList),
+        };
+        return {
+            success: true,
+            message: 'Finished search',
+        };
     };
 
     render() {
@@ -139,8 +140,8 @@ export default class App extends Component<
                                 IconComponent={IconComponent}
                                 userPreferences={{
                                     ...preferences,
-                                    setFavouriteCommands: App.setFavouriteCommands,
-                                    addRecentCommand: App.addRecentCommand,
+                                    setFavouriteCommands: PreferencesApi.setFavouriteCommands,
+                                    addRecentCommand: PreferencesApi.addRecentCommand,
                                 }}
                                 translate={App.translate}
                             />

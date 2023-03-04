@@ -1,0 +1,12 @@
+{
+  "name": "@neos-commandbar/neos-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "@neos-commandbar/commandbar": "workspace:*"
+  },
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo 'not implemented' exit 1",
+    "build": "exit 0"
+  }
+}

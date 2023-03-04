@@ -53,8 +53,8 @@ class SearchNeosDocsDataSource extends AbstractDataSource
 
         try {
             $result = $browser->request($endpoint->withQuery($this->settings['queryParameter'] . '=' . urlencode($query)));
-        } catch (\Exception) {
-            throw new Exception('Could not fetch search results from the Neos documentation', 1676205990);
+        } catch (\Exception $e) {
+            throw new Exception('Could not fetch search results from the Neos documentation', 1676205990, $e);
         }
         if ($result->getStatusCode() !== 200) {
             throw new Exception('Could not fetch search results from the Neos documentation', 1676205993);

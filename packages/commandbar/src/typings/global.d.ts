@@ -145,6 +145,6 @@ interface UserPreferences {
 }
 
 interface UserPreferencesService extends UserPreferences {
-    setFavouriteCommands: (commandIds: CommandId[]) => Promise<void>;
-    addRecentCommand: (commandId: CommandId) => Promise<void>;
+    setFavouriteCommands: (commandIds: CommandId[]) => Promise;
+    addRecentCommand: (commandId: CommandId) => Promise;
 }

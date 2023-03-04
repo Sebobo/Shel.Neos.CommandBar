@@ -7,9 +7,12 @@
     "jsxImportSource": "preact"
   },
   "references": [
-    { "path": "../commandbar" }
+    { "path": "../commandbar" },
+    { "path": "../neos-api" }
   ],
   "include": [
-    "packages/**/*"
+    "./src",
+    "../commandbar",
+    "../neos-api"
   ]
 }

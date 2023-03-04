@@ -10,7 +10,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "@neos-commandbar/commandbar": "workspace:*",
     "@neos-commandbar/dev-server": "workspace:*",
     "@neos-commandbar/module-plugin": "workspace:*",
     "@neos-commandbar/ui-plugin": "workspace:*"

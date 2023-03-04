@@ -1860,7 +1860,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neos-commandbar/commandbar@*, @neos-commandbar/commandbar@workspace:*, @neos-commandbar/commandbar@workspace:packages/commandbar":
+"@neos-commandbar/commandbar@*, @neos-commandbar/commandbar@workspace:packages/commandbar":
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/commandbar@workspace:packages/commandbar"
   dependencies:
@@ -1892,10 +1892,19 @@ __metadata:
   resolution: "@neos-commandbar/module-plugin@workspace:packages/module-plugin"
   dependencies:
     "@neos-commandbar/commandbar": "*"
+    "@neos-commandbar/neos-api": "*"
     "@parcel/reporter-bundle-analyzer": ^2.8.3
     parcel: ^2.8.3
     preact: ^10.13.0
     preact-custom-element: ^4.2.1
+  languageName: unknown
+  linkType: soft
+
+"@neos-commandbar/neos-api@*, @neos-commandbar/neos-api@workspace:packages/neos-api":
+  version: 0.0.0-use.local
+  resolution: "@neos-commandbar/neos-api@workspace:packages/neos-api"
+  dependencies:
+    "@neos-commandbar/commandbar": "*"
   languageName: unknown
   linkType: soft
 
@@ -11898,7 +11907,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "neos-commandbar@workspace:."
   dependencies:
-    "@neos-commandbar/commandbar": "workspace:*"
     "@neos-commandbar/dev-server": "workspace:*"
     "@neos-commandbar/module-plugin": "workspace:*"
     "@neos-commandbar/ui-plugin": "workspace:*"

@@ -2,7 +2,8 @@
   "name": "@neos-commandbar/ui-plugin",
   "version": "1.0.0",
   "dependencies": {
-    "@neos-commandbar/commandbar": "*",
+    "@neos-commandbar/commandbar": "workspace:*",
+    "@neos-commandbar/neos-api": "workspace:*",
     "@neos-project/react-ui-components": "^8.2.6"
   },
   "devDependencies": {

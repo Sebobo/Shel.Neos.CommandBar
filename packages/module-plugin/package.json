@@ -2,7 +2,8 @@
   "name": "@neos-commandbar/module-plugin",
   "version": "1.0.0",
   "dependencies": {
-    "@neos-commandbar/commandbar": "*",
+    "@neos-commandbar/commandbar": "workspace:*",
+    "@neos-commandbar/neos-api": "workspace:*",
     "preact": "^10.13.0",
     "preact-custom-element": "^4.2.1"
   },
