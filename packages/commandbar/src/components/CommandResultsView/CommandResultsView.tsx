@@ -11,11 +11,13 @@ const CommandResultsView: React.FC = () => {
         Icon,
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
-    const selectedElementRef = React.useRef(null);
+    const navRef = React.useRef<HTMLElement>(null);
 
     useEffect(() => {
-        selectedElementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, [selectedElementRef.current]);
+        navRef.current
+            ?.querySelector(`li:nth-child(${highlightedOption})`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, [highlightedOption, navRef]);
 
     if (!result) return null;
 
@@ -31,7 +33,6 @@ const CommandResultsView: React.FC = () => {
                         {Object.keys(options).map((commandId, index) => (
                             <CommandListItem
                                 key={commandId}
-                                ref={highlightedOption === index ? selectedElementRef : null}
                                 command={options[commandId]}
                                 onItemSelect={executeCommand}
                                 highlighted={highlightedOption === index}

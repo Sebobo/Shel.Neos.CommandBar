@@ -30,11 +30,13 @@ const CommandList: React.FC<CommandListingProps> = ({
         Icon,
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
-    const highlightedCommandRef = React.useRef<HTMLLIElement>(null);
+    const navRef = React.useRef<HTMLElement>(null);
 
     useEffect(() => {
-        highlightedCommandRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, [highlightedCommandRef.current]);
+        navRef.current
+            ?.querySelector(`li:nth-child(${highlightedItem})`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, [highlightedItem, navRef]);
 
     const handleToggleFavourite = useCallback(
         (commandId: CommandId) => {
@@ -56,6 +58,7 @@ const CommandList: React.FC<CommandListingProps> = ({
         <nav
             className={classnames(styles.results, status !== STATUS.IDLE && styles.disabled)}
             data-testid="CommandList"
+            ref={navRef}
         >
             {suggestions.length > 0 && (
                 <>
@@ -65,11 +68,6 @@ const CommandList: React.FC<CommandListingProps> = ({
                             <CommandListItem
                                 key={commandId}
                                 Icon={Icon}
-                                ref={
-                                    highlightedItem === availableCommandIds.indexOf(commandId)
-                                        ? highlightedCommandRef
-                                        : null
-                                }
                                 command={commands[commandId]}
                                 onItemSelect={executeCommand}
                                 highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
@@ -90,11 +88,6 @@ const CommandList: React.FC<CommandListingProps> = ({
                             <CommandListItem
                                 key={commandId}
                                 Icon={Icon}
-                                ref={
-                                    highlightedItem === availableCommandIds.indexOf(commandId)
-                                        ? highlightedCommandRef
-                                        : null
-                                }
                                 command={commands[commandId]}
                                 onItemSelect={executeCommand}
                                 highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
