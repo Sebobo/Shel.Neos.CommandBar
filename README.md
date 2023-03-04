@@ -85,6 +85,33 @@ Shel:
         showBranding: false
 ```
 
+## Add additional commands
+
+Additional commands can be added to the UI plugin via the Neos UI extensibility API.
+
+Here is an example `manifest.js` which adds a simple command to the command bar:
+
+```javascript
+import manifest, { SynchronousRegistry } from '@neos-project/neos-ui-extensibility';
+import { selectors } from '@neos-project/neos-ui-redux-store';
+
+manifest('My.Vendor:CommandBarPlugin', {}, (globalRegistry, { store, frontendConfiguration }) => {
+    globalRegistry.get('Shel.Neos.CommandBar').set('plugins/My.Vendor:Example.Alert', () => ({
+        extensibilityTest: {
+            name: 'Example alert command',
+            icon: 'vial',
+            description: 'Command registered via command bar extensibility',
+            canHandleQueries: true,
+            action: async (query) => {
+                const state = store.getState();
+                const documentNode = selectors.CR.Nodes.documentNodeSelector(state);
+                window.alert(`The current document node is ${documentNode.label} and the query is ${query}.`);
+            },
+        },
+    }));
+});
+```
+
 ## Development
 
 ⚠️ This package offers 2 plugins. One is the Neos.UI plugin built with Neos extensibility React based API and the other 
