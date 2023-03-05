@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
+import { useComputed, useSignalEffect } from '@preact/signals';
 
 import CommandListItem from '../CommandListItem/CommandListItem';
 import { useCommandBarState, useCommandInput, STATUS } from '../../state';
@@ -6,41 +7,31 @@ import { classnames } from '../../helpers';
 
 import * as styles from './CommandListing.module.css';
 
-type CommandListingProps = {
-    heading?: string;
-    noCommandsMessage?: string;
-};
-
-const CommandList: React.FC<CommandListingProps> = ({
-    heading = 'Commands',
-    noCommandsMessage = 'No matching commands found',
-}) => {
+const CommandList: React.FC = () => {
     const {
         state: {
             commands,
             highlightedItem,
             availableCommandIds,
-            activeCommandId,
             status,
             searchWord,
             favouriteCommands,
             recentCommands,
         },
         actions: { ADD_FAVOURITE, REMOVE_FAVOURITE },
-        Icon,
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
     const navRef = React.useRef<HTMLElement>(null);
 
-    useEffect(() => {
+    useSignalEffect(() => {
         navRef.current
             ?.querySelector(`li:nth-child(${highlightedItem})`)
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, [highlightedItem, navRef]);
+    });
 
     const handleToggleFavourite = useCallback(
         (commandId: CommandId) => {
-            if (favouriteCommands.includes(commandId)) {
+            if (favouriteCommands.value.includes(commandId)) {
                 REMOVE_FAVOURITE(commandId);
             } else {
                 ADD_FAVOURITE(commandId);
@@ -49,58 +40,59 @@ const CommandList: React.FC<CommandListingProps> = ({
         [favouriteCommands]
     );
 
-    const suggestions = searchWord ? [] : availableCommandIds.filter((commandId) => recentCommands.includes(commandId));
-    const availableCommands = searchWord
-        ? availableCommandIds
-        : availableCommandIds.filter((commandId) => !recentCommands.includes(commandId));
+    const suggestions = useComputed(() => {
+        return searchWord.value
+            ? []
+            : availableCommandIds.value.filter((commandId) => recentCommands.value.includes(commandId));
+    });
+    const availableCommands = useComputed(() => {
+        return searchWord.value
+            ? availableCommandIds.value
+            : availableCommandIds.value.filter((commandId) => !recentCommands.value.includes(commandId));
+    });
+    const highlightedCommand = useComputed<CommandId>(() => availableCommandIds.value[highlightedItem.value]);
 
     return (
         <nav
-            className={classnames(styles.results, status !== STATUS.IDLE && styles.disabled)}
+            className={classnames(styles.results, status.value !== STATUS.IDLE && styles.disabled)}
             data-testid="CommandList"
             ref={navRef}
         >
-            {suggestions.length > 0 && (
+            {suggestions.value.length > 0 && (
                 <>
-                    <h6>Suggestions</h6>
+                    <h6>Recently used</h6>
                     <ul>
-                        {suggestions.map((commandId) => (
+                        {suggestions.value.map((commandId) => (
                             <CommandListItem
                                 key={commandId}
-                                Icon={Icon}
-                                command={commands[commandId]}
+                                command={commands.value[commandId]}
                                 onItemSelect={executeCommand}
-                                highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
-                                runningCommandId={activeCommandId}
-                                disabled={!searchWord && commands[commandId].canHandleQueries}
-                                isFavourite={favouriteCommands.includes(commandId)}
+                                highlightedId={highlightedCommand}
                                 onToggleFavourite={handleToggleFavourite}
                             />
                         ))}
                     </ul>
                 </>
             )}
-            {availableCommands.length > 0 && (
+            {availableCommands.value.length > 0 && (
                 <>
-                    {heading && <h6>{heading}</h6>}
+                    <h6>Commands</h6>
                     <ul>
-                        {availableCommands.map((commandId) => (
+                        {availableCommands.value.map((commandId) => (
                             <CommandListItem
                                 key={commandId}
-                                Icon={Icon}
-                                command={commands[commandId]}
+                                command={commands.value[commandId]}
                                 onItemSelect={executeCommand}
-                                highlighted={highlightedItem === availableCommandIds.indexOf(commandId)}
-                                runningCommandId={activeCommandId}
-                                disabled={!searchWord && commands[commandId].canHandleQueries}
-                                isFavourite={favouriteCommands.includes(commandId)}
+                                highlightedId={highlightedCommand}
                                 onToggleFavourite={handleToggleFavourite}
                             />
                         ))}
                     </ul>
                 </>
             )}
-            {availableCommandIds.length === 0 && <small className={styles.noResults}>{noCommandsMessage}</small>}
+            {availableCommandIds.value.length === 0 && (
+                <small className={styles.noResults}>No matching commands found</small>
+            )}
         </nav>
     );
 };

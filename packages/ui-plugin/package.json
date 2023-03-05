@@ -20,5 +20,8 @@
   },
   "neos": {
     "buildTargetDirectory": "../../Resources/Public"
+  },
+  "alias": {
+    "@preact/signals": "@preact/signals-react"
   }
 }

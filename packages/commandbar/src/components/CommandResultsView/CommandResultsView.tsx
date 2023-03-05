@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useComputed, useSignalEffect } from '@preact/signals';
 
 import { useCommandBarState, useCommandInput } from '../../state';
 import CommandListItem from '../CommandListItem/CommandListItem';
@@ -7,21 +8,23 @@ import * as styles from './CommandResultsView.module.css';
 
 const CommandResultsView: React.FC = () => {
     const {
-        state: { result, highlightedOption, activeCommandId },
-        Icon,
+        state: { result, highlightedOption },
     } = useCommandBarState();
     const { executeCommand } = useCommandInput();
     const navRef = React.useRef<HTMLElement>(null);
+    const highlightedCommand = useComputed<CommandId>(() =>
+        result.value ? Object.values(result.value.options)[highlightedOption.value].id : null
+    );
 
-    useEffect(() => {
+    useSignalEffect(() => {
         navRef.current
             ?.querySelector(`li:nth-child(${highlightedOption})`)
             ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, [highlightedOption, navRef]);
+    });
 
-    if (!result) return null;
+    if (!result.value) return null;
 
-    const { options, view, message } = result;
+    const { options, view, message } = result.value;
 
     return (
         <div className={styles.commandResultsView}>
@@ -30,14 +33,12 @@ const CommandResultsView: React.FC = () => {
             {options && (
                 <nav className={[styles.results].join(' ')}>
                     <ul>
-                        {Object.keys(options).map((commandId, index) => (
+                        {Object.keys(options).map((commandId) => (
                             <CommandListItem
                                 key={commandId}
                                 command={options[commandId]}
                                 onItemSelect={executeCommand}
-                                highlighted={highlightedOption === index}
-                                runningCommandId={activeCommandId}
-                                Icon={Icon}
+                                highlightedId={highlightedCommand}
                             />
                         ))}
                     </ul>
@@ -47,4 +48,4 @@ const CommandResultsView: React.FC = () => {
     );
 };
 
-export default React.memo(CommandResultsView);
+export default CommandResultsView;

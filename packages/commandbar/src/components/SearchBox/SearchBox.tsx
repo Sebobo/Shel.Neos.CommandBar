@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
+import { useSignalEffect } from '@preact/signals';
 
 import { useCommandBarState, STATUS, useIntl } from '../../state';
 import IconWrapper from '../IconWrapper/IconWrapper';
@@ -6,13 +7,11 @@ import IconWrapper from '../IconWrapper/IconWrapper';
 import * as styles from './SearchBox.module.css';
 
 const SearchBox: React.FC = () => {
-    const {
-        state: { searchWord, status, expanded },
-        actions,
-    } = useCommandBarState();
+    const { state, actions } = useCommandBarState();
     const { translate } = useIntl();
     const inputRef = useRef<HTMLInputElement>();
 
+    const handleChange = useCallback((e) => actions.UPDATE_SEARCH(e.target.value), []);
     const handleKeyPress = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {
             // Prevent escape event from bubbling up if the input is focused and the native reset should be used
@@ -26,13 +25,8 @@ const SearchBox: React.FC = () => {
         [inputRef.current]
     );
 
-    useEffect(() => {
-        if (status === STATUS.IDLE) {
-            inputRef.current?.focus();
-        }
-    }, [inputRef.current, status]);
-
-    const handleChange = useCallback((e) => actions.UPDATE_SEARCH(e.target.value), []);
+    // Focus input when the command bar is ready for input
+    useSignalEffect(() => state.status.value === STATUS.IDLE && inputRef.current?.focus());
 
     return (
         <>
@@ -44,11 +38,11 @@ const SearchBox: React.FC = () => {
                 autoFocus
                 onChange={handleChange}
                 onKeyUp={handleKeyPress}
-                value={searchWord}
-                disabled={status !== STATUS.IDLE && status !== STATUS.COLLAPSED}
+                value={state.searchWord as unknown as string}
+                disabled={state.status.value !== STATUS.IDLE && state.status.value !== STATUS.COLLAPSED}
                 data-testid="SearchBox"
             />
-            {!expanded && (
+            {!state.expanded.value && (
                 <button
                     className={styles.expandButton}
                     onClick={actions.EXPAND}
