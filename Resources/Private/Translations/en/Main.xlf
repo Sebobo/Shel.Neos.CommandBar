@@ -5,6 +5,24 @@
             <trans-unit id="SearchBox.placeholder">
                 <source>What do you want to do today?</source>
             </trans-unit>
+            <trans-unit id="CommandBarFooter.branding">
+                <source>Made with love by Sebastian Helzle</source>
+            </trans-unit>
+            <trans-unit id="CommandBarFooter.brandingSmall">
+                <source>Made with love by</source>
+            </trans-unit>
+            <trans-unit id="CommandList.suggestions">
+                <source>Suggestions</source>
+            </trans-unit>
+            <trans-unit id="CommandList.heading">
+                <source>Commands</source>
+            </trans-unit>
+            <trans-unit id="CommandList.noCommandsMessage">
+                <source>No matching commands found</source>
+            </trans-unit>
+            <trans-unit id="CommandView.searchResults">
+                <source>Try a different query to find more results</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>
