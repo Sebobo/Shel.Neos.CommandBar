@@ -73,7 +73,7 @@ export const machine: MachineDefinition = {
                 },
                 HIGHLIGHT_NEXT_ITEM: {
                     target: STATUS.IDLE,
-                    actions: [ACTION.REFRESH_COMMANDS, ACTION.EXPAND, ACTION.HIGHLIGHT_NEXT_COMMAND],
+                    actions: [ACTION.REFRESH_COMMANDS, ACTION.EXPAND],
                 },
                 EXPAND: {
                     target: STATUS.IDLE,
