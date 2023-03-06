@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
-import { useSignalEffect, signal, computed, ReadonlySignal } from '@preact/signals';
+import { signal, computed, ReadonlySignal } from '@preact/signals';
 
 import { CommandBarEvent, commandBarReducer, CommandBarState } from './commandBarReducer';
 import { flattenCommands, logger } from '../helpers';
