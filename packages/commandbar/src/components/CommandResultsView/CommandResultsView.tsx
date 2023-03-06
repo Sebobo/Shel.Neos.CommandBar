@@ -19,7 +19,7 @@ const CommandResultsView: React.FC = () => {
     useSignalEffect(() => {
         navRef.current
             ?.querySelector(`li:nth-child(${highlightedOption})`)
-            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     if (!result.value) return null;
