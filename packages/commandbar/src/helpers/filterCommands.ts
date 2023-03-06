@@ -1,4 +1,13 @@
-import FuzzySearch from 'fuzzy-search';
+import uFuzzy from '@leeoniya/ufuzzy';
+
+// See https://github.com/leeoniya/uFuzzy#options
+const uf = new uFuzzy({
+    intraMode: 1,
+    intraIns: 1,
+    intraSub: 1,
+    intraTrn: 1,
+    intraDel: 1,
+});
 
 function sortCommands(
     a: ProcessedCommandItem,
@@ -63,16 +72,15 @@ export default function filterCommands(
             .map((command) => command.id);
     }
 
-    // TODO: Try @leeoniya/ufuzzy for fuzzy search which makes it easier to use custom sorting functions
-    const searcher = new FuzzySearch(availableCommands, ['name', 'description'], {
-        sort: true,
-    });
-    const matchingCommands = searcher.search(searchWord.toLowerCase());
+    // Create a list of all available commands with their name and description as haystack for the search
+    const availableCommandNames = availableCommands.map(({ name, description }) => name + ' ' + description);
+    const [idxs, , order] = uf.search(availableCommandNames, searchWord.toLowerCase());
+    const matchingIds = order.map((i) => availableCommands[idxs[i]].id);
 
     // Add all commands that can handle queries to the result, the Set removes duplicates
     return [
         ...new Set([
-            ...matchingCommands.map((command) => command.id),
+            ...matchingIds,
             ...availableCommands.filter((command) => command.canHandleQueries).map((command) => command.id),
         ]),
     ];

@@ -1,0 +1,46 @@
+diff --git a/dist/uFuzzy.esm.js b/dist/uFuzzy.esm.js
+index 5ce00641aa943c921f929fa3ba698fa91fb11f92..f6ef56a463054596b5f128252d8e2403c2844f2e 100644
+--- a/dist/uFuzzy.esm.js
++++ b/dist/uFuzzy.esm.js
+@@ -733,8 +733,9 @@ function uFuzzy(opts) {
+ 						order[i] += retOrder.length;
+ 				}
+
+-				for (let k in _info)
+-					retInfo[k] = (retInfo[k] ?? []).concat(_info[k]);
++				for (let k in _info) {
++					retInfo[k] = (retInfo[k] ? retInfo[k] : []).concat(_info[k]);
++                }
+
+ 				retOrder = retOrder.concat(order);
+ 			}
+@@ -834,19 +835,24 @@ const _mark = (part, matched) => matched ? `<mark>${part}</mark>` : part;
+ const _append = (acc, part) => acc + part;
+
+ function highlight(str, ranges, mark = _mark, accum = '', append = _append) {
+-	accum = append(accum, mark(str.substring(0, ranges[0]), false)) ?? accum;
++    let tmp = append(accum, mark(str.substring(0, ranges[0]), false));
++	accum = tmp !== null ? tmp : accum;
+
+ 	for (let i = 0; i < ranges.length; i+=2) {
+ 		let fr = ranges[i];
+ 		let to = ranges[i+1];
+
+-		accum = append(accum, mark(str.substring(fr, to), true)) ?? accum;
++        tmp = append(accum, mark(str.substring(fr, to), true));
++		accum = tmp !== null ? tmp : accum;
+
+-		if (i < ranges.length - 3)
+-			accum = append(accum, mark(str.substring(ranges[i+1], ranges[i+2]), false)) ?? accum;
++		if (i < ranges.length - 3) {
++            tmp = append(accum, mark(str.substring(ranges[i + 1], ranges[i + 2]), false));
++            accum = tmp !== null ? tmp : accum;
++        }
+ 	}
+
+-	accum = append(accum, mark(str.substring(ranges[ranges.length - 1]), false)) ?? accum;
++    tmp = append(accum, mark(str.substring(ranges[ranges.length - 1]), false));
++	accum = tmp !== null ? tmp : accum;
+
+ 	return accum;
+ }

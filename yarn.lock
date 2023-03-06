@@ -1732,6 +1732,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@leeoniya/ufuzzy@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@leeoniya/ufuzzy@npm:1.0.3"
+  checksum: f64632a4d324bf1c0718bb54d8a3069cbcde23a41673763b7432d9d9f7a5b74d7786ed34b44d7a5fc58af3f2593b66f289b70edd9ee901c9153268ab478c5cc6
+  languageName: node
+  linkType: hard
+
+"@leeoniya/ufuzzy@patch:@leeoniya/ufuzzy@npm%3A1.0.3#./.yarn/patches/@leeoniya-ufuzzy-npm-1.0.3-475d16540b.patch::version=1.0.3&hash=b7c8eb&locator=neos-commandbar%40workspace%3A.":
+  version: 1.0.3
+  resolution: "@leeoniya/ufuzzy@patch:@leeoniya/ufuzzy@npm%3A1.0.3#./.yarn/patches/@leeoniya-ufuzzy-npm-1.0.3-475d16540b.patch::version=1.0.3&hash=b7c8eb&locator=neos-commandbar%40workspace%3A."
+  checksum: 784c0afa6bb44cf6c8ea8a472ea3fa7a6e4ad9f6f957b30359cfae8f8b9880c0fe3414d7463722c96466ea45570eaa679c1972b3f8500825baad7dcd7ece955d
+  languageName: node
+  linkType: hard
+
+"@leeoniya/ufuzzy@patch:@leeoniya/ufuzzy@patch%3A@leeoniya/ufuzzy@npm%253A1.0.3%23./.yarn/patches/@leeoniya-ufuzzy-npm-1.0.3-475d16540b.patch%3A%3Aversion=1.0.3&hash=b7c8eb&locator=neos-commandbar%2540workspace%253A.#./.yarn/patches/@leeoniya-ufuzzy-patch-e276b84bbf.patch::locator=neos-commandbar%40workspace%3A.":
+  version: 1.0.3
+  resolution: "@leeoniya/ufuzzy@patch:@leeoniya/ufuzzy@patch%3A@leeoniya/ufuzzy@npm%253A1.0.3%23./.yarn/patches/@leeoniya-ufuzzy-npm-1.0.3-475d16540b.patch%3A%3Aversion=1.0.3&hash=b7c8eb&locator=neos-commandbar%2540workspace%253A.#./.yarn/patches/@leeoniya-ufuzzy-patch-e276b84bbf.patch::version=1.0.3&hash=874005&locator=neos-commandbar%40workspace%3A."
+  checksum: 29a3405a1f008ce93511b16b30d26e74d4cd01700b23fedcce47a1802b054d3e8d2459eabe4523666b5e4943e240fc34a9dd671272a4ed488d83db285467cff3
+  languageName: node
+  linkType: hard
+
 "@lezer/common@npm:^0.15.0, @lezer/common@npm:^0.15.7":
   version: 0.15.12
   resolution: "@lezer/common@npm:0.15.12"
@@ -1860,13 +1881,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neos-commandbar/commandbar@*, @neos-commandbar/commandbar@workspace:packages/commandbar":
+"@neos-commandbar/commandbar@*, @neos-commandbar/commandbar@workspace:*, @neos-commandbar/commandbar@workspace:packages/commandbar":
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/commandbar@workspace:packages/commandbar"
   dependencies:
+    "@leeoniya/ufuzzy": ^1.0.3
     "@preact/signals": ^1.1.3
     "@preact/signals-react": 1.1.*
-    fuzzy-search: ^3.2.1
     preact: "*"
     react: "*"
   dependenciesMeta:
@@ -1891,8 +1912,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/module-plugin@workspace:packages/module-plugin"
   dependencies:
-    "@neos-commandbar/commandbar": "*"
-    "@neos-commandbar/neos-api": "*"
+    "@neos-commandbar/commandbar": "workspace:*"
+    "@neos-commandbar/neos-api": "workspace:*"
     "@parcel/reporter-bundle-analyzer": ^2.8.3
     parcel: ^2.8.3
     preact: ^10.13.0
@@ -1900,11 +1921,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@neos-commandbar/neos-api@*, @neos-commandbar/neos-api@workspace:packages/neos-api":
+"@neos-commandbar/neos-api@workspace:*, @neos-commandbar/neos-api@workspace:packages/neos-api":
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/neos-api@workspace:packages/neos-api"
   dependencies:
-    "@neos-commandbar/commandbar": "*"
+    "@neos-commandbar/commandbar": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -1912,7 +1933,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@neos-commandbar/ui-plugin@workspace:packages/ui-plugin"
   dependencies:
-    "@neos-commandbar/commandbar": "*"
+    "@neos-commandbar/commandbar": "workspace:*"
+    "@neos-commandbar/neos-api": "workspace:*"
     "@neos-project/build-essentials": ^8.2.6
     "@neos-project/neos-ui-extensibility": ^8.2.6
     "@neos-project/react-ui-components": ^8.2.6
@@ -2028,7 +2050,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@neos-project/neos-ui-extensibility@npm:^8.2.6":
+"@neos-project/neos-ui-extensibility@npm:8.2.6":
   version: 8.2.6
   resolution: "@neos-project/neos-ui-extensibility@npm:8.2.6"
   dependencies:
@@ -2046,6 +2068,27 @@ __metadata:
   bin:
     neos-react-scripts: ./bin/neos-react-scripts.js
   checksum: 2f1d06b05f21d9b916458da780dff1bf245772a285027ca0e9e538bb3fac68a836f9506f19d50cf896d298b37b59f2a6b39ca77b194201199452d60b459327ee
+  languageName: node
+  linkType: hard
+
+"@neos-project/neos-ui-extensibility@patch:@neos-project/neos-ui-extensibility@npm%3A8.2.6#./.yarn/patches/@neos-project-neos-ui-extensibility-npm-8.2.6-aa62204758.patch::locator=neos-commandbar%40workspace%3A.":
+  version: 8.2.6
+  resolution: "@neos-project/neos-ui-extensibility@patch:@neos-project/neos-ui-extensibility@npm%3A8.2.6#./.yarn/patches/@neos-project-neos-ui-extensibility-npm-8.2.6-aa62204758.patch::version=8.2.6&hash=5d069f&locator=neos-commandbar%40workspace%3A."
+  dependencies:
+    "@neos-project/positional-array-sorter": 8.1.4
+    babel-plugin-transform-decorators-legacy: ^1.3.4
+    babel-plugin-transform-object-rest-spread: ^6.20.1
+    babel-preset-es2015: ^6.13.2
+    babel-preset-react: ^6.3.13
+    babel-preset-stage-0: ^6.3.13
+    chalk: ^1.1.3
+    cross-spawn: ^7.0.3
+    mini-css-extract-plugin: ^0.5.0
+    react-dev-utils: ^7.0.0
+    webpack: ^4.41.5
+  bin:
+    neos-react-scripts: ./bin/neos-react-scripts.js
+  checksum: 251b8fe4e2544dec88ca187f6ac7c52f898f82143362c327ce4ae01e3e3a0d65989489dcba918d1f6fa17447e4144fae3cd85bd5ca31a1a91c0c778b5854dc4d
   languageName: node
   linkType: hard
 
@@ -8460,13 +8503,6 @@ __metadata:
   version: 1.2.3
   resolution: "functions-have-names@npm:1.2.3"
   checksum: c3f1f5ba20f4e962efb71344ce0a40722163e85bee2101ce25f88214e78182d2d2476aa85ef37950c579eb6cf6ee811c17b3101bb84004bb75655f3e33f3fdb5
-  languageName: node
-  linkType: hard
-
-"fuzzy-search@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "fuzzy-search@npm:3.2.1"
-  checksum: 65d50909e69216f830a6e88eade08df00662e2c081edb02063404cc922cc7319ef8958eff781aa4e3e64543a394a912cd8c80abb4c6b158c119e811364e7cfb9
   languageName: node
   linkType: hard
 

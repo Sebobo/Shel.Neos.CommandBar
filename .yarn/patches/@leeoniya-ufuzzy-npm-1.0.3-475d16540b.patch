@@ -1,0 +1,22 @@
+diff --git a/dist/uFuzzy.esm.js b/dist/uFuzzy.esm.js
+index f2d60b326d70b6573e0d708bba43c907387899b2..5ce00641aa943c921f929fa3ba698fa91fb11f92 100644
+--- a/dist/uFuzzy.esm.js
++++ b/dist/uFuzzy.esm.js
+@@ -663,7 +663,7 @@ function uFuzzy(opts) {
+ 
+ 				for (let ti = 0; ti < terms2.length; ti++) {
+ 					// no haystack item contained all terms
+-					if (preFiltered?.length == 0)
++					if (preFiltered && preFiltered.length == 0)
+ 						return [[], null, null];
+ 
+ 					preFiltered = filter(haystack, terms2[ti], preFiltered);
+@@ -701,7 +701,7 @@ function uFuzzy(opts) {
+ 		// non-ooo or ooo w/single term
+ 		if (needles == null) {
+ 			needles = [needle];
+-			matches = [preFiltered?.length > 0 ? preFiltered : filter(haystack, needle)];
++			matches = [preFiltered && preFiltered.length > 0 ? preFiltered : filter(haystack, needle)];
+ 		}
+ 
+ 		let retInfo = null;
