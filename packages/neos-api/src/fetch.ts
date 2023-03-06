@@ -15,6 +15,9 @@ export async function fetchData<T = any>(endpoint: string, params?: Record<strin
             Accept: 'application/json',
         },
     }).then((response: Response) => {
+        if (response.status !== 200) {
+            throw new Error(`The request failed with code ${response.status}: "${response.statusText}"`);
+        }
         if (response.headers.get('Content-Type')?.includes('application/json')) {
             return response.json();
         }

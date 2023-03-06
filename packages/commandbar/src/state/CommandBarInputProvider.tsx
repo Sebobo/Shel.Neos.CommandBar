@@ -43,7 +43,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
             // Cancel search, or selection, or close command bar
             e.stopPropagation();
             e.preventDefault();
-            if (state.selectedCommandGroup || state.searchWord) {
+            if (state.selectedCommandGroup.value || state.searchWord.value) {
                 actions.CANCEL();
             } else {
                 // Close command bar if cancel is noop
@@ -59,7 +59,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
             e.stopPropagation();
             e.preventDefault();
             actions.HIGHLIGHT_PREVIOUS_ITEM();
-        } else if (e.key === 'Enter' && state.availableCommandIds.value.length > state.highlightedItem.value) {
+        } else if (e.key === 'Enter') {
             // Execute highlighted command
             e.stopPropagation();
             e.preventDefault();
@@ -74,7 +74,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
     const executeCommand = useCallback(
         async (commandId: CommandId) => {
             const command = state.result.value?.options[commandId] ?? state.commands.value[commandId];
-            const { action, canHandleQueries, subCommandIds } = command;
+            const { action, canHandleQueries, subCommandIds, name } = command;
 
             // If the command is a group, select it
             if (subCommandIds?.length > 0) {
@@ -110,12 +110,13 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
                 // Handle Promises
                 (actionResult as AsyncCommandResult)
                     .then((result) => {
-                        // TODO: Handle success === false
-                        logger.debug('Command result', result);
+                        if (result && !result.success) {
+                            throw new Error(`The command "${name}" failed`);
+                        }
                     })
                     .catch((error) => {
-                        // TODO: Show error message
-                        logger.error('Command error', error);
+                        // TODO: Show an error message to the user
+                        logger.error('Command error', name, error);
                     })
                     .finally(() => {
                         actions.FINISH_COMMAND();
