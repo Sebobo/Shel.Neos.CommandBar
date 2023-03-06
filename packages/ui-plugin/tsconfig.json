@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig",
+  "references": [
+    { "path": "../commandbar" },
+    { "path": "../neos-api" }
+  ],
+  "include": [
+    "./src",
+    "../commandbar",
+    "../neos-api"
+  ]
+}
