@@ -136,20 +136,20 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
             [TRANSITION.FINISH_COMMAND]: () => dispatch({ type: TRANSITION.FINISH_COMMAND }),
             [TRANSITION.UPDATE_RESULT]: (result: CommandResult) => dispatch({ type: TRANSITION.UPDATE_RESULT, result }),
             [TRANSITION.EXPAND]: () => dispatch({ type: TRANSITION.EXPAND }),
-            [TRANSITION.ADD_FAVOURITE]: (commandId: CommandId) =>
-                dispatch({ type: TRANSITION.ADD_FAVOURITE, commandId }),
-            [TRANSITION.REMOVE_FAVOURITE]: (commandId: CommandId) =>
-                dispatch({ type: TRANSITION.REMOVE_FAVOURITE, commandId }),
+            [TRANSITION.ADD_FAVOURITE]: (commandId: CommandId) => {
+                dispatch({ type: TRANSITION.ADD_FAVOURITE, commandId });
+                userPreferences
+                    .setFavouriteCommands(state.favouriteCommands.value)
+                    .catch((e) => logger.error('Could not update favourite commands', e));
+            },
+            [TRANSITION.REMOVE_FAVOURITE]: (commandId: CommandId) => {
+                dispatch({ type: TRANSITION.REMOVE_FAVOURITE, commandId });
+                userPreferences
+                    .setFavouriteCommands(state.favouriteCommands.value)
+                    .catch((e) => logger.error('Could not update favourite commands', e));
+            },
         };
     }, []);
-
-    // Update the user preferences on the server when the favourite commands change
-    useSignalEffect(() => {
-        if (state.status.peek() === STATUS.COLLAPSED) return;
-        userPreferences
-            .setFavouriteCommands(state.favouriteCommands.value)
-            .catch((e) => logger.error('Could not update favourite commands', e));
-    });
 
     const Icon: React.FC<IconProps> = useCallback(({ icon, spin = false }) => {
         return (

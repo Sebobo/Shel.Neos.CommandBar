@@ -62,4 +62,5 @@
 .isFavourite {
     display: block;
     color: var(--primaryBlue);
+    visibility: visible;
 }

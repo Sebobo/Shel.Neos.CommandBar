@@ -69,7 +69,7 @@ function CommandListItem({ command, onItemSelect, highlightedId, onToggleFavouri
             {onToggleFavourite && action && (
                 <button
                     type="button"
-                    className={classnames(styles.favouriteButton, isFavourite && styles.isFavourite)}
+                    className={classnames(styles.favouriteButton, isFavourite.value && styles.isFavourite)}
                     onClick={(e) => {
                         e.stopPropagation();
                         onToggleFavourite(id);
