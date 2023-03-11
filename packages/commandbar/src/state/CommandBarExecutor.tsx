@@ -123,8 +123,12 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
             } else {
                 logger.error('Command result is not a promise or generator', actionResult);
             }
+
+            if (command.closeOnExecute) {
+                toggleOpen();
+            }
         },
-        [state.searchWord, state.commands, state.result.value?.options]
+        [state.searchWord, state.commands, state.result]
     );
 
     const executeCommandRef = useFunctionRef((commandId: CommandId) => {
