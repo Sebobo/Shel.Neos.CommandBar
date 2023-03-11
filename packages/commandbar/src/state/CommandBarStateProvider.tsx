@@ -44,7 +44,7 @@ function createAppState(initialState: CommandBarState) {
     // Define a signal to hold the state
     const commandBarState = signal(initialState);
 
-    // Define a function to dispatch events to the reducer and update the state
+    // Define a function to dispatch events to the reducer and its state machine and update the state with the result
     const dispatch = (event: CommandBarEvent) => {
         commandBarState.value = commandBarReducer(commandBarState.value, event);
     };
