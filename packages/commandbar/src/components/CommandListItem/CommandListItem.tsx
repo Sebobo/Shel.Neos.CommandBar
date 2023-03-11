@@ -37,24 +37,19 @@ function getCommandType({ subCommandIds, category, canHandleQueries, action }: P
 
 function CommandListItem({ command, onItemSelect, highlightedId, onToggleFavourite }: CommandListItemProps) {
     const {
-        state: { searchWord, favouriteCommands },
+        state: { favouriteCommands },
         Icon,
     } = useCommandBarState();
-    const { id, name, description, icon, action, canHandleQueries } = command;
+    const { id, name, description, icon, action } = command;
     const commandType = getCommandType(command);
 
     const isHighlighted = useComputed(() => highlightedId.value === id);
-    const isDisabled = useComputed(() => !searchWord.value && canHandleQueries);
     const isFavourite = useComputed(() => favouriteCommands.value.includes(id));
 
     return (
         <li
-            className={classnames(
-                styles.commandListItem,
-                isHighlighted.value && styles.highlighted,
-                isDisabled.value && styles.disabled
-            )}
-            onClick={isDisabled.value ? null : () => onItemSelect(id)}
+            className={classnames(styles.commandListItem, isHighlighted.value && styles.highlighted)}
+            onClick={() => onItemSelect(id)}
             data-testid="CommandListItem"
         >
             <Icon icon={icon} />

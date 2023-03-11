@@ -15,20 +15,22 @@ interface CommandBarContextProps {
 
 interface CommandBarContextValues {
     state: {
-        status: ReadonlySignal<STATUS>;
-        expanded: ReadonlySignal<boolean>;
-        selectedCommandGroup: ReadonlySignal<CommandId>;
-        availableCommandIds: ReadonlySignal<CommandId[]>;
-        searchWord: ReadonlySignal<string>;
-        highlightedItem: ReadonlySignal<number>;
-        commands: ReadonlySignal<FlatCommandList>;
         activeCommandId: ReadonlySignal<CommandId>;
         activeCommandMessage: ReadonlySignal<string>;
-        result: ReadonlySignal<CommandResult | null>;
-        highlightedOption: ReadonlySignal<number>;
+        availableCommandIds: ReadonlySignal<CommandId[]>;
+        commandQuery: ReadonlySignal<string>;
+        commands: ReadonlySignal<FlatCommandList>;
+        expanded: ReadonlySignal<boolean>;
         favouriteCommands: ReadonlySignal<CommandId[]>;
+        highlightedItem: ReadonlySignal<number>;
+        highlightedOption: ReadonlySignal<number>;
         recentCommands: ReadonlySignal<CommandId[]>;
+        result: ReadonlySignal<CommandResult | null>;
+        resultCommandId: ReadonlySignal<CommandId | null>;
+        searchWord: ReadonlySignal<string>;
+        selectedCommandGroup: ReadonlySignal<CommandId>;
         showBranding: ReadonlySignal<boolean>;
+        status: ReadonlySignal<STATUS>;
     };
     actions: Record<TRANSITION, (...any) => void>;
     Icon: Renderable<IconProps>;
@@ -53,6 +55,7 @@ function createAppState(initialState: CommandBarState) {
     const activeCommandId = computed(() => commandBarState.value.activeCommandId);
     const activeCommandMessage = computed(() => commandBarState.value.activeCommandMessage);
     const availableCommandIds = computed(() => commandBarState.value.availableCommandIds);
+    const commandQuery = computed(() => commandBarState.value.commandQuery);
     const commands = computed(() => commandBarState.value.commands);
     const expanded = computed(() => commandBarState.value.expanded);
     const favouriteCommands = computed(() => commandBarState.value.favouriteCommands);
@@ -60,6 +63,7 @@ function createAppState(initialState: CommandBarState) {
     const highlightedOption = computed(() => commandBarState.value.highlightedOption);
     const recentCommands = computed(() => commandBarState.value.recentCommands);
     const result = computed(() => commandBarState.value.result);
+    const resultCommandId = computed(() => commandBarState.value.resultCommandId);
     const searchWord = computed(() => commandBarState.value.searchWord);
     const selectedCommandGroup = computed(() => commandBarState.value.selectedCommandGroup);
     const showBranding = computed(() => commandBarState.value.showBranding);
@@ -70,6 +74,7 @@ function createAppState(initialState: CommandBarState) {
             activeCommandId,
             activeCommandMessage,
             availableCommandIds,
+            commandQuery,
             commands,
             expanded,
             favouriteCommands,
@@ -77,6 +82,7 @@ function createAppState(initialState: CommandBarState) {
             highlightedOption,
             recentCommands,
             result,
+            resultCommandId,
             searchWord,
             selectedCommandGroup,
             showBranding,
@@ -94,20 +100,22 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
 }) => {
     const { state, dispatch } = useMemo(() => {
         return createAppState({
-            status: STATUS.COLLAPSED,
-            availableCommandIds: Object.keys(commands),
-            commands: flattenCommands(commands),
-            expanded: false,
-            highlightedItem: 0,
-            highlightedOption: 0,
-            result: null,
             activeCommandId: null,
             activeCommandMessage: null,
+            availableCommandIds: Object.keys(commands),
+            commandQuery: '',
+            commands: flattenCommands(commands),
+            expanded: false,
+            favouriteCommands: userPreferences.favouriteCommands,
+            highlightedItem: 0,
+            highlightedOption: 0,
+            recentCommands: userPreferences.recentCommands,
+            result: null,
+            resultCommandId: null,
             searchWord: '',
             selectedCommandGroup: null,
-            favouriteCommands: userPreferences.favouriteCommands,
-            recentCommands: userPreferences.recentCommands,
             showBranding: userPreferences.showBranding,
+            status: STATUS.COLLAPSED,
         });
     }, []);
 
@@ -122,6 +130,8 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
             [TRANSITION.GO_TO_PARENT_GROUP]: () => dispatch({ type: TRANSITION.GO_TO_PARENT_GROUP }),
             [TRANSITION.UPDATE_SEARCH]: (searchWord: string) =>
                 dispatch({ type: TRANSITION.UPDATE_SEARCH, searchWord }),
+            [TRANSITION.UPDATE_COMMAND_QUERY]: (commandQuery: string) =>
+                dispatch({ type: TRANSITION.UPDATE_COMMAND_QUERY, commandQuery }),
             [TRANSITION.EXECUTE_COMMAND]: async (commandId: CommandId, message: string) => {
                 dispatch({
                     type: TRANSITION.EXECUTE_COMMAND,

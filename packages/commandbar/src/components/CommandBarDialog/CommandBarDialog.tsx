@@ -2,7 +2,7 @@ import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
 import { batch, signal, useComputed } from '@preact/signals';
 
 import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from '../index';
-import { CommandBarInputProvider, useCommandBarState } from '../../state';
+import { CommandBarExecutor, useCommandBarState } from '../../state';
 import { clamp } from '../../helpers';
 
 import * as styles from './CommandBarDialog.module.css';
@@ -113,7 +113,7 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
             style={dialogStyle.value}
             data-testid="CommandBarDialog"
         >
-            <CommandBarInputProvider toggleOpen={toggleOpen} dialogRef={dialogRef} open={open}>
+            <CommandBarExecutor toggleOpen={toggleOpen} dialogRef={dialogRef} open={open}>
                 <CommandBarHeader />
                 <div
                     className={[
@@ -123,10 +123,10 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
                     ].join(' ')}
                 >
                     <CommandList />
-                    <CommandResultsView />
+                    {result.value && <CommandResultsView />}
                 </div>
                 <CommandBarFooter />
-            </CommandBarInputProvider>
+            </CommandBarExecutor>
         </dialog>
     );
 };

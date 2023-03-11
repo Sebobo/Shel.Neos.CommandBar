@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useComputed, useSignalEffect } from '@preact/signals';
 
 import CommandListItem from '../CommandListItem/CommandListItem';
-import { useCommandBarState, useCommandInput, STATUS } from '../../state';
+import { useCommandBarState, useCommandExecutor, STATUS } from '../../state';
 import { classnames } from '../../helpers';
 
 import * as styles from './CommandListing.module.css';
@@ -20,12 +20,12 @@ const CommandList: React.FC = () => {
         },
         actions: { ADD_FAVOURITE, REMOVE_FAVOURITE },
     } = useCommandBarState();
-    const { executeCommand } = useCommandInput();
+    const { executeCommand } = useCommandExecutor();
     const navRef = React.useRef<HTMLElement>(null);
 
     useSignalEffect(() => {
         navRef.current
-            ?.querySelector(`li:nth-child(${highlightedItem})`)
+            ?.querySelector(`li:nth-child(${highlightedItem.value})`)
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 

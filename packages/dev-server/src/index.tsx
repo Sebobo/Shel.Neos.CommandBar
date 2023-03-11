@@ -89,10 +89,59 @@ if (module.hot) module.hot.accept();
             });
         }, []);
 
-        const findDocument: CommandAction = useCallback(async () => {
-            logger.debug('Find document ist not implemented yet');
-            return {
-                success: false,
+        const findDocument = useCallback(async function* (query: string): CommandGeneratorResult {
+            yield {
+                success: true,
+                message: `Searching for "${query}"`,
+            };
+            // FIXME: Use defined pages
+            const options: FlatCommandList = query
+                ? (
+                      [
+                          {
+                              id: 'node-a',
+                              description: 'This is a blog with news articles',
+                              name: 'Blog',
+                              icon: 'file',
+                              category: 'Neos.Neos:Document',
+                              action: '#',
+                          },
+                          {
+                              id: 'node-b',
+                              name: 'The latest article about command bars in Neos',
+                              description: 'The latest article about command bars in Neos',
+                              icon: 'file',
+                              category: 'Neos.Neos:Document',
+                              action: '#',
+                          },
+                          {
+                              id: 'node-c',
+                              name: 'Massive content page',
+                              description: 'This is a page with a lot of content',
+                              icon: 'file',
+                              category: 'Neos.Neos:Document',
+                              action: '#',
+                          },
+                          {
+                              id: 'node-d',
+                              name: 'Landing page',
+                              description: 'This is a landing page for planes and helicopters',
+                              icon: 'file',
+                              category: 'Neos.Neos:Document',
+                              action: '#',
+                          },
+                      ] as ProcessedCommandItem[]
+                  ).reduce((acc, item) => {
+                      if (item.name.toLowerCase().includes(query.toLowerCase())) {
+                          acc[item.id] = item;
+                      }
+                      return acc;
+                  }, {} as FlatCommandList)
+                : {};
+            yield {
+                success: true,
+                message: `Found ${Object.values(options).length} documents`,
+                options,
             };
         }, []);
 
@@ -131,6 +180,7 @@ if (module.hot) module.hot.accept();
                     icon: 'search',
                     name: 'Find page',
                     description: 'Search for a document and navigate to it',
+                    canHandleQueries: true,
                     action: findDocument,
                 },
                 sites: {

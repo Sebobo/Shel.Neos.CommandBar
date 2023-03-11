@@ -1,17 +1,36 @@
 import React, { useCallback, useRef } from 'react';
 import { useSignalEffect } from '@preact/signals';
 
-import { useCommandBarState, STATUS, useIntl } from '../../state';
+import { useCommandBarState, STATUS, useIntl, useCommandExecutor } from '../../state';
 import IconWrapper from '../IconWrapper/IconWrapper';
 
 import * as styles from './SearchBox.module.css';
 
+// Timer helper for debouncing updates of command query results
+let updateResultsTimer = null;
+const RESULT_UPDATE_DEBOUNCE_TIME = 500;
+
 const SearchBox: React.FC = () => {
     const { state, actions } = useCommandBarState();
+    const { executeCommand } = useCommandExecutor();
     const { translate } = useIntl();
     const inputRef = useRef<HTMLInputElement>();
 
-    const handleChange = useCallback((e) => actions.UPDATE_SEARCH(e.target.value), []);
+    const handleChange = useCallback((e) => {
+        if (state.status.value === STATUS.DISPLAYING_RESULT) {
+            actions.UPDATE_COMMAND_QUERY(e.target.value);
+            if (updateResultsTimer) {
+                clearTimeout(updateResultsTimer);
+            }
+            updateResultsTimer = setTimeout(
+                () => executeCommand(state.resultCommandId.value),
+                RESULT_UPDATE_DEBOUNCE_TIME
+            );
+        } else {
+            actions.UPDATE_SEARCH(e.target.value);
+        }
+    }, []);
+
     const handleKeyPress = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {
             // Prevent escape event from bubbling up if the input is focused and the native reset should be used
@@ -26,7 +45,11 @@ const SearchBox: React.FC = () => {
     );
 
     // Focus input when the command bar is ready for input
-    useSignalEffect(() => state.status.value === STATUS.IDLE && inputRef.current?.focus());
+    useSignalEffect(() => {
+        if (state.status.value !== STATUS.EXECUTING_COMMAND) {
+            inputRef.current?.focus();
+        }
+    });
 
     return (
         <>
@@ -34,12 +57,19 @@ const SearchBox: React.FC = () => {
                 ref={inputRef}
                 className={styles.searchBox}
                 type="search"
-                placeholder={translate('SearchBox.placeholder', 'What do you want to do today?')}
+                placeholder={
+                    state.status.value === STATUS.DISPLAYING_RESULT
+                        ? translate('SearchBox.commandQuery.placeholder', 'Enter the query for the command')
+                        : translate('SearchBox.placeholder', 'What do you want to do today?')
+                }
                 autoFocus
                 onChange={handleChange}
                 onKeyUp={handleKeyPress}
-                value={state.searchWord as unknown as string}
-                disabled={state.status.value !== STATUS.IDLE && state.status.value !== STATUS.COLLAPSED}
+                value={
+                    (state.status.value === STATUS.DISPLAYING_RESULT
+                        ? state.commandQuery
+                        : state.searchWord) as unknown as string
+                }
                 data-testid="SearchBox"
             />
             {!state.expanded.value && (

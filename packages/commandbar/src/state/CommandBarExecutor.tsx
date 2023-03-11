@@ -17,19 +17,12 @@ interface CommandInputContextValues {
 }
 
 const CommandInputContext = React.createContext({} as CommandInputContextValues);
-export const useCommandInput = (): CommandInputContextValues => React.useContext(CommandInputContext);
+export const useCommandExecutor = (): CommandInputContextValues => React.useContext(CommandInputContext);
 
 /**
  * Context provider for the command bar input and command execution
- *
- * TODO: Rename to something matching its purpose of handling keypress and execution of commands
  */
-export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
-    children,
-    toggleOpen,
-    dialogRef,
-    open,
-}) => {
+export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ children, toggleOpen, dialogRef, open }) => {
     const { state, actions } = useCommandBarState();
 
     const handleKeyEnteredRef = useFunctionRef((e: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
@@ -67,7 +60,9 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
                 state.status.value === STATUS.DISPLAYING_RESULT
                     ? Object.keys(state.result.value.options)[state.highlightedOption.value]
                     : state.availableCommandIds.value[state.highlightedItem.value];
-            void executeCommand(commandId);
+            if (commandId) {
+                void executeCommand(commandId);
+            }
         }
     });
 
@@ -83,10 +78,6 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
             }
 
             assert(action, `Command ${commandId} has no action`);
-
-            if (command.canHandleQueries && !state.searchWord.value) {
-                return;
-            }
 
             // If the command is a url, open it
             if (typeof action == 'string') {
@@ -105,7 +96,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({
 
             // If the command is a function, execute it
             actions.EXECUTE_COMMAND(commandId, 'Running command');
-            const actionResult = action(canHandleQueries ? state.searchWord.value : undefined);
+            const actionResult = action(canHandleQueries ? state.commandQuery.value : undefined);
             if ((actionResult as AsyncCommandResult).then) {
                 // Handle Promises
                 (actionResult as AsyncCommandResult)
