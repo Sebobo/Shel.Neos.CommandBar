@@ -299,6 +299,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                             setActiveContentCanvasSrc(uri);
                             setActiveContentCanvasContextPath(contextPath);
                         },
+                        closeOnExecute: true,
                         icon,
                     };
                     return carry;
