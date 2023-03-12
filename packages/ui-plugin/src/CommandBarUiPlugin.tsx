@@ -235,11 +235,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     name: description,
                     description: id,
                     icon: this.mapHotkeyIdToIcon(id),
-                    action: async () => handleHotkeyAction(action()),
+                    action: async () => void handleHotkeyAction(action()),
+                    closeOnExecute: true,
                 };
             }
             return carry;
-        }, {});
+        }, {} as HierarchicalCommandList);
     };
 
     buildCommandsFromEditPreviewModes = (): HierarchicalCommandList => {
