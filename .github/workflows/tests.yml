@@ -13,6 +13,9 @@ jobs:
     name: 'CommandBar build'
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          repository: ${{ github.head_repository.full_name }}
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
@@ -35,6 +38,9 @@ jobs:
     name: 'CommandBar tests'
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          repository: ${{ github.head_repository.full_name }}
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
