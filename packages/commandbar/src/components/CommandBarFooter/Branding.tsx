@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCommandBarState } from '../../state';
+import { useCommandBarState, useIntl } from '../../state';
 
 import * as styles from './Branding.module.css';
 
@@ -7,18 +7,19 @@ const Branding: React.FC = () => {
     const {
         state: { showBranding },
     } = useCommandBarState();
+    const { translate } = useIntl();
 
     if (!showBranding) return null;
 
     return (
         <a
             href="https://helzle.it"
-            title="Made with love by Sebastian Helzle"
+            title={translate('CommandBarFooter.branding', 'Made with love by Sebastian Helzle')}
             target="_blank"
             rel="noreferrer noopener"
             className={styles.madeWithLove}
         >
-            <small>Made with love by</small>
+            <small>{translate('CommandBarFooter.brandingSmall', 'Made with love by')}</small>
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 180 180">
                 <defs>
                     <linearGradient

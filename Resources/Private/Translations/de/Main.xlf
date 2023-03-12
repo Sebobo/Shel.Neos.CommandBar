@@ -6,6 +6,30 @@
                 <source>What do you want to do today?</source>
                 <target>Was möchten Sie heute tun?</target>
             </trans-unit>
+            <trans-unit id="CommandBarFooter.branding">
+                <source>Made with love by Sebastian Helzle</source>
+                <target>Mit Liebe gemacht von Sebastian Helzle</target>
+            </trans-unit>
+            <trans-unit id="CommandBarFooter.brandingSmall">
+                <source>Made with love by</source>
+                <target>Mit Liebe gemacht von</target>
+            </trans-unit>
+            <trans-unit id="CommandList.suggestions">
+                <source>Suggestions</source>
+                <target>Vorschläge</target>
+            </trans-unit>
+            <trans-unit id="CommandList.heading">
+                <source>Commands</source>
+                <target>Befehle</target>
+            </trans-unit>
+            <trans-unit id="CommandList.noCommandsMessage">
+                <source>No matching commands found</source>
+                <target>Keine passenden Befehle gefunden</target>
+            </trans-unit>
+            <trans-unit id="CommandView.searchResults">
+                <source>Try a different query to find more results</source>
+                <target>Versuchen sie eine andere Eingabe, um mehr Ergebnisse zu finden.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

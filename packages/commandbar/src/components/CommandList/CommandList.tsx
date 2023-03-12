@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useComputed, useSignalEffect } from '@preact/signals';
 
 import CommandListItem from '../CommandListItem/CommandListItem';
-import { useCommandBarState, useCommandExecutor, STATUS } from '../../state';
+import { useCommandBarState, useCommandExecutor, useIntl, STATUS } from '../../state';
 import { classnames } from '../../helpers';
 
 import * as styles from './CommandListing.module.css';
@@ -20,6 +20,7 @@ const CommandList: React.FC = () => {
         },
         actions: { ADD_FAVOURITE, REMOVE_FAVOURITE },
     } = useCommandBarState();
+    const { translate } = useIntl();
     const { executeCommand } = useCommandExecutor();
     const navRef = React.useRef<HTMLElement>(null);
 
@@ -60,7 +61,7 @@ const CommandList: React.FC = () => {
         >
             {suggestions.value.length > 0 && (
                 <>
-                    <h6>Recently used</h6>
+                    <h6>{translate('CommandList.suggestions', 'Recently used')}</h6>
                     <ul>
                         {suggestions.value.map((commandId) => (
                             <CommandListItem
@@ -76,7 +77,7 @@ const CommandList: React.FC = () => {
             )}
             {availableCommands.value.length > 0 && (
                 <>
-                    <h6>Commands</h6>
+                    <h6>{translate('CommandList.heading', 'Commands')}</h6>
                     <ul>
                         {availableCommands.value.map((commandId) => (
                             <CommandListItem
@@ -91,7 +92,9 @@ const CommandList: React.FC = () => {
                 </>
             )}
             {availableCommandIds.value.length === 0 && (
-                <small className={styles.noResults}>No matching commands found</small>
+                <small className={styles.noResults}>
+                    {translate('CommandList.noCommandsMessage', 'No matching commands found')}
+                </small>
             )}
         </nav>
     );
