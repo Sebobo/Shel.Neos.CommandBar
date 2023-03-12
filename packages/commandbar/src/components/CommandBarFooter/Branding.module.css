@@ -1,6 +1,7 @@
 .madeWithLove {
     display: flex;
     text-decoration: none;
+    gap: 0.5rem;
 }
 
 .madeWithLove small {
@@ -15,5 +16,4 @@
     display: inline-block;
     width: var(--icon-size);
     height: auto;
-    margin-left: 0.5em;
 }

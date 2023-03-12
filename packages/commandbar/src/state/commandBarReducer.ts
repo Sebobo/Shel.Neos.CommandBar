@@ -9,6 +9,7 @@ export type CommandBarEvent =
     | { type: TRANSITION.SELECT_GROUP; commandId: string }
     | { type: TRANSITION.GO_TO_PARENT_GROUP }
     | { type: TRANSITION.UPDATE_SEARCH; searchWord: string }
+    | { type: TRANSITION.UPDATE_COMMAND_QUERY; commandQuery: string }
     | { type: TRANSITION.EXECUTE_COMMAND; commandId: CommandId; message: string }
     | { type: TRANSITION.FINISH_COMMAND }
     | { type: TRANSITION.UPDATE_RESULT; result: CommandResult }
@@ -17,18 +18,20 @@ export type CommandBarEvent =
     | { type: TRANSITION.REMOVE_FAVOURITE; commandId: CommandId };
 
 export type CommandBarState = MachineState & {
-    expanded: boolean;
-    selectedCommandGroup: CommandId;
-    availableCommandIds: CommandId[];
-    searchWord: string;
-    highlightedItem: number;
-    commands: FlatCommandList;
     activeCommandId: CommandId;
     activeCommandMessage: string;
-    result: CommandResult | null;
-    highlightedOption: number;
+    availableCommandIds: CommandId[];
+    commandQuery: string;
+    commands: FlatCommandList;
+    expanded: boolean;
     favouriteCommands: CommandId[];
+    highlightedItem: number;
+    highlightedOption: number;
     recentCommands: CommandId[];
+    result: CommandResult | null;
+    resultCommandId: CommandId;
+    searchWord: string;
+    selectedCommandGroup: CommandId;
     showBranding: boolean;
 };
 
@@ -38,6 +41,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
     switch (action) {
         case ACTION.RESET_SEARCH:
             nextState.searchWord = '';
+            nextState.commandQuery = '';
             break;
         case ACTION.RESET_HIGHLIGHT:
             nextState.highlightedItem = 0;
@@ -83,6 +87,10 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             assert(event.type === TRANSITION.UPDATE_SEARCH);
             nextState.searchWord = event.searchWord;
             break;
+        case ACTION.SET_COMMAND_QUERY:
+            assert(event.type === TRANSITION.UPDATE_COMMAND_QUERY);
+            nextState.commandQuery = event.commandQuery;
+            break;
         case ACTION.EXPAND:
             nextState.expanded = true;
             break;
@@ -101,12 +109,15 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
                 ...nextState.result,
                 ...event.result,
             };
+            nextState.resultCommandId = nextState.activeCommandId;
             break;
         case ACTION.RESET_OPTION_HIGHLIGHT:
             nextState.highlightedOption = 0;
             break;
         case ACTION.RESET_SEARCH_OR_LEAVE_GROUP:
-            if (nextState.searchWord) {
+            if (nextState.commandQuery) {
+                nextState.commandQuery = '';
+            } else if (nextState.searchWord) {
                 nextState.searchWord = '';
             } else {
                 nextState.selectedCommandGroup = nextState.selectedCommandGroup
@@ -116,6 +127,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             break;
         case ACTION.UNSET_RESULT:
             nextState.result = null;
+            nextState.resultCommandId = null;
             break;
         case ACTION.LEAVE_GROUP:
             nextState.selectedCommandGroup = nextState.selectedCommandGroup

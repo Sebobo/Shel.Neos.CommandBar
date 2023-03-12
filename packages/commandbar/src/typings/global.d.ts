@@ -51,7 +51,7 @@ type Command = AbstractCommandItem & {
     action: string | CommandAction | CommandGeneratorAction;
     canHandleQueries?: boolean;
     category?: string;
-    // TODO: Introduce a disabled state via a callback -> solve issue that react might not update the component
+    closeOnExecute?: boolean;
 };
 
 // Holds other commands but cannot be executed
@@ -75,7 +75,7 @@ type CommandGeneratorAction = (argument?: string) => CommandGeneratorResult;
 
 // Command results can be returned asynchronously or via a generator
 type AsyncCommandResult = Promise<void | CommandResult>;
-type CommandGeneratorResult = AsyncGenerator<CommandResult, CommandResult, CommandResult>;
+type CommandGeneratorResult = AsyncGenerator<CommandResult, void, CommandResult>;
 
 // If a command returns an optional response it has to at least contain the success state
 type CommandResult = {

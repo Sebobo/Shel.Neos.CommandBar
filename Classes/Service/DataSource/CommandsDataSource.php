@@ -36,16 +36,13 @@ class CommandsDataSource extends AbstractDataSource
 
         $sitesForMenu = array_reduce($this->menuHelper->buildSiteList($this->controllerContext),
             static function (array $carry, array $site) {
-                // Skip the currently active site
-                if (!$site['active']) {
-                    $carry[$site['nodeName']] = new CommandDto(
-                        $site['name'],
-                        $site['name'],
-                        '',
-                        $site['uri'],
-                        'globe'
-                    );
-                }
+                $carry[$site['nodeName']] = new CommandDto(
+                    $site['name'],
+                    $site['name'],
+                    '',
+                    $site['uri'],
+                    'globe'
+                );
                 return $carry;
             }, []);
 

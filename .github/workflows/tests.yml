@@ -1,20 +1,24 @@
 name: Tests
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ 'main' ]
   pull_request:
-    branches: [ main ]
+    branches: [ 'main' ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     name: 'CommandBar build'
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
         with:
-          node-version: '16'
+          ref: ${{ github.head_ref }}
+          repository: ${{ github.head_repository.full_name }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
           cache: 'yarn'
 
       - name: Install dependencies
@@ -33,10 +37,13 @@ jobs:
     runs-on: ubuntu-latest
     name: 'CommandBar tests'
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
         with:
-          node-version: '16'
+          ref: ${{ github.head_ref }}
+          repository: ${{ github.head_repository.full_name }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
           cache: 'yarn'
 
       - name: Install dependencies

@@ -1,8 +1,8 @@
 import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
-import { batch, signal, useComputed } from '@preact/signals-react';
+import { batch, signal, useComputed } from '@preact/signals';
 
 import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from '../index';
-import { CommandBarInputProvider, useCommandBarState } from '../../state';
+import { CommandBarExecutor, useCommandBarState } from '../../state';
 import { clamp } from '../../helpers';
 
 import * as styles from './CommandBarDialog.module.css';
@@ -28,7 +28,7 @@ const dragState = signal<{
 
 const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggleOpen }) => {
     const {
-        state: { result, expanded },
+        state: { expanded, result },
     } = useCommandBarState();
     const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -104,7 +104,7 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
     return (
         <dialog
             ref={dialogRef}
-            className={[styles.commandBar, result && styles.hasResults].join(' ')}
+            className={[styles.commandBar, result.value && styles.hasResults].join(' ')}
             open={open}
             draggable
             onDragStart={handleDragStart}
@@ -113,16 +113,22 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
             style={dialogStyle.value}
             data-testid="CommandBarDialog"
         >
-            <CommandBarInputProvider toggleOpen={toggleOpen} dialogRef={dialogRef}>
+            <CommandBarExecutor toggleOpen={toggleOpen} dialogRef={dialogRef} open={open}>
                 <CommandBarHeader />
-                <div className={[styles.resultsWrap, expanded && styles.expanded, result && styles.split].join(' ')}>
+                <div
+                    className={[
+                        styles.resultsWrap,
+                        expanded.value && styles.expanded,
+                        result.value && styles.split,
+                    ].join(' ')}
+                >
                     <CommandList />
-                    <CommandResultsView />
+                    {result.value && <CommandResultsView />}
                 </div>
                 <CommandBarFooter />
-            </CommandBarInputProvider>
+            </CommandBarExecutor>
         </dialog>
     );
 };
 
-export default React.memo(CommandBarDialog);
+export default CommandBarDialog;

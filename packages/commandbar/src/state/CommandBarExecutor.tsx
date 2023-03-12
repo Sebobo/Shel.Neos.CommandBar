@@ -9,6 +9,7 @@ interface CommandInputContextProps {
     children: React.ReactElement | React.ReactElement[];
     toggleOpen: () => void;
     dialogRef: React.RefObject<HTMLDialogElement>;
+    open: boolean;
 }
 
 interface CommandInputContextValues {
@@ -16,14 +17,12 @@ interface CommandInputContextValues {
 }
 
 const CommandInputContext = React.createContext({} as CommandInputContextValues);
-export const useCommandInput = (): CommandInputContextValues => React.useContext(CommandInputContext);
+export const useCommandExecutor = (): CommandInputContextValues => React.useContext(CommandInputContext);
 
 /**
  * Context provider for the command bar input and command execution
- *
- * TODO: Rename to something matching its purpose of handling keypress and execution of commands
  */
-export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ children, toggleOpen, dialogRef }) => {
+export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ children, toggleOpen, dialogRef, open }) => {
     const { state, actions } = useCommandBarState();
 
     const handleKeyEnteredRef = useFunctionRef((e: KeyboardEvent | React.KeyboardEvent<HTMLElement>) => {
@@ -37,7 +36,7 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
             // Cancel search, or selection, or close command bar
             e.stopPropagation();
             e.preventDefault();
-            if (state.selectedCommandGroup || state.searchWord) {
+            if (state.selectedCommandGroup.value || state.searchWord.value) {
                 actions.CANCEL();
             } else {
                 // Close command bar if cancel is noop
@@ -53,22 +52,24 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
             e.stopPropagation();
             e.preventDefault();
             actions.HIGHLIGHT_PREVIOUS_ITEM();
-        } else if (e.key === 'Enter' && state.availableCommandIds.length > state.highlightedItem) {
+        } else if (e.key === 'Enter') {
             // Execute highlighted command
             e.stopPropagation();
             e.preventDefault();
             const commandId =
-                state.status === STATUS.DISPLAYING_RESULT
-                    ? Object.keys(state.result.options)[state.highlightedOption]
-                    : state.availableCommandIds[state.highlightedItem];
-            void executeCommand(commandId);
+                state.status.value === STATUS.DISPLAYING_RESULT
+                    ? Object.keys(state.result.value.options)[state.highlightedOption.value]
+                    : state.availableCommandIds.value[state.highlightedItem.value];
+            if (commandId) {
+                void executeCommand(commandId);
+            }
         }
     });
 
     const executeCommand = useCallback(
         async (commandId: CommandId) => {
-            const command = state.result?.options[commandId] ?? state.commands[commandId];
-            const { action, canHandleQueries, subCommandIds } = command;
+            const command = state.result.value?.options[commandId] ?? state.commands.value[commandId];
+            const { action, canHandleQueries, subCommandIds, name } = command;
 
             // If the command is a group, select it
             if (subCommandIds?.length > 0) {
@@ -77,10 +78,6 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
             }
 
             assert(action, `Command ${commandId} has no action`);
-
-            if (command.canHandleQueries && !state.searchWord) {
-                return;
-            }
 
             // If the command is a url, open it
             if (typeof action == 'string') {
@@ -99,17 +96,18 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
 
             // If the command is a function, execute it
             actions.EXECUTE_COMMAND(commandId, 'Running command');
-            const actionResult = action(canHandleQueries ? state.searchWord : undefined);
+            const actionResult = action(canHandleQueries ? state.commandQuery.value : undefined);
             if ((actionResult as AsyncCommandResult).then) {
                 // Handle Promises
                 (actionResult as AsyncCommandResult)
                     .then((result) => {
-                        // TODO: Handle success === false
-                        logger.debug('Command result', result);
+                        if (result && !result.success) {
+                            throw new Error(`The command "${name}" failed`);
+                        }
                     })
                     .catch((error) => {
-                        // TODO: Show error message
-                        logger.error('Command error', error);
+                        // TODO: Show an error message to the user
+                        logger.error('Command error', name, error);
                     })
                     .finally(() => {
                         actions.FINISH_COMMAND();
@@ -125,8 +123,12 @@ export const CommandBarInputProvider: React.FC<CommandInputContextProps> = ({ ch
             } else {
                 logger.error('Command result is not a promise or generator', actionResult);
             }
+
+            if (command.closeOnExecute) {
+                toggleOpen();
+            }
         },
-        [state.searchWord, state.commands, state.result?.options]
+        [state.searchWord, state.commands, state.result]
     );
 
     const executeCommandRef = useFunctionRef((commandId: CommandId) => {

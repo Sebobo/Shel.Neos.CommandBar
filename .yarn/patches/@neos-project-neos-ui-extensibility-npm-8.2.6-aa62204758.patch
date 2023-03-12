@@ -1,0 +1,15 @@
+diff --git a/scripts/helpers/webpack.config.js b/scripts/helpers/webpack.config.js
+index 98d4af9bb60a4b7ed317d6c54587ffb745fd7831..2108f89acc3fce0eb6dd9dc312eaf1603a94d35d 100644
+--- a/scripts/helpers/webpack.config.js
++++ b/scripts/helpers/webpack.config.js
+@@ -92,7 +92,9 @@ module.exports = function (neosPackageJson) {
+                 '@neos-project/neos-ui-redux-store': '@neos-project/neos-ui-extensibility/src/shims/neosProjectPackages/neos-ui-redux-store/index',
+                 '@neos-project/neos-ui-views': '@neos-project/neos-ui-extensibility/src/shims/neosProjectPackages/neos-ui-views/index',
+                 '@neos-project/neos-ui-guest-frame': '@neos-project/neos-ui-extensibility/src/shims/neosProjectPackages/neos-ui-guest-frame/index',
+-                '@neos-project/utils-redux': '@neos-project/neos-ui-extensibility/src/shims/neosProjectPackages/utils-redux/index'
++                '@neos-project/utils-redux': '@neos-project/neos-ui-extensibility/src/shims/neosProjectPackages/utils-redux/index',
++                
++                "@preact/signals": "@preact/signals-react"
+             }
+         }
+     });

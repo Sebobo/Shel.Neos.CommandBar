@@ -39,7 +39,7 @@
     "dev": "yarn workspace @neos-commandbar/dev-server start",
     "test": "testcafe",
     "test:github-actions": "xvfb-run --server-args=\"-screen 0 1280x720x24\" yarn testcafe chrome",
-    "lint": "eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'",
+    "lint": "tsc --noemit && eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'",
     "analyze-module": "yarn build-module --reporter @parcel/reporter-bundle-analyzer"
   },
   "prettier": {
@@ -55,7 +55,9 @@
   ],
   "flat": true,
   "resolutions": {
-    "@neos-project/build-essentials@^8.2.6": "patch:@neos-project/build-essentials@npm%3A8.2.6#./.yarn/patches/@neos-project-build-essentials-npm-8.2.6-787ecaf75f.patch"
+    "@neos-project/build-essentials@^8.2.6": "patch:@neos-project/build-essentials@npm%3A8.2.6#./.yarn/patches/@neos-project-build-essentials-npm-8.2.6-787ecaf75f.patch",
+    "@leeoniya/ufuzzy@^1.0.3": "patch:@leeoniya/ufuzzy@patch%3A@leeoniya/ufuzzy@npm%253A1.0.3%23./.yarn/patches/@leeoniya-ufuzzy-npm-1.0.3-475d16540b.patch%3A%3Aversion=1.0.3&hash=b7c8eb&locator=neos-commandbar%2540workspace%253A.#./.yarn/patches/@leeoniya-ufuzzy-patch-e276b84bbf.patch",
+    "@neos-project/neos-ui-extensibility@^8.2.6": "patch:@neos-project/neos-ui-extensibility@npm%3A8.2.6#./.yarn/patches/@neos-project-neos-ui-extensibility-npm-8.2.6-aa62204758.patch"
   },
   "alias": {
     "react": "preact/compat",

@@ -235,11 +235,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     name: description,
                     description: id,
                     icon: this.mapHotkeyIdToIcon(id),
-                    action: async () => handleHotkeyAction(action()),
+                    action: async () => void handleHotkeyAction(action()),
+                    closeOnExecute: true,
                 };
             }
             return carry;
-        }, {});
+        }, {} as HierarchicalCommandList);
     };
 
     buildCommandsFromEditPreviewModes = (): HierarchicalCommandList => {
@@ -270,41 +271,42 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             success: true,
             message: `Searching for "${query}"`,
         };
-        const results = await NodesApi.searchNodes(query, siteNode.contextPath).catch((e) =>
-            logger.error('Could not search nodes', e)
-        );
+        let error;
+        const results = await NodesApi.searchNodes(query, siteNode.contextPath).catch((e) => {
+            logger.error('Could not search nodes', e);
+            error = e.message;
+        });
         if (!results) {
-            return {
+            yield {
                 success: false,
                 message: 'Search failed',
+                view: error,
+            };
+        } else {
+            yield {
+                success: true,
+                message: `${results.length} options match your query`,
+                options: results.reduce((carry, { name, nodetype, contextPath, uri, icon }) => {
+                    if (!uri) {
+                        // TODO: Show hint that document cannot be opened or filter them remotely already?
+                        return carry;
+                    }
+
+                    carry[contextPath] = {
+                        id: contextPath,
+                        name,
+                        category: nodetype,
+                        action: async () => {
+                            setActiveContentCanvasSrc(uri);
+                            setActiveContentCanvasContextPath(contextPath);
+                        },
+                        closeOnExecute: true,
+                        icon,
+                    };
+                    return carry;
+                }, {} as FlatCommandList),
             };
         }
-        yield {
-            success: true,
-            message: `${results.length} options match your query`,
-            options: results.reduce((carry, { name, nodetype, contextPath, uri, icon }) => {
-                if (!uri) {
-                    // TODO: Show hint that document cannot be opened?
-                    return carry;
-                }
-
-                carry[contextPath] = {
-                    id: contextPath,
-                    name,
-                    category: nodetype,
-                    action: async () => {
-                        setActiveContentCanvasSrc(uri);
-                        setActiveContentCanvasContextPath(contextPath);
-                    },
-                    icon,
-                };
-                return carry;
-            }, {} as FlatCommandList),
-        };
-        return {
-            success: true,
-            message: 'Finished search',
-        };
     };
 
     handleSearchNeosDocs = async function* (query: string): CommandGeneratorResult {
@@ -312,20 +314,24 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             success: true,
             message: `Searching for "${query}"`,
         };
-        const options = await DocumentationApi.searchNeosDocs(query).catch((e) =>
-            logger.error('Could not search Neos docs', e)
-        );
-        if (options) {
+        let error;
+        const options = await DocumentationApi.searchNeosDocs(query).catch((e) => {
+            logger.error('Could not search Neos docs', e);
+            error = e.message;
+        });
+        if (error || !options) {
+            yield {
+                success: false,
+                message: 'Search failed',
+                view: error,
+            };
+        } else {
             yield {
                 success: true,
-                message: `${options.length} options match your query`,
+                message: `${Object.keys(options).length} options match your query`,
                 options,
             };
         }
-        return {
-            success: !!options,
-            message: options ? 'Finished search' : 'Search failed',
-        };
     };
 
     handleSearchNeosPackages = async function* (query: string): CommandGeneratorResult {
@@ -333,20 +339,24 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             success: true,
             message: `Searching for "${query}"`,
         };
-        const options = await PackagesApi.searchNeosPackages(query).catch((e) =>
-            logger.error('Could not search Neos packages', e)
-        );
-        if (options) {
+        let error;
+        const options = await PackagesApi.searchNeosPackages(query).catch((e) => {
+            logger.error('Could not search Neos packages', e);
+            error = e.message;
+        });
+        if (error || !options) {
+            yield {
+                success: !!options,
+                message: options ? 'Finished search' : 'Search failed',
+                view: error,
+            };
+        } else {
             yield {
                 success: true,
                 message: `${options.length} options match your query`,
                 options,
             };
         }
-        return {
-            success: !!options,
-            message: options ? 'Finished search' : 'Search failed',
-        };
     };
 
     handlePublish = async (): AsyncCommandResult => {

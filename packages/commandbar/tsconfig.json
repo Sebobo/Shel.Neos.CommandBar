@@ -4,5 +4,8 @@
     "typeRoots": [
       "./src/typings"
     ]
-  }
+  },
+  "include": [
+    "./src"
+  ]
 }
