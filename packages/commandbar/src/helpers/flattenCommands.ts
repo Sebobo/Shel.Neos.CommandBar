@@ -7,8 +7,9 @@ export default function flattenCommands(
     parentId: CommandId = null
 ): FlatCommandList {
     return Object.keys(commands).reduce((commandList, commandId) => {
-        const { icon, description, name, subCommands, action, canHandleQueries } = commands[commandId] as Command &
-            CommandGroup;
+        const { icon, description, name, subCommands, action, canHandleQueries, closeOnExecute, category } = commands[
+            commandId
+        ] as Command & CommandGroup;
 
         // Create an uniquely identifiable command id for the flat command list
         const absoluteCommandId = parentId ? `${parentId}.${commandId}` : commandId;
@@ -28,6 +29,8 @@ export default function flattenCommands(
             canHandleQueries,
             subCommandIds,
             parentId,
+            closeOnExecute,
+            category,
         };
 
         // Insert subcommands into the list
