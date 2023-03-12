@@ -23,7 +23,7 @@ const CommandResultsView: React.FC = () => {
             ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
-    const { options, view, message } = result.value;
+    const { options, view, message } = result.value ?? {};
 
     return (
         <div className={styles.commandResultsView}>
