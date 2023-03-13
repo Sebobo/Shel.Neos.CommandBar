@@ -2,9 +2,9 @@
 
 [![Tests](https://github.com/Sebobo/Shel.Neos.CommandBar/actions/workflows/tests.yml/badge.svg)](https://github.com/Sebobo/Shel.Neos.CommandBar/actions/workflows/tests.yml)
 
-This package provides a command bar plugin for Neos CMS.
-
-⚠️ This package is a work in progress and not ready for production use yet.
+This package provides a command bar plugin for Neos CMS similar to
+Spotlight, [Raycast](https://www.raycast.com) or [Alfred](https://www.alfredapp.com/). 
+It allows you to quickly search and execute commands and navigate in [NeosCMS](https://neos.io).
 
 ## Features
 
