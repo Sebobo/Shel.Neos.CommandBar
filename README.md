@@ -17,17 +17,17 @@ This package provides a command bar plugin for Neos CMS.
   * Jump to module
   * Jump to site
   * Search and open document node
+  * Search and navigate to the Neos documentation (enabled in Development context)
+  * Search and navigate to the Neos plugin repository (enabled in Development context)
 * ➕ Open node creation dialog relative to the current node
 * 📝 Switch edit/preview mode
-* 📰 Publishing
-  * Publish / discard changes on current page
-  * Publish / discard all changes
+* 📰 Publish / discard changes on current page or all changes
 * ⭐️Mark commands as favourites (stored in Neos user preferences)
 * 🗄️Store recent commands (stored in Neos user preferences)
-* 🪛 Extensibility
-  * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
 * 🧩 Backend module integration
   * Open the command bar from within the backend modules which have the module enabled (global inclusion possible with Neos 8.3)
+* 🪛 Extensibility
+  * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
 
 ## Screenshot
 
@@ -75,7 +75,7 @@ Neos:
 
 ## Disable branding
 
-If you supported the development of this package or you don't want to show the branding, you can disable it via the following setting:
+If you supported the development of this package, or you don't want to show the branding, you can disable it via the following setting:
 
 ```yaml
 Shel:
