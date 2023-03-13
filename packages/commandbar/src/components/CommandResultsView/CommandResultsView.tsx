@@ -27,7 +27,7 @@ const CommandResultsView: React.FC = () => {
 
     return (
         <div className={styles.commandResultsView}>
-            {message && <h6>{message}</h6>}
+            {message && <h6 className={styles.message}>{message}</h6>}
             {view ? <div>{view}</div> : ''}
             {options && (
                 <nav className={[styles.results].join(' ')} ref={navRef}>

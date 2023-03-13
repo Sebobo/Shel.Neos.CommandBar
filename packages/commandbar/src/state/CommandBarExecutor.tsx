@@ -36,7 +36,7 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
             // Cancel search, or selection, or close command bar
             e.stopPropagation();
             e.preventDefault();
-            if (state.selectedCommandGroup.value || state.searchWord.value) {
+            if (state.selectedCommandGroup.value || state.searchWord.value || state.commandQuery.value) {
                 actions.CANCEL();
             } else {
                 // Close command bar if cancel is noop
@@ -56,10 +56,12 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
             // Execute highlighted command
             e.stopPropagation();
             e.preventDefault();
-            const commandId =
-                state.status.value === STATUS.DISPLAYING_RESULT
-                    ? Object.keys(state.result.value.options)[state.highlightedOption.value]
-                    : state.availableCommandIds.value[state.highlightedItem.value];
+
+            let commandId = state.availableCommandIds.value[state.highlightedItem.value];
+            if (state.status.value === STATUS.DISPLAYING_RESULT && state.result.value.options) {
+                commandId = Object.keys(state.result.value.options)[state.highlightedOption.value] || commandId;
+            }
+
             if (commandId) {
                 void executeCommand(commandId);
             }

@@ -5,6 +5,7 @@ import { useCommandBarState, STATUS, useIntl, useCommandExecutor } from '../../s
 import IconWrapper from '../IconWrapper/IconWrapper';
 
 import * as styles from './SearchBox.module.css';
+import { IconPlay } from '../Icons';
 
 // Timer helper for debouncing updates of command query results
 let updateResultsTimer = null;
@@ -19,13 +20,17 @@ const SearchBox: React.FC = () => {
     const handleChange = useCallback((e) => {
         if (state.status.value === STATUS.DISPLAYING_RESULT) {
             actions.UPDATE_COMMAND_QUERY(e.target.value);
-            if (updateResultsTimer) {
-                clearTimeout(updateResultsTimer);
+
+            // Execute command after a delay if it's not a manual command
+            if (!state.commands.value[state.resultCommandId.value].executeManually) {
+                if (updateResultsTimer) {
+                    clearTimeout(updateResultsTimer);
+                }
+                updateResultsTimer = setTimeout(
+                    () => executeCommand(state.resultCommandId.value),
+                    RESULT_UPDATE_DEBOUNCE_TIME
+                );
             }
-            updateResultsTimer = setTimeout(
-                () => executeCommand(state.resultCommandId.value),
-                RESULT_UPDATE_DEBOUNCE_TIME
-            );
         } else {
             actions.UPDATE_SEARCH(e.target.value);
         }
@@ -50,6 +55,8 @@ const SearchBox: React.FC = () => {
             inputRef.current?.focus();
         }
     });
+
+    console.debug('SearchBox.render', state.commands.value[state.resultCommandId.value]);
 
     return (
         <>
@@ -88,6 +95,18 @@ const SearchBox: React.FC = () => {
                     </IconWrapper>
                 </button>
             )}
+            {state.status.value === STATUS.DISPLAYING_RESULT &&
+                state.commands.value[state.resultCommandId.value]?.executeManually && (
+                    <button
+                        className={styles.executeButton}
+                        onClick={() => executeCommand(state.resultCommandId.value)}
+                        title={translate('SearchBox.execute.title', 'Execute the command')}
+                    >
+                        <IconWrapper>
+                            <IconPlay />
+                        </IconWrapper>
+                    </button>
+                )}
         </>
     );
 };

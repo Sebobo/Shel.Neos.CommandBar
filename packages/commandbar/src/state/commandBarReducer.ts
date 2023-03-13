@@ -105,8 +105,12 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
             break;
         case ACTION.UPDATE_RESULT:
             assert(event.type === TRANSITION.UPDATE_RESULT);
+            assert(typeof event.result.success === 'boolean');
             nextState.result = {
-                ...nextState.result,
+                options: {},
+                message: 'Command executed',
+                view: null,
+                success: false,
                 ...event.result,
             };
             nextState.resultCommandId = nextState.activeCommandId;

@@ -49,9 +49,10 @@ type AbstractCommandItem = {
 // An executable command
 type Command = AbstractCommandItem & {
     action: string | CommandAction | CommandGeneratorAction;
-    canHandleQueries?: boolean;
+    canHandleQueries?: boolean; // This flag tells the command bar to open a secondary view when this command is executed and refresh upon change of the query parameter
+    executeManually?: boolean; // Only useful with `canHandleQueries`, this flag tells the command bar to not execute the command automatically after a certain delay but wait for user input
     category?: string;
-    closeOnExecute?: boolean;
+    closeOnExecute?: boolean; // This flag tells the command bar to close upon execution
 };
 
 // Holds other commands but cannot be executed

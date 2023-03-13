@@ -34,3 +34,23 @@
 .expandButton:hover svg {
     color: var(--primaryBlue);
 }
+
+.executeButton {
+    position: absolute;
+    padding: 0 1rem;
+    height: 100%;
+    right: 0;
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.executeButton {
+    color: var(--grayLighter);
+    transition: color 0.1s ease-in-out;
+}
+
+.executeButton:hover svg {
+    color: var(--primaryBlue);
+}
