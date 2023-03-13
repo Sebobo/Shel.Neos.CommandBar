@@ -198,13 +198,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         // Load 3rd party commands
         let pluginCommands: HierarchicalCommandList = {};
         if (plugins) {
-            Object.keys(plugins).forEach((pluginName) => {
+            for (const pluginName of Object.keys(plugins)) {
+                const plugin = plugins[pluginName];
                 try {
-                    pluginCommands = { ...pluginCommands, ...plugins[pluginName]() };
+                    const pluginResult = await plugin();
+                    pluginCommands = { ...pluginCommands, ...pluginResult };
                 } catch (e) {
-                    logger.error(`Could not load commands from plugin ${pluginName}`, e);
+                    logger.warn(`Could not load commands from plugin ${pluginName}`, e);
                 }
-            });
+            }
         }
 
         // Load commands from data source which are not available via the UI API

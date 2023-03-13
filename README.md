@@ -96,19 +96,21 @@ import manifest, { SynchronousRegistry } from '@neos-project/neos-ui-extensibili
 import { selectors } from '@neos-project/neos-ui-redux-store';
 
 manifest('My.Vendor:CommandBarPlugin', {}, (globalRegistry, { store, frontendConfiguration }) => {
-    globalRegistry.get('Shel.Neos.CommandBar').set('plugins/My.Vendor:Example.Alert', () => ({
-        extensibilityTest: {
-            name: 'Example alert command',
-            icon: 'vial',
-            description: 'Command registered via command bar extensibility',
-            canHandleQueries: true,
-            action: async (query) => {
-                const state = store.getState();
-                const documentNode = selectors.CR.Nodes.documentNodeSelector(state);
-                window.alert(`The current document node is ${documentNode.label} and the query is ${query}.`);
+    globalRegistry.get('Shel.Neos.CommandBar').set('plugins/My.Vendor:Example.Alert', async () => {
+        return {
+            extensibilityTest: {
+                name: 'Example alert command',
+                icon: 'vial',
+                description: 'Command registered via command bar extensibility',
+                canHandleQueries: true,
+                action: async (query) => {
+                    const state = store.getState();
+                    const documentNode = selectors.CR.Nodes.documentNodeSelector(state);
+                    window.alert(`The current document node is ${documentNode.label} and the query is ${query}.`);
+                },
             },
-        },
-    }));
+        };
+    });
 });
 ```
 
