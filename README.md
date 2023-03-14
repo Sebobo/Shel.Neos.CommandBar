@@ -6,6 +6,8 @@ This package provides a command bar plugin for Neos CMS similar to
 Spotlight, [Raycast](https://www.raycast.com) or [Alfred](https://www.alfredapp.com/). 
 It allows you to quickly search and execute commands and navigate in [NeosCMS](https://neos.io).
 
+Compatible with PHP 8+ & Neos 7.3+
+
 ## Features
 
 * 🔍 Open commandbar via CMD+K or CTRL+K in the Neos content module
@@ -28,6 +30,7 @@ It allows you to quickly search and execute commands and navigate in [NeosCMS](h
   * Open the command bar from within the backend modules which have the module enabled (global inclusion possible with Neos 8.3)
 * 🪛 Extensibility
   * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
+* 🗣️ Available in English & German
 
 ## Screenshot
 
