@@ -88,6 +88,7 @@ export default class App extends Component<
 
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'k' && e.metaKey) {
+                    e.stopPropagation();
                     e.preventDefault();
                     this.handleToggle();
                 }

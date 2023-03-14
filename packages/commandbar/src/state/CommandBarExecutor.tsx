@@ -32,6 +32,8 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
         if (e.key === 'k' && e.metaKey && dialogRef?.current.contains(e.target as Node)) {
             // Close command bar
             toggleOpen();
+            e.stopPropagation();
+            e.preventDefault();
         } else if (e.key === 'Escape') {
             // Cancel search, or selection, or close command bar
             e.stopPropagation();
