@@ -41,7 +41,6 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
     switch (action) {
         case ACTION.RESET_SEARCH:
             nextState.searchWord = '';
-            nextState.commandQuery = '';
             break;
         case ACTION.RESET_HIGHLIGHT:
             nextState.highlightedItem = 0;
@@ -132,6 +131,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
         case ACTION.UNSET_RESULT:
             nextState.result = null;
             nextState.resultCommandId = null;
+            nextState.commandQuery = '';
             break;
         case ACTION.LEAVE_GROUP:
             nextState.selectedCommandGroup = nextState.selectedCommandGroup
