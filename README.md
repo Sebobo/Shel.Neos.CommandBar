@@ -38,7 +38,7 @@ It allows you to quickly search and execute commands and navigate in [NeosCMS](h
 Run the following command in your Neos site package
 
 ```console
-composer require --no-install shel/neos-commandbar
+composer require --no-update shel/neos-commandbar
 ```
 
 The run `composer update` in your project root folder.
