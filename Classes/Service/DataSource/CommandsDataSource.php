@@ -13,6 +13,7 @@ namespace Shel\Neos\CommandBar\Service\DataSource;
  */
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
@@ -26,7 +27,8 @@ class CommandsDataSource extends AbstractDataSource
 
     public function __construct(
         private readonly MenuHelper $menuHelper,
-        private readonly UriBuilder $uriBuilder
+        private readonly UriBuilder $uriBuilder,
+        private readonly Translator $translator
     ) {
     }
 
@@ -81,17 +83,22 @@ class CommandsDataSource extends AbstractDataSource
 
         return [
             'sites' => [
-                'name' => 'Sites',
-                'description' => 'Switch to another site',
+                'name' => $this->translate('CommandDataSource.category.sites'),
+                'description' => $this->translate('CommandDataSource.category.sites.description'),
                 'icon' => 'file',
                 'subCommands' => $sitesForMenu,
             ],
             'modules' => [
-                'name' => 'Modules',
-                'description' => 'Open a backend module',
+                'name' => $this->translate('CommandDataSource.category.modules'),
+                'description' => $this->translate('CommandDataSource.category.modules.description'),
                 'icon' => 'puzzle-piece',
                 'subCommands' => $modulesForMenu,
             ],
         ];
+    }
+
+    protected function translate($id): string
+    {
+        return $this->translator->translateById($id, [], null, null, 'Main', 'Shel.Neos.CommandBar') ?? $id;
     }
 }

@@ -12,7 +12,7 @@ type CommandBarProps = {
     onDrag?: (state: boolean) => void;
     IconComponent: React.FC<IconProps>;
     userPreferences: UserPreferencesService;
-    translate?: TranslateFunction;
+    translate: TranslateFunction;
 };
 
 const CommandBar: React.FC<CommandBarProps> = ({
@@ -22,7 +22,7 @@ const CommandBar: React.FC<CommandBarProps> = ({
     onDrag,
     IconComponent,
     userPreferences,
-    translate = (_id, fallback) => fallback,
+    translate,
 }) => {
     return (
         <IntlProvider translate={translate}>

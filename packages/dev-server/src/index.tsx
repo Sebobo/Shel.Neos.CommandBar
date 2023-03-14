@@ -263,7 +263,11 @@ if (module.hot) module.hot.accept();
             <div className="app-grid">
                 <header className="header">
                     <span>Neos commandbar test</span>
-                    <ToggleButton handleToggle={() => setCommandBarOpen((prev) => !prev)} />
+                    <ToggleButton
+                        handleToggle={() => setCommandBarOpen((prev) => !prev)}
+                        label="Search…"
+                        title="Search for commands"
+                    />
                     <button disabled={published}>Publish all</button>
                 </header>
                 {sideBarLeftOpen && (
@@ -311,6 +315,7 @@ if (module.hot) module.hot.accept();
                     toggleOpen={() => setCommandBarOpen((prev) => !prev)}
                     IconComponent={IconComponent}
                     userPreferences={userPreferencesService}
+                    translate={(id) => id}
                 />
             </div>
         );

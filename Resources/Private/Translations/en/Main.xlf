@@ -5,12 +5,14 @@
             <trans-unit id="SearchBox.placeholder">
                 <source>What do you want to do today?</source>
             </trans-unit>
+
             <trans-unit id="CommandBarFooter.branding">
                 <source>Made with love by Sebastian Helzle</source>
             </trans-unit>
             <trans-unit id="CommandBarFooter.brandingSmall">
                 <source>Made with love by</source>
             </trans-unit>
+
             <trans-unit id="CommandList.suggestions">
                 <source>Suggestions</source>
             </trans-unit>
@@ -20,8 +22,154 @@
             <trans-unit id="CommandList.noCommandsMessage">
                 <source>No matching commands found</source>
             </trans-unit>
+
+            <trans-unit id="CommandListItem.type.command">
+                <source>Command</source>
+            </trans-unit>
+            <trans-unit id="CommandListItem.type.link">
+                <source>Link</source>
+            </trans-unit>
+            <trans-unit id="CommandListItem.type.query">
+                <source>Query</source>
+            </trans-unit>
+            <trans-unit id="CommandListItem.type.category">
+                <source>Category</source>
+            </trans-unit>
+            <trans-unit id="CommandListItem.toggleFavourite">
+                <source>Toggle favourite</source>
+            </trans-unit>
+
             <trans-unit id="CommandView.searchResults">
                 <source>Try a different query to find more results</source>
+            </trans-unit>
+
+            <trans-unit id="ToggleButton.label">
+                <source>Search…</source>
+            </trans-unit>
+            <trans-unit id="ToggleButton.title">
+                <source>Toggle the command bar</source>
+            </trans-unit>
+
+            <trans-unit id="CommandDataSource.category.sites">
+                <source>Sites</source>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.category.sites.description">
+                <source>Switch to another site</source>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.category.modules">
+                <source>Modules</source>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.category.modules.description">
+                <source>Open a backend module</source>
+            </trans-unit>
+
+            <trans-unit id="CommandBarUiPlugin.command.switchEditPreviewMode">
+                <source>Switch edit/preview mode</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.switchEditPreviewMode.description">
+                <source>Switch between edit and preview modes</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.switchEditPreviewMode.active">
+                <source>Currently active</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.quickActions">
+                <source>Quick actions</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.quickActions.description">
+                <source>Execute hotkeys</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.addNode">
+                <source>Add content</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.addNode.description">
+                <source>Add new content</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments">
+                <source>Search documents</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.description">
+                <source>Search and navigate to documents</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.searching">
+                <source>Searching for "{query}"</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.matches">
+                <source>{matches} options match your query</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.searchFailed">
+                <source>Search failed</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishDiscard">
+                <source>Publish / discard</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishDiscard.description">
+                <source>Publish or discard changes</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publish">
+                <source>Publish</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publish.description">
+                <source>Publish changes in this document</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publish.success">
+                <source>Published {count} changes</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishAll">
+                <source>Publish all</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishAll.description">
+                <source>Publish changes in all documents</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishAll.success">
+                <source>Published {count} changes</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discard">
+                <source>Discard</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discard.description">
+                <source>Discard changes in the current document</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discard.success">
+                <source>Discarded {count} changes</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discardAll">
+                <source>Discard all</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discardAll.description">
+                <source>Discard changes in all documents</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discardAll.success">
+                <source>Discarded {count} changes</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation">
+                <source>Documentation</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.description">
+                <source>Browse or search the Neos documentation</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.searching">
+                <source>Searching for "{query}"</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.error">
+                <source>Search failed</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.matches">
+                <source>{matches} options match your query</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages">
+                <source>Packages</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.description">
+                <source>Search for Neos packages</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.searching">
+                <source>Searching for "{query}"</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.error">
+                <source>Search failed</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.matches">
+                <source>{matches} options match your query</source>
             </trans-unit>
         </body>
     </file>

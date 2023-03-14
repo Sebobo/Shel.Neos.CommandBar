@@ -26,9 +26,197 @@
                 <source>No matching commands found</source>
                 <target>Keine passenden Befehle gefunden</target>
             </trans-unit>
+            <trans-unit id="CommandListItem.type.command">
+                <source>Command</source>
+                <target>Befehl</target>
+            </trans-unit>
+            <trans-unit id="CommandListItem.type.link">
+                <source>Link</source>
+                <target>Verknüpfung</target>
+            </trans-unit>
+            <trans-unit id="CommandListItem.type.query">
+                <source>Query</source>
+                <target>Abfrage</target>
+            </trans-unit>
+            <trans-unit id="CommandListItem.type.category">
+                <source>Category</source>
+                <target>Kategorie</target>
+            </trans-unit>
+            <trans-unit id="CommandListItem.toggleFavourite">
+                <source>Toggle favourite</source>
+                <target>Favorit umschalten</target>
+            </trans-unit>
             <trans-unit id="CommandView.searchResults">
                 <source>Try a different query to find more results</source>
                 <target>Versuchen sie eine andere Eingabe, um mehr Ergebnisse zu finden.</target>
+            </trans-unit>
+            <trans-unit id="ToggleButton.label">
+                <source>Search…</source>
+                <target>Suche…</target>
+            </trans-unit>
+            <trans-unit id="ToggleButton.title">
+                <source>Toggle the command bar</source>
+                <target>Die Befehlsleiste umschalten</target>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.category.sites">
+                <source>Sites</source>
+                <target>Seiten</target>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.category.sites.description">
+                <source>Switch to another site</source>
+                <target>Zu einer anderen Seite wechseln</target>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.category.modules">
+                <source>Modules</source>
+                <target>Module</target>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.category.modules.description">
+                <source>Open a backend module</source>
+                <target>Ein Backend-Modul öffnen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.switchEditPreviewMode">
+                <source>Switch edit/preview mode</source>
+                <target>Bearbeiten/Vorschau-Modus umschalten</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.switchEditPreviewMode.description">
+                <source>Switch between edit and preview modes</source>
+                <target>Umschalten zwischen Bearbeitungs- und Vorschaumodus</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.switchEditPreviewMode.active">
+                <source>Currently active</source>
+                <target>Derzeit aktiv</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.quickActions">
+                <source>Quick actions</source>
+                <target>Schnelle Aktionen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.quickActions.description">
+                <source>Execute hotkeys</source>
+                <target>Ausführen von Hotkeys</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.addNode">
+                <source>Add content</source>
+                <target>Inhalt hinzufügen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.addNode.description">
+                <source>Add new content</source>
+                <target>Neuen Inhalt hinzufügen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments">
+                <source>Search documents</source>
+                <target>Dokumente suchen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.description">
+                <source>Search and navigate to documents</source>
+                <target>Suchen und Navigieren zu Dokumenten</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.searching">
+                <source>Searching for "{query}"</source>
+                <target>Suche nach "{query}"</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.matches">
+                <source>{matches} options match your query</source>
+                <target>{matches} Optionen entsprechen Ihrer Abfrage</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.searchDocuments.searchFailed">
+                <source>Search failed</source>
+                <target>Suche fehlgeschlagen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishDiscard">
+                <source>Publish / discard</source>
+                <target>Veröffentlichen / Verwerfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishDiscard.description">
+                <source>Publish or discard changes</source>
+                <target>Änderungen veröffentlichen oder verwerfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publish">
+                <source>Publish</source>
+                <target>Veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publish.description">
+                <source>Publish changes in this document</source>
+                <target>Änderungen in diesem Dokument veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publish.success">
+                <source>Published {count} changes</source>
+                <target>{count} Änderungen veröffentlicht</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishAll">
+                <source>Publish all</source>
+                <target>Alles veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishAll.description">
+                <source>Publish changes in all documents</source>
+                <target>Alle Änderungen veröffentlichen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.publishAll.success">
+                <source>Published {count} changes</source>
+                <target>{count} Änderungen veröffentlicht</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discard">
+                <source>Discard</source>
+                <target>Verwerfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discard.description">
+                <source>Discard changes in the current document</source>
+                <target>Änderungen im aktuellen Dokument verwerfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discard.success">
+                <source>Discarded {count} changes</source>
+                <target>{count} Änderungen verworfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discardAll">
+                <source>Discard all</source>
+                <target>Alle verwerfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discardAll.description">
+                <source>Discard changes in all documents</source>
+                <target>Änderungen in allen Dokumenten verwerfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.discardAll.success">
+                <source>Discarded {count} changes</source>
+                <target>{count} Änderungen verworfen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation">
+                <source>Documentation</source>
+                <target>Dokumentation</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.description">
+                <source>Browse or search the Neos documentation</source>
+                <target>Durchsuchen Sie die Neos Dokumentation.</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.searching">
+                <source>Searching for "{query}"</source>
+                <target>Suche nach "{query}"</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.error">
+                <source>Search failed</source>
+                <target>Suche fehlgeschlagen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.documentation.matches">
+                <source>{matches} options match your query</source>
+                <target>{matches} Optionen entsprechen Ihrer Abfrage</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages">
+                <source>Packages</source>
+                <target>Erweiterungen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.description">
+                <source>Search for Neos packages</source>
+                <target>Suche nach Neos-Erweiterungen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.searching">
+                <source>Searching for "{query}"</source>
+                <target>Suche nach "{query}"</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.error">
+                <source>Search failed</source>
+                <target>Suche fehlgeschlagen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.packages.matches">
+                <source>{matches} options match your query</source>
+                <target>{matches} Optionen entsprechen Ihrer Abfrage</target>
             </trans-unit>
         </body>
     </file>

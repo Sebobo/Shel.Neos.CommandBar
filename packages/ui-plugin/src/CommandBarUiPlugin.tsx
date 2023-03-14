@@ -93,77 +93,110 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             showBranding: true,
             commands: {
                 addNode: {
-                    name: 'Add node',
+                    name: this.translate('CommandBarUiPlugin.command.addNode', 'Add content'),
                     icon: 'plus',
-                    description: 'Add a new node',
+                    description: this.translate('CommandBarUiPlugin.command.addNode.description', 'Add new content'),
                     action: this.handleAddNode,
                 },
                 searchDocuments: {
-                    name: 'Search documents',
+                    name: this.translate('CommandBarUiPlugin.command.searchDocuments', 'Search documents'),
                     icon: 'search',
-                    description: 'Search and navigate to documents',
+                    description: this.translate(
+                        'CommandBarUiPlugin.command.searchDocuments.description',
+                        'Search and navigate to documents'
+                    ),
                     action: this.handleSearchNode.bind(this),
                     canHandleQueries: true,
                 },
                 publishDiscard: {
-                    name: 'Publish or discard changes',
-                    description: 'Publish or discard changes',
+                    name: this.translate('CommandBarUiPlugin.command.publishDiscard', 'Publish / discard'),
+                    description: this.translate(
+                        'CommandBarUiPlugin.command.publishDiscard.description',
+                        'Publish or discard changes'
+                    ),
                     icon: 'check',
                     subCommands: {
                         publish: {
-                            name: 'Publish',
-                            description: 'Publish changes on this document',
+                            name: this.translate('CommandBarUiPlugin.command.publish', 'Publish'),
+                            description: this.translate(
+                                'CommandBarUiPlugin.command.publish.description',
+                                'Publish changes in this document'
+                            ),
                             icon: 'check',
                             action: this.handlePublish,
                         },
                         publishAll: {
-                            name: 'Publish all',
-                            description: 'Publish all changes',
+                            name: this.translate('CommandBarUiPlugin.command.publishAll', 'Publish all'),
+                            description: this.translate(
+                                'CommandBarUiPlugin.command.publishAll.description',
+                                'Publish changes in all documents'
+                            ),
                             icon: 'check-double',
                             action: this.handlePublishAll,
                         },
                         discard: {
-                            name: 'Discard',
-                            description: 'Discard changes on this document',
+                            name: this.translate('CommandBarUiPlugin.command.discard', 'Discard'),
+                            description: this.translate(
+                                'CommandBarUiPlugin.command.discard.description',
+                                'Discard changes in the current document'
+                            ),
                             icon: 'ban',
                             action: this.handleDiscard,
                         },
                         discardAll: {
-                            name: 'Discard all',
-                            description: 'Discard all changes',
+                            name: this.translate('CommandBarUiPlugin.command.discardAll', 'Discard all'),
+                            description: this.translate(
+                                'CommandBarUiPlugin.command.discardAll.description',
+                                'Discard changes in all documents'
+                            ),
                             icon: 'ban',
                             action: this.handleDiscardAll,
                         },
                     },
                 },
                 quickActions: {
-                    name: 'Quick actions',
+                    name: this.translate('CommandBarUiPlugin.command.quickActions', 'Quick actions'),
                     icon: 'keyboard',
-                    description: 'Execute configured hotkeys',
+                    description: this.translate(
+                        'CommandBarUiPlugin.command.quickActions.description',
+                        'Execute hotkeys'
+                    ),
                     subCommands: this.buildCommandsFromHotkeys(),
                 },
                 switchEditPreviewMode: {
-                    name: 'Switch edit/preview mode',
+                    name: this.translate(
+                        'CommandBarUiPlugin.command.switchEditPreviewMode',
+                        'Switch edit/preview mode'
+                    ),
                     icon: 'pencil',
-                    description: 'Switch between edit and preview modes',
+                    description: this.translate(
+                        'CommandBarUiPlugin.command.switchEditPreviewMode.description',
+                        'Switch between edit and preview modes'
+                    ),
                     subCommands: this.buildCommandsFromEditPreviewModes(),
                 },
             },
         };
         if (props.config.features.searchNeosDocs) {
             this.state.commands.searchNeosDocs = {
-                name: 'Documentation',
+                name: this.translate('CommandBarUiPlugin.command.documentation', 'Documentation'),
+                description: this.translate(
+                    'CommandBarUiPlugin.command.documentation.description',
+                    'Browse or search the Neos documentation'
+                ),
                 icon: 'book',
-                description: 'Browse or search the Neos documentation',
                 canHandleQueries: true,
                 action: this.handleSearchNeosDocs.bind(this),
             };
         }
         if (props.config.features.searchNeosPackages) {
             this.state.commands.searchNeosPackages = {
-                name: 'Packages',
+                name: this.translate('CommandBarUiPlugin.command.packages', 'Packages'),
+                description: this.translate(
+                    'CommandBarUiPlugin.command.packages.description',
+                    'Search for Neos packages'
+                ),
                 icon: 'boxes',
-                description: 'Search for Neos packages',
                 canHandleQueries: true,
                 action: this.handleSearchNeosPackages.bind(this),
             };
@@ -252,7 +285,10 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             const { title, isEditingMode } = editPreviewModes[mode];
             carry[mode] = {
                 name: i18nRegistry.translate(title),
-                description: () => (this.props.editPreviewMode === mode ? 'Currently active' : ''),
+                description: () =>
+                    this.props.editPreviewMode === mode
+                        ? this.translate('CommandBarUiPlugin.command.switchEditPreviewMode.active', 'Currently active')
+                        : '',
                 icon: isEditingMode ? 'pencil' : 'eye',
                 action: async () => setEditPreviewMode(mode),
             };
@@ -266,12 +302,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         addNode(focusedNodeContextPath || documentNode.contextPath, undefined, 'after');
     };
 
-    handleSearchNode = async function* (query: string): CommandGeneratorResult {
+    handleSearchNode = async function* (this: CommandBarUiPlugin, query: string): CommandGeneratorResult {
         const { siteNode, setActiveContentCanvasContextPath, setActiveContentCanvasSrc } = this
             .props as CommandBarUiPluginProps;
         yield {
             success: true,
-            message: `Searching for "${query}"`,
+            message: this.translate('CommandBarUiPlugin.command.searchDocuments.searching', { query }),
         };
         let error;
         const results = await NodesApi.searchNodes(query, siteNode.contextPath).catch((e) => {
@@ -281,13 +317,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         if (!results) {
             yield {
                 success: false,
-                message: 'Search failed',
+                message: this.translate('CommandBarUiPlugin.command.searchDocuments.searchFailed', 'Search failed'),
                 view: error,
             };
         } else {
             yield {
                 success: true,
-                message: `${results.length} options match your query`,
+                message: this.translate('CommandBarUiPlugin.command.searchDocuments.matches', {
+                    matches: results.length,
+                }),
                 options: results.reduce((carry, { name, nodetype, contextPath, uri, icon }) => {
                     if (!uri) {
                         // TODO: Show hint that document cannot be opened or filter them remotely already?
@@ -311,10 +349,14 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }
     };
 
-    handleSearchNeosDocs = async function* (query: string): CommandGeneratorResult {
+    handleSearchNeosDocs = async function* (this: CommandBarUiPlugin, query: string): CommandGeneratorResult {
         yield {
             success: true,
-            message: `Searching for "${query}"`,
+            message: this.translate(
+                'CommandBarUiPlugin.command.documentation.searching',
+                { query },
+                `Search for "${query}"`
+            ),
         };
         let error;
         const options = await DocumentationApi.searchNeosDocs(query).catch((e) => {
@@ -324,22 +366,30 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         if (error || !options) {
             yield {
                 success: false,
-                message: 'Search failed',
+                message: this.translate('CommandBarUiPlugin.command.documentation.error', 'Search failed'),
                 view: error,
             };
         } else {
             yield {
                 success: true,
-                message: `${Object.keys(options).length} options match your query`,
+                message: this.translate(
+                    'CommandBarUiPlugin.command.documentation.matches',
+                    { matches: Object.keys(options).length },
+                    `${Object.values(options).length} options match your query`
+                ),
                 options,
             };
         }
     };
 
-    handleSearchNeosPackages = async function* (query: string): CommandGeneratorResult {
+    handleSearchNeosPackages = async function* (this: CommandBarUiPlugin, query: string): CommandGeneratorResult {
         yield {
             success: true,
-            message: `Searching for "${query}"`,
+            message: this.translate(
+                'CommandBarUiPlugin.command.packages.searching',
+                { query },
+                `Search for "${query}"`
+            ),
         };
         let error;
         const options = await PackagesApi.searchNeosPackages(query).catch((e) => {
@@ -348,14 +398,18 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         });
         if (error || !options) {
             yield {
-                success: !!options,
-                message: options ? 'Finished search' : 'Search failed',
+                success: false,
+                message: this.translate('CommandBarUiPlugin.command.packages.error', 'Search failed'),
                 view: error,
             };
         } else {
             yield {
                 success: true,
-                message: `${options.length} options match your query`,
+                message: this.translate(
+                    'CommandBarUiPlugin.command.packages.matches',
+                    { matches: Object.values(options).length },
+                    `${Object.values(options).length} options match your query`
+                ),
                 options,
             };
         }
@@ -369,7 +423,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         );
         return {
             success: true,
-            message: `Published ${publishableNodesInDocument.length} changes`,
+            message: this.translate(
+                'CommandBarUiPlugin.command.publish.success',
+                { count: publishableNodesInDocument.length },
+                `Published ${publishableNodesInDocument.length} changes`
+            ),
         };
     };
 
@@ -381,7 +439,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         );
         return {
             success: true,
-            message: `Published ${publishableNodes.length} changes`,
+            message: this.translate(
+                'CommandBarUiPlugin.command.publishAll.success',
+                { count: publishableNodes.length },
+                `Published ${publishableNodes.length} changes`
+            ),
         };
     };
 
@@ -390,7 +452,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         discardAction(publishableNodesInDocument.map((node) => node.contextPath));
         return {
             success: true,
-            message: `Discarded ${publishableNodesInDocument.length} changes`,
+            message: this.translate(
+                'CommandBarUiPlugin.command.discard.success',
+                { count: publishableNodesInDocument.length },
+                `Discarded ${publishableNodesInDocument.length} changes`
+            ),
         };
     };
 
@@ -399,7 +465,11 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         discardAction(publishableNodes.map((node) => node.contextPath));
         return {
             success: true,
-            message: `Discarded ${publishableNodes.length} changes`,
+            message: this.translate(
+                'CommandBarUiPlugin.command.discardAll.success',
+                { count: publishableNodes.length },
+                `Discarded ${publishableNodes.length} changes`
+            ),
         };
     };
 
@@ -407,8 +477,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         this.setState({ ...this.state, dragging });
     };
 
-    translate = (id: string, label = '', args = []): string => {
-        return this.props.i18nRegistry.translate(id, label, args, 'Shel.Neos.CommandBar', 'Main');
+    translate: TranslateFunction = (id, paramsOrFallback, fallback) => {
+        if (typeof paramsOrFallback === 'string') {
+            fallback = paramsOrFallback;
+            paramsOrFallback = {};
+        }
+        return this.props.i18nRegistry.translate(id, fallback, paramsOrFallback, 'Shel.Neos.CommandBar', 'Main');
     };
 
     render() {
@@ -418,7 +492,12 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
 
         return (
             <div className={styles.commandBarToolbarComponent}>
-                <ToggleButton handleToggle={toggleCommandBar} disabled={!loaded} />
+                <ToggleButton
+                    handleToggle={toggleCommandBar}
+                    disabled={!loaded}
+                    label={this.translate('ToggleButton.label', 'Search…')}
+                    title={this.translate('ToggleButton.title', 'Search for commands')}
+                />
                 {loaded && (
                     <div
                         className={[styles.fullScreenLayer, commandBarOpen && styles.open].join(' ')}

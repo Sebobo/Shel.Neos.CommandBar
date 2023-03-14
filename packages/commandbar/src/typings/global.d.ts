@@ -12,10 +12,11 @@ interface NeosI18n {
     initialized: boolean;
 }
 
-type TranslateFunction = (
-    id: string,
-    fallback?: string,
-    parameters?: Record<string, string | number> | string[]
+// FIXME: Fallback should be required if params is a record
+type TranslateFunction<T = string, S = string | Record<string, string | number>> = (
+    id: T,
+    paramsOrFallback: S,
+    fallback?: S extends string ? never : string
 ) => string;
 
 type NeosModuleWindow = Window &
@@ -111,11 +112,6 @@ type NeosHotKey = {
     id: string;
     description: string;
     action: () => any;
-};
-
-type ModuleCommands = {
-    sites: CommandGroup;
-    modules: CommandGroup;
 };
 
 type EditPreviewMode = {
