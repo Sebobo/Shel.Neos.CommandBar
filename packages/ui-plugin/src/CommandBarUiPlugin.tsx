@@ -40,7 +40,6 @@ type CommandBarUiPluginProps = {
     publishAction: (contextPaths: string[], baseWorkspace: string) => void;
     discardAction: (contextPaths: string[]) => void;
     baseWorkspace: string;
-    setActiveContentCanvasContextPath: (contextPath: string) => void;
     setActiveContentCanvasSrc: (uri: string) => void;
     plugins: Record<string, () => HierarchicalCommandList>;
 };
@@ -78,7 +77,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         publishAction: PropTypes.func.isRequired,
         discardAction: PropTypes.func.isRequired,
         baseWorkspace: PropTypes.string.isRequired,
-        setActiveContentCanvasContextPath: PropTypes.func.isRequired,
         setActiveContentCanvasSrc: PropTypes.func.isRequired,
     };
 
@@ -303,8 +301,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
     };
 
     handleSearchNode = async function* (this: CommandBarUiPlugin, query: string): CommandGeneratorResult {
-        const { siteNode, setActiveContentCanvasContextPath, setActiveContentCanvasSrc } = this
-            .props as CommandBarUiPluginProps;
+        const { siteNode, setActiveContentCanvasSrc } = this.props as CommandBarUiPluginProps;
         yield {
             success: true,
             message: this.translate('CommandBarUiPlugin.command.searchDocuments.searching', { query }),
@@ -338,7 +335,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                         category: nodetype,
                         action: async () => {
                             setActiveContentCanvasSrc(uri);
-                            setActiveContentCanvasContextPath(contextPath);
                         },
                         closeOnExecute: true,
                         icon,
@@ -564,6 +560,5 @@ export default connect(() => ({}), {
     setEditPreviewMode: actions.UI.EditPreviewMode.set,
     publishAction: actions.CR.Workspaces.publish,
     discardAction: actions.CR.Workspaces.commenceDiscard,
-    setActiveContentCanvasContextPath: actions.CR.Nodes.setDocumentNode,
     setActiveContentCanvasSrc: actions.UI.ContentCanvas.setSrc,
 })(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiPlugin)));
