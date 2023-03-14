@@ -22,8 +22,8 @@ It allows you to quickly search and execute commands and navigate in [NeosCMS](h
 * ➕ Open node creation dialog relative to the current node
 * 📝 Switch edit/preview mode
 * 📰 Publish / discard changes on current page or all changes
-* ⭐️Mark commands as favourites (stored in Neos user preferences)
-* 🗄️Store recent commands (stored in Neos user preferences)
+* ⭐️ Mark commands as favourites (stored in Neos user preferences)
+* 🗄️ Store recent commands (stored in Neos user preferences)
 * 🧩 Backend module integration
   * Open the command bar from within the backend modules which have the module enabled (global inclusion possible with Neos 8.3)
 * 🪛 Extensibility
@@ -35,24 +35,13 @@ It allows you to quickly search and execute commands and navigate in [NeosCMS](h
 
 ## Installation
 
-As the plugin is still in development, you need to add the package to your `composer.json` manually:
-
-```json
-{
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/Sebobo/Shel.Neos.CommandBar"
-    }
-  ]
-}
-```
-
-Then you can install the package via composer:
+Run the following command in your Neos site package
 
 ```console
-composer require shel/neos-commandbar:@dev
+composer require --no-install shel/neos-commandbar
 ```
+
+The run `composer update` in your project root folder.
 
 ## Enabling the command bar in additional backend modules
 
