@@ -3,7 +3,7 @@ import { batch, signal, useComputed } from '@preact/signals';
 
 import { CommandBarFooter, CommandBarHeader, CommandList, CommandResultsView } from '../index';
 import { CommandBarExecutor, useCommandBarState } from '../../state';
-import { clamp } from '../../helpers';
+import { clamp, classnames } from '../../helpers';
 
 import * as styles from './CommandBarDialog.module.css';
 
@@ -104,7 +104,7 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
     return (
         <dialog
             ref={dialogRef}
-            className={[styles.commandBar, result.value && styles.hasResults].join(' ')}
+            className={classnames(styles.commandBar, result.value && styles.hasResults)}
             open={open}
             draggable
             onDragStart={handleDragStart}
@@ -116,11 +116,11 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
             <CommandBarExecutor toggleOpen={toggleOpen} dialogRef={dialogRef} open={open}>
                 <CommandBarHeader />
                 <div
-                    className={[
+                    className={classnames(
                         styles.resultsWrap,
                         expanded.value && styles.expanded,
-                        result.value && styles.split,
-                    ].join(' ')}
+                        result.value && styles.split
+                    )}
                 >
                     <CommandList />
                     {result.value && <CommandResultsView />}
