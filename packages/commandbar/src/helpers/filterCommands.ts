@@ -78,10 +78,5 @@ export default function filterCommands(
     const matchingIds = order.map((i) => availableCommands[indices[i]].id);
 
     // Add all commands that can handle queries to the result, the Set removes duplicates
-    return [
-        ...new Set([
-            ...matchingIds,
-            ...availableCommands.filter((command) => command.canHandleQueries).map((command) => command.id),
-        ]),
-    ];
+    return matchingIds;
 }
