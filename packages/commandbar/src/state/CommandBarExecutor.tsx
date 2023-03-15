@@ -59,9 +59,16 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
             e.stopPropagation();
             e.preventDefault();
 
+            // Select the highlighted command by default
             let commandId = state.availableCommandIds.value[state.highlightedItem.value];
-            if (state.status.value === STATUS.DISPLAYING_RESULT && state.result.value.options) {
-                commandId = Object.keys(state.result.value.options)[state.highlightedOption.value] || commandId;
+            if (state.status.value === STATUS.DISPLAYING_RESULT) {
+                // If there are options the command to execute is the highlighted option
+                if (Object.values(state.result.value.options).length) {
+                    commandId = Object.keys(state.result.value.options)[state.highlightedOption.value];
+                } else {
+                    // If there are no options we run the command which generated the result again
+                    commandId = state.resultCommandId.value;
+                }
             }
 
             if (commandId) {
