@@ -39,7 +39,7 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
     const dialogStyle = useComputed(() => {
         const { left, top } = dialogPosition.value;
         return (
-            hasBeenDragged
+            hasBeenDragged.value
                 ? {
                       left: left + 'px',
                       top: top + 'px',
@@ -99,10 +99,10 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
 
     useEffect(() => {
         if (!open) return;
-        dialogRef.current.parentElement.addEventListener('drop', handleDragDrop);
+        dialogRef.current?.parentElement?.addEventListener('drop', handleDragDrop);
         window.addEventListener('resize', onResize);
         return () => {
-            dialogRef.current.parentElement.removeEventListener('drop', handleDragDrop);
+            dialogRef.current?.parentElement?.removeEventListener('drop', handleDragDrop);
             window.removeEventListener('resize', onResize);
         };
     }, [open, onResize, handleDragDrop]);
