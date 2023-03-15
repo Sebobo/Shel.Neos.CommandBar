@@ -277,6 +277,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             ...preferences,
             commands: { ...prev.commands, ...commands, ...pluginCommands },
         }));
+
+        // add event-listener directly as the neos-ui hotkey-handling can't prevent defaults
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+                e.stopPropagation();
+                e.preventDefault();
+                this.props.toggleCommandBar();
+            }
+        });
     }
 
     buildCommandsFromHotkeys = (): HierarchicalCommandList => {

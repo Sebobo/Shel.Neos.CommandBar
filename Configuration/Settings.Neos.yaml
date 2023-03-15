@@ -19,9 +19,6 @@ Neos:
             loadTestCommands: false
           hotkeys:
             filter:
-              # Hide the command bar hotkeys
-              - 'Shel.Neos.CommandBar.toggle.CMD'
-              - 'Shel.Neos.CommandBar.toggle.CTRL'
               # Hide Neos hotkeys which are not relevant in the command bar
               - 'UI.AddNodeModal.close'
               - 'UI.InsertionModeModal.cancel'
@@ -35,11 +32,6 @@ Neos:
               - 'UI.NodeVariantCreationDialog.createEmpty'
               - 'UI.NodeVariantCreationDialog.createAndCopy'
               - 'CR.Nodes.unfocus'
-        hotkeys:
-          # MacOS
-          'Shel.Neos.CommandBar.toggle.CMD': 'command+k'
-          # Linux & Windows
-          'Shel.Neos.CommandBar.toggle.CTRL': 'ctrl+k'
 
     modules:
       administration:
