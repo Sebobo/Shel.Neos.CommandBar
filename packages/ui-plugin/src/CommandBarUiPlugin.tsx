@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect, DefaultRootState } from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Neos dependencies are provided by the UI
@@ -10,38 +10,40 @@ import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 import { Icon } from '@neos-project/react-ui-components';
 
 import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
-import { actions as commandBarActions, selectors as commandBarSelectors } from './actions';
 import { CommandsApi, PreferencesApi, DocumentationApi, NodesApi, PackagesApi } from '@neos-commandbar/neos-api';
+
+import { actions as commandBarActions, NeosRootState, selectors as commandBarSelectors } from './actions';
 
 import * as styles from './CommandBarUiPlugin.module.css';
 
 type CommandBarUiPluginProps = {
-    config: CommandBarConfig;
-    siteNode: CRNode;
-    documentNode: CRNode;
-    focusedNodeContextPath: string;
-    i18nRegistry: I18nRegistry;
-    commandBarOpen: boolean;
-    toggleCommandBar: () => void;
-    hotkeyRegistry: any;
-    handleHotkeyAction: (action: () => any) => void;
     addNode: (
         referenceNodeContextPath: string,
         referenceNodeFusionPath: string | null,
         preferredMode: string,
         nodeType?: string
     ) => void;
+    baseWorkspace: string;
+    commandBarOpen: boolean;
+    config: CommandBarConfig;
+    discardAction: (contextPaths: string[]) => void;
+    documentNode: CRNode;
     editPreviewMode: string;
-    setEditPreviewMode: (mode: string) => void;
     editPreviewModes: EditPreviewModes;
+    focusedNodeContextPath: string;
+    handleHotkeyAction: (action: () => any) => void;
+    hotkeyRegistry: any;
+    i18nRegistry: I18nRegistry;
+    isWorkspaceReadOnly: boolean;
+    plugins: Record<string, () => HierarchicalCommandList>;
+    publishAction: (contextPaths: string[], baseWorkspace: string) => void;
     publishableNodes: CRNode[];
     publishableNodesInDocument: CRNode[];
-    isWorkspaceReadOnly: boolean;
-    publishAction: (contextPaths: string[], baseWorkspace: string) => void;
-    discardAction: (contextPaths: string[]) => void;
-    baseWorkspace: string;
+    previewUrl: string | null;
     setActiveContentCanvasSrc: (uri: string) => void;
-    plugins: Record<string, () => HierarchicalCommandList>;
+    setEditPreviewMode: (mode: string) => void;
+    siteNode: CRNode;
+    toggleCommandBar: () => void;
 };
 
 type CommandBarUiPluginState = {
@@ -58,26 +60,27 @@ const IconComponent: React.FC<IconProps> = ({ icon, spin = false }) => <Icon ico
 
 class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, CommandBarUiPluginState> {
     static propTypes = {
-        config: PropTypes.object.isRequired,
-        i18nRegistry: PropTypes.object.isRequired,
-        siteNode: PropTypes.object,
-        documentNode: PropTypes.object,
-        focusedNodeContextPath: PropTypes.string,
+        addNode: PropTypes.func.isRequired,
+        baseWorkspace: PropTypes.string.isRequired,
         commandBarOpen: PropTypes.bool,
-        toggleCommandBar: PropTypes.func.isRequired,
+        config: PropTypes.object.isRequired,
+        discardAction: PropTypes.func.isRequired,
+        documentNode: PropTypes.object,
+        editPreviewMode: PropTypes.string.isRequired,
+        editPreviewModes: PropTypes.object.isRequired,
+        focusedNodeContextPath: PropTypes.string,
         handleHotkeyAction: PropTypes.func.isRequired,
         hotkeyRegistry: PropTypes.object.isRequired,
-        addNode: PropTypes.func.isRequired,
-        editPreviewMode: PropTypes.string.isRequired,
-        setEditPreviewMode: PropTypes.func.isRequired,
-        editPreviewModes: PropTypes.object.isRequired,
-        publishableNodes: PropTypes.array,
-        publishableNodesInDocument: PropTypes.array,
+        i18nRegistry: PropTypes.object.isRequired,
         isWorkspaceReadOnly: PropTypes.bool,
         publishAction: PropTypes.func.isRequired,
-        discardAction: PropTypes.func.isRequired,
-        baseWorkspace: PropTypes.string.isRequired,
+        publishableNodes: PropTypes.array,
+        publishableNodesInDocument: PropTypes.array,
+        previewUrl: PropTypes.string,
         setActiveContentCanvasSrc: PropTypes.func.isRequired,
+        setEditPreviewMode: PropTypes.func.isRequired,
+        siteNode: PropTypes.object,
+        toggleCommandBar: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -173,8 +176,25 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     ),
                     subCommands: this.buildCommandsFromEditPreviewModes(),
                 },
+                openPreview: {
+                    name: this.translate('CommandBarUiPlugin.command.openPreview', 'Open preview'),
+                    description: this.translate(
+                        'CommandBarUiPlugin.command.openPreview.description',
+                        'Open the preview for current document'
+                    ),
+                    icon: 'external-link-alt',
+                    action: async () => {
+                        if (this.props.previewUrl) {
+                            window.open(this.props.previewUrl, '_blank', 'noopener,noreferrer')?.focus();
+                        } else {
+                            logger.warn('No preview url to open');
+                        }
+                    },
+                    closeOnExecute: true,
+                },
             },
         };
+
         if (props.config.features.searchNeosDocs) {
             this.state.commands.searchNeosDocs = {
                 name: this.translate('CommandBarUiPlugin.command.documentation', 'Documentation'),
@@ -523,12 +543,6 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
     }
 }
 
-interface NeosRootState extends DefaultRootState {
-    user?: {
-        name?: string;
-    };
-}
-
 const mapStateToProps = (state: NeosRootState) => ({
     siteNode: selectors.CR.Nodes.siteNodeSelector(state),
     documentNode: selectors.CR.Nodes.documentNodeSelector(state),
@@ -539,6 +553,7 @@ const mapStateToProps = (state: NeosRootState) => ({
     baseWorkspace: selectors.CR.Workspaces.baseWorkspaceSelector(state),
     commandBarOpen: commandBarSelectors.commandBarOpen(state),
     editPreviewMode: selectors.UI.EditPreviewMode.currentEditPreviewMode(state),
+    previewUrl: commandBarSelectors.previewUrl(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({

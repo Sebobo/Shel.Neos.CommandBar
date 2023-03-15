@@ -218,6 +218,14 @@
                 <source>{matches} options match your query</source>
                 <target>{matches} Optionen entsprechen Ihrer Abfrage</target>
             </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.openPreview">
+                <source>Open preview</source>
+                <target>Vorschau öffnen</target>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.openPreview.description">
+                <source>Open the preview for current document</source>
+                <target>Öffnen Sie die Vorschau für das aktuelle Dokument</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

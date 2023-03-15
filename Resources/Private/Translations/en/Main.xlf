@@ -171,6 +171,12 @@
             <trans-unit id="CommandBarUiPlugin.command.packages.matches">
                 <source>{matches} options match your query</source>
             </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.openPreview">
+                <source>Open preview</source>
+            </trans-unit>
+            <trans-unit id="CommandBarUiPlugin.command.openPreview.description">
+                <source>Open the preview for current document</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

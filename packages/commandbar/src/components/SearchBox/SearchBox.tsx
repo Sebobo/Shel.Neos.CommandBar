@@ -56,8 +56,6 @@ const SearchBox: React.FC = () => {
         }
     });
 
-    console.debug('SearchBox.render', state.commands.value[state.resultCommandId.value]);
-
     return (
         <>
             <input
