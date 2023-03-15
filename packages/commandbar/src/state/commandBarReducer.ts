@@ -145,7 +145,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
         case ACTION.ADD_FAVOURITE:
             assert(event.type === TRANSITION.ADD_FAVOURITE);
             if (!nextState.favouriteCommands.includes(event.commandId)) {
-                nextState.favouriteCommands.push(event.commandId);
+                nextState.favouriteCommands = [...nextState.favouriteCommands, event.commandId];
             }
             break;
         case ACTION.REMOVE_FAVOURITE:
