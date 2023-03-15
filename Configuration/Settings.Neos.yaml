@@ -38,8 +38,6 @@ Neos:
         hotkeys:
           # MacOS
           'Shel.Neos.CommandBar.toggle.CMD': 'command+k'
-          # Linux & Windows
-          'Shel.Neos.CommandBar.toggle.CTRL': 'ctrl+k'
 
     modules:
       administration:

@@ -33,9 +33,5 @@ manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { frontendConfi
             description: 'Toggle command bar',
             action: actions.toggleCommandBar,
         });
-        hotkeyRegistry.set('Shel.Neos.CommandBar.toggle.CTRL', {
-            description: 'Toggle command bar',
-            action: actions.toggleCommandBar,
-        });
     }
 });
