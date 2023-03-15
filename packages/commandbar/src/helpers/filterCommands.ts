@@ -65,17 +65,17 @@ export default function filterCommands(
                   (!selectedCommandGroup && recentCommands.includes(command.id))
           );
 
-    // If there is no search word, return all commands in the current context with favourites first
+    // If there is no search word, return all commands in the current context with favourites first, the recent commands will only be prioritised if we are at the top level
     if (!searchWord) {
         return availableCommands
-            .sort((a, b) => sortCommands(a, b, favourites, recentCommands))
+            .sort((a, b) => sortCommands(a, b, favourites, selectedCommandGroup ? [] : recentCommands))
             .map((command) => command.id);
     }
 
     // Create a list of all available commands with their name and description as haystack for the search
     const availableCommandNames = availableCommands.map(({ name, description }) => name + ' ' + description);
-    const [idxs, , order] = uf.search(availableCommandNames, searchWord.toLowerCase());
-    const matchingIds = order.map((i) => availableCommands[idxs[i]].id);
+    const [indices, , order] = uf.search(availableCommandNames, searchWord.toLowerCase());
+    const matchingIds = order.map((i) => availableCommands[indices[i]].id);
 
     // Add all commands that can handle queries to the result, the Set removes duplicates
     return [
