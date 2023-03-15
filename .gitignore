@@ -15,4 +15,4 @@ node_modules
 packages/*/dist
 /parcel-bundle-reports
 *.d.ts
-!.global.d.ts
+!global.d.ts

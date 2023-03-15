@@ -13,7 +13,7 @@
         "name": "typescript-plugin-css-modules"
       }
     ],
-    "typeRoots": ["./packages/commandbar/src/typings"]
+    "typeRoots": ["./packages/commandbar/src/typings", "./packages/neos-api/src/typings"]
   },
   "exclude": [
     "node_modules",
