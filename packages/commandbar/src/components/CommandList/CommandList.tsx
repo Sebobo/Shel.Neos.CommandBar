@@ -17,6 +17,7 @@ const CommandList: React.FC = () => {
             searchWord,
             favouriteCommands,
             recentCommands,
+            selectedCommandGroup,
         },
         actions: { ADD_FAVOURITE, REMOVE_FAVOURITE },
     } = useCommandBarState();
@@ -42,12 +43,12 @@ const CommandList: React.FC = () => {
     );
 
     const suggestions = useComputed(() => {
-        return searchWord.value
+        return searchWord.value || selectedCommandGroup.value
             ? []
             : availableCommandIds.value.filter((commandId) => recentCommands.value.includes(commandId));
     });
     const availableCommands = useComputed(() => {
-        return searchWord.value
+        return searchWord.value || selectedCommandGroup.value
             ? availableCommandIds.value
             : availableCommandIds.value.filter((commandId) => !recentCommands.value.includes(commandId));
     });
