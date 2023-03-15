@@ -1,6 +1,6 @@
 import manifest, { SynchronousRegistry } from '@neos-project/neos-ui-extensibility';
 
-import { reducer, actions } from './actions';
+import { reducer } from './actions';
 import CommandBarUiPlugin from './CommandBarUiPlugin';
 
 manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { frontendConfiguration }) => {
@@ -25,13 +25,4 @@ manifest('Shel.Neos.CommandBar:CommandBar', {}, (globalRegistry, { frontendConfi
 
     // Register reducer
     globalRegistry.get('reducers').set('Shel.Neos.CommandBar', { reducer });
-
-    // Register hotkeys
-    if (frontendConfiguration.hotkeys !== null && frontendConfiguration.hotkeys.length !== 0) {
-        const hotkeyRegistry = globalRegistry.get('hotkeys');
-        hotkeyRegistry.set('Shel.Neos.CommandBar.toggle.CMD', {
-            description: 'Toggle command bar',
-            action: actions.toggleCommandBar,
-        });
-    }
 });
