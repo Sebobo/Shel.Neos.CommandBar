@@ -29,7 +29,7 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
         if (!open || e.defaultPrevented) {
             return;
         }
-        if (e.key === 'k' && e.metaKey && dialogRef?.current.contains(e.target as Node)) {
+        if (e.key === 'k' && (e.metaKey || e.ctrlKey) && dialogRef?.current.contains(e.target as Node)) {
             // Close command bar
             toggleOpen();
             e.stopPropagation();

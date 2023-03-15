@@ -87,7 +87,7 @@ export default class App extends Component<
             this.setState((prev) => ({ initialized: true, preferences, commands: { ...prev.commands, ...commands } }));
 
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'k' && e.metaKey) {
+                if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.handleToggle();
