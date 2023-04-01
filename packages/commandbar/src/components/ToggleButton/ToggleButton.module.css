@@ -23,6 +23,10 @@
     color: var(--textOnWhite);
 }
 
+.toggleButtonActive .buttonIcon {
+    background-color: var(--primaryBlue);
+}
+
 .buttonIcon {
     background-color: var(--gray);
     border-radius: 3px;

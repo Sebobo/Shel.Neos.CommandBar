@@ -522,6 +522,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     disabled={!loaded}
                     label={this.translate('ToggleButton.label', 'Search…')}
                     title={this.translate('ToggleButton.title', 'Search for commands')}
+                    active={commandBarOpen}
                 />
                 {loaded && (
                     <div

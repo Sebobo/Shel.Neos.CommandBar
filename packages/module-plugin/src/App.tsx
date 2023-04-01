@@ -182,6 +182,7 @@ export default class App extends Component<
                         disabled={!initialized}
                         label={App.translate('ToggleButton.label', 'Search…')}
                         title={App.translate('ToggleButton.title', 'Search and execute commands')}
+                        active={open}
                     />
                     {initialized && (
                         <div
