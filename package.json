@@ -31,16 +31,16 @@
   },
   "scripts": {
     "build": "yarn workspaces foreach -pt run build",
-    "watch": "yarn watch-ui && yarn watch-module",
-    "build-ui": "yarn workspace @neos-commandbar/ui-plugin build",
-    "watch-ui": "yarn workspace @neos-commandbar/ui-plugin watch",
-    "build-module": "yarn workspace @neos-commandbar/module-plugin build",
-    "watch-module": "yarn workspace @neos-commandbar/module-plugin watch",
+    "watch": "yarn watch:ui && yarn watch:module",
+    "build:ui": "yarn workspace @neos-commandbar/ui-plugin build",
+    "watch:ui": "yarn workspace @neos-commandbar/ui-plugin watch",
+    "build:module": "yarn workspace @neos-commandbar/module-plugin build",
+    "watch:module": "yarn workspace @neos-commandbar/module-plugin watch",
     "dev": "yarn workspace @neos-commandbar/dev-server start",
     "test": "testcafe",
     "test:github-actions": "xvfb-run --server-args=\"-screen 0 1280x720x24\" yarn testcafe chrome",
     "lint": "tsc --noemit && eslint 'packages/*/src/**/*.{js,jsx,ts,tsx}'",
-    "analyze-module": "yarn build-module --reporter @parcel/reporter-bundle-analyzer"
+    "analyze:module": "yarn build:module --reporter @parcel/reporter-bundle-analyzer"
   },
   "prettier": {
     "printWidth": 120,

@@ -25,10 +25,10 @@ jobs:
         run: yarn lint
 
       - name: Build the Neos UI plugin
-        run: yarn build-ui
+        run: yarn build:ui
 
       - name: Build the backend module plugin
-        run: yarn build-module
+        run: yarn build:module
 
   test:
     runs-on: ubuntu-latest

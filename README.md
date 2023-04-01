@@ -141,8 +141,8 @@ yarn watch
 Or watch them individually
 
 ```console
-yarn watch-ui
-yarn watch-module
+yarn watch:ui
+yarn watch:module
 ```
 
 To build both plugins for production, run the following command:
@@ -154,8 +154,8 @@ yarn build
 Or run the build for each plugin individually
 
 ```console
-yarn build-ui
-yarn build-module
+yarn build:ui
+yarn build:module
 ```
 
 ## License
