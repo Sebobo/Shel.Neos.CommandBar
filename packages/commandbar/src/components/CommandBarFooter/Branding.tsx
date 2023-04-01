@@ -13,7 +13,7 @@ const Branding: React.FC = () => {
 
     return (
         <a
-            href="https://helzle.it/projects"
+            href="https://helzle.it/projects?source=commandbar"
             title={translate('CommandBarFooter.branding', 'Made with love by Sebastian Helzle')}
             target="_blank"
             rel="noreferrer noopener"
