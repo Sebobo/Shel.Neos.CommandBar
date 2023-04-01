@@ -108,8 +108,11 @@ manifest('My.Vendor:CommandBarPlugin', {}, (globalRegistry, { store, frontendCon
 
 ## Development
 
-⚠️ This package offers 2 plugins. One is the Neos.UI plugin built with Neos extensibility React based API and the other 
-is the backend module plugin built with ParcelJS and Preact.
+⚠️ This package offers 2 plugins. 
+
+1. The Neos.UI plugin built with Neos extensibility React based API to integrate with the Neos.UI and its APIs.
+2. A standalone plugin built with ParcelJS and Preact which is loaded in the Neos backend modules where we have only access to a very lightweight Neos API and no React environment.
+
 We use yarn workspaces to manage the code for the 2 plugins, the dev server and the shared components.
 Most of the code is shared and only a small wrapper is needed to make the components work in the UI and module environments.
 
