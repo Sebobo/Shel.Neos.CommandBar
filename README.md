@@ -36,6 +36,10 @@ Compatible with PHP 8+ & Neos 7.3+
 
 ![Main window](Documentation/index-commandbar.jpeg)
 
+## Video
+
+Checkout the video introduction on [YouTube](https://youtu.be/z3aVSSDG_nY).
+
 ## Installation
 
 Run the following command in your Neos site package
