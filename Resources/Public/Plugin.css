@@ -326,6 +326,10 @@
     color: var(--textOnWhite);
 }
 
+.ToggleButton-module__toggleButtonActive___3bWD5 .ToggleButton-module__buttonIcon___UjFjw {
+    background-color: var(--primaryBlue);
+}
+
 .ToggleButton-module__buttonIcon___UjFjw {
     background-color: var(--gray);
     border-radius: 3px;
@@ -415,7 +419,27 @@
     grid-template-columns: 1fr 1fr;
 }
 
-:root {
+.CommandBarUiPlugin-module__fullScreenLayer___1cUx4 {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+}
+
+.CommandBarUiPlugin-module__open___1Bjxj {
+    display: block;
+}
+
+.CommandBarUiPlugin-module__commandBarToolbarComponent___1agRY {
+    display: flex;
+    align-items: center;
+}
+
+.Theme-module__commandBarTheme___1Z1-S {
     --bar-min-width: 600px;
     --bar-max-width: 90vw;
     --bar-width: 30vw;
@@ -436,35 +460,15 @@
     --dialog-blur: 5px;
 
     /* Neos UI colors */
-    --grayLight: #999;
+    --grayLight: #3f3f3f;
     --grayLighter: #eee;
     --grayMedium: #323232;
-    --grayDark: #3f3f3f;
+    --grayDark: #222;
     --gray: #555;
     --textSubtleLight: #adadad;
     --textOnGray: #fff;
     --textOnWhite: #252525;
     --primaryBlue: #00adee;
-}
-
-.CommandBarUiPlugin-module__fullScreenLayer___1cUx4 {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    left: 0;
-    top: 0;
-    pointer-events: none;
-    z-index: 9999;
-    display: none;
-}
-
-.CommandBarUiPlugin-module__open___1Bjxj {
-    display: block;
-}
-
-.CommandBarUiPlugin-module__commandBarToolbarComponent___1agRY {
-    display: flex;
-    align-items: center;
 }
 
 
