@@ -1,11 +1,12 @@
 import { Component } from 'preact';
 import React from 'preact/compat';
 
-import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
+import { classnames, CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
 import { PreferencesApi, CommandsApi, DocumentationApi, PackagesApi } from '@neos-commandbar/neos-api';
 import IconComponent from './IconComponent';
 
 import * as styles from './ModulePlugin.module.css';
+import * as theme from '@neos-commandbar/commandbar/src/Theme.module.css';
 
 /**
  * This is a custom element that is used to render the command bar inside a shadow dom to prevent Neos and module
@@ -176,7 +177,7 @@ export default class App extends Component<
         return (
             <>
                 <style>{'@import "' + this.props.styleuri + '";'}</style>
-                <div className={styles.pluginWrap}>
+                <div className={classnames(styles.pluginWrap, theme.commandBarTheme)}>
                     <ToggleButton
                         handleToggle={this.handleToggle}
                         disabled={!initialized}

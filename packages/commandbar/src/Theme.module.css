@@ -1,4 +1,4 @@
-:root {
+.commandBarTheme {
     --bar-min-width: 600px;
     --bar-max-width: 90vw;
     --bar-width: 30vw;
@@ -19,10 +19,10 @@
     --dialog-blur: 5px;
 
     /* Neos UI colors */
-    --grayLight: #999;
+    --grayLight: #3f3f3f;
     --grayLighter: #eee;
     --grayMedium: #323232;
-    --grayDark: #3f3f3f;
+    --grayDark: #222;
     --gray: #555;
     --textSubtleLight: #adadad;
     --textOnGray: #fff;

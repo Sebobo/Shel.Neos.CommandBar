@@ -9,12 +9,13 @@ import { neos } from '@neos-project/neos-ui-decorators';
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 import { Icon } from '@neos-project/react-ui-components';
 
-import { CommandBar, logger, ToggleButton } from '@neos-commandbar/commandbar';
+import { CommandBar, logger, ToggleButton, classnames } from '@neos-commandbar/commandbar';
 import { CommandsApi, PreferencesApi, DocumentationApi, NodesApi, PackagesApi } from '@neos-commandbar/neos-api';
 
 import { actions as commandBarActions, NeosRootState, selectors as commandBarSelectors } from './actions';
 
 import * as styles from './CommandBarUiPlugin.module.css';
+import * as theme from '@neos-commandbar/commandbar/src/Theme.module.css';
 
 type CommandBarUiPluginProps = {
     addNode: (
@@ -516,7 +517,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
             this.state;
 
         return (
-            <div className={styles.commandBarToolbarComponent}>
+            <div className={classnames(styles.commandBarToolbarComponent, theme.commandBarTheme)}>
                 <ToggleButton
                     handleToggle={toggleCommandBar}
                     disabled={!loaded}

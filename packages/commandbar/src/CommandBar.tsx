@@ -3,8 +3,6 @@ import React from 'react';
 import { CommandBarStateProvider, IntlProvider } from './state';
 import CommandBarDialog from './components/CommandBarDialog/CommandBarDialog';
 
-import './Variables.module.css';
-
 type CommandBarProps = {
     commands: HierarchicalCommandList;
     open: boolean;
