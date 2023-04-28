@@ -22,7 +22,7 @@ const SearchBox: React.FC = () => {
             actions.UPDATE_COMMAND_QUERY(e.target.value);
 
             // Execute command after a delay if it's not a manual command
-            if (!state.commands.value[state.resultCommandId.value].executeManually) {
+            if (!state.commands.value[state.resultCommandId.value]?.executeManually) {
                 if (updateResultsTimer) {
                     clearTimeout(updateResultsTimer);
                 }
