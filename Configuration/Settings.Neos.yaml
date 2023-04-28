@@ -33,7 +33,17 @@ Neos:
               - 'UI.NodeVariantCreationDialog.createAndCopy'
               - 'CR.Nodes.unfocus'
 
+    moduleConfiguration:
+      # This setting will register the plugin with all backend modules which is only supported in Neos 8.3+
+      additionalResources:
+        javaScripts:
+          Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.js'
+        styleSheets:
+          Shel.Neos.CommandBar: 'resource://Shel.Neos.CommandBar/Public/Module.css'
+
     modules:
+      # These settings are for Neos 8.2 and below as the global additionalResources setting is not supported yet
+      # A check in the plugin code will prevent the plugin from being loaded twice
       administration:
         submodules:
           users:
