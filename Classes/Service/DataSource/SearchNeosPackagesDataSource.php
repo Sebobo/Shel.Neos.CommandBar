@@ -60,29 +60,23 @@ class SearchNeosPackagesDataSource extends AbstractDataSource
             throw new Exception('Could not fetch search results from the Neos package repository', 1677901927);
         }
 
-        // TODO: Implement JSON API in Neos docs to simplify this and provide structured data
-        $searchResults = $browser->getCrawler()->filterXPath('//ol[contains(@class, "search-results")]//article[contains(@class, "result-list__item")]');
+        try {
+            $data = json_decode($result->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Exception $e) {
+            throw new Exception('Could not decode search results from the Neos package repository', 1682681305);
+        }
 
-        $subCommands = [];
-        $searchResults->slice(0, self::MAX_RESULTS)->each(function (Crawler $searchResult, int $i) use (
-            &$subCommands,
-            $endpoint
-        ) {
-            $linkTag = $searchResult->filter('.result-list__title a');
-            $link = $linkTag->attr('href');
-            // Make $link absolute if it is relative
-            $link = str_starts_with($link, 'http') ? $link : $endpoint->withPath($link);
-            $version = $searchResult->filter('.result-list__title small')->text();
-            $description = $searchResult->filter('.result-list__description')->text();
-            $subCommands['result-' . $i] = new CommandDto(
-                'result-' . $i,
-                $linkTag->text(),
-                $description,
-                (string)$link,
+        return array_reduce($data['results'] ?? [], static function (array $carry, array $package) {
+            $commandId = 'result-' . preg_replace('/[^a-z0-9]/', '-', $package['title']);
+            $carry[$commandId] = new CommandDto(
+                $commandId,
+                $package['title'],
+                $package['description'],
+                $package['link'],
                 'external-link-alt',
-                $version
+                $package['latestVersion']
             );
-        });
-        return $subCommands;
+            return $carry;
+        }, []);
     }
 }

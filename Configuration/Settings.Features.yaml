@@ -11,6 +11,6 @@ Shel:
           queryParameter: 'search'
         searchNeosPackages:
           enabled: false
-          endpoint: 'https://www.neos.io/download-and-extend/packages.html'
+          endpoint: 'https://www.neos.io/download-and-extend/packages.json'
           queryParameter: 'search'
 #          versionParameter: 'version'
