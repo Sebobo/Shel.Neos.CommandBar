@@ -264,6 +264,7 @@ if (module.hot) module.hot.accept();
                 <header className="header">
                     <span>Neos commandbar test</span>
                     <ToggleButton
+                        active={commandBarOpen}
                         handleToggle={() => setCommandBarOpen((prev) => !prev)}
                         label="Search…"
                         title="Search for commands"
