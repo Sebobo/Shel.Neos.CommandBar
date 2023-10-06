@@ -120,7 +120,7 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
     }, []);
 
     // Provide all actions as shorthand functions
-    const actions: Record<TRANSITION, (...any) => void | Promise<void>> = useMemo(() => {
+    const actions: Record<TRANSITION, (...any) => void | Promise<void | any>> = useMemo(() => {
         return {
             [TRANSITION.RESET_SEARCH]: () => dispatch({ type: TRANSITION.RESET_SEARCH }),
             [TRANSITION.HIGHLIGHT_NEXT_ITEM]: () => dispatch({ type: TRANSITION.HIGHLIGHT_NEXT_ITEM }),
@@ -148,13 +148,13 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
             [TRANSITION.EXPAND]: () => dispatch({ type: TRANSITION.EXPAND }),
             [TRANSITION.ADD_FAVOURITE]: (commandId: CommandId) => {
                 dispatch({ type: TRANSITION.ADD_FAVOURITE, commandId });
-                userPreferences
+                return userPreferences
                     .setFavouriteCommands(state.favouriteCommands.value)
                     .catch((e) => logger.error('Could not update favourite commands', e));
             },
             [TRANSITION.REMOVE_FAVOURITE]: (commandId: CommandId) => {
                 dispatch({ type: TRANSITION.REMOVE_FAVOURITE, commandId });
-                userPreferences
+                return userPreferences
                     .setFavouriteCommands(state.favouriteCommands.value)
                     .catch((e) => logger.error('Could not update favourite commands', e));
             },

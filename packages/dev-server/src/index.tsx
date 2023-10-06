@@ -49,6 +49,7 @@ if (module.hot) module.hot.accept();
 
     let favourites: CommandId[] = [];
     let recentCommands: CommandId[] = [];
+    let recentDocuments: CommandId[] = [];
 
     const userPreferencesService: UserPreferencesService = {
         favouriteCommands: [...favourites],
@@ -56,6 +57,11 @@ if (module.hot) module.hot.accept();
         recentCommands: [...recentCommands],
         addRecentCommand: async (commandId: CommandId) =>
             void (recentCommands = [commandId, ...recentCommands.filter((id) => id !== commandId).slice(0, 4)]),
+        addRecentDocument: async (nodeContextPath: CommandId) =>
+            void (recentDocuments = [
+                nodeContextPath,
+                ...recentDocuments.filter((id) => id !== nodeContextPath).slice(0, 4),
+            ]),
         recentDocuments: [],
         showBranding: true,
     };

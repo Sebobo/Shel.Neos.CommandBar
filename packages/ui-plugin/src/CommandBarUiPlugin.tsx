@@ -16,6 +16,7 @@ import { actions as commandBarActions, NeosRootState, selectors as commandBarSel
 
 import * as styles from './CommandBarUiPlugin.module.css';
 import * as theme from '@neos-commandbar/commandbar/src/Theme.module.css';
+import { addRecentDocument } from '@neos-commandbar/neos-api/src/preferences';
 
 type CommandBarUiPluginProps = {
     addNode: (
@@ -42,6 +43,7 @@ type CommandBarUiPluginProps = {
     publishableNodesInDocument: CRNode[];
     previewUrl: string | null;
     setActiveContentCanvasSrc: (uri: string) => void;
+    setActiveContentCanvasContextPath: (contextPath: string) => void;
     setEditPreviewMode: (mode: string) => void;
     siteNode: CRNode;
     toggleCommandBar: () => void;
@@ -52,7 +54,7 @@ type CommandBarUiPluginState = {
     dragging: boolean;
     favouriteCommands: CommandId[];
     recentCommands: CommandId[];
-    recentDocuments: NodeContextPath[];
+    recentDocuments: RecentDocument[];
     showBranding: boolean;
     commands: HierarchicalCommandList;
 };
@@ -79,6 +81,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         publishableNodesInDocument: PropTypes.array,
         previewUrl: PropTypes.string,
         setActiveContentCanvasSrc: PropTypes.func.isRequired,
+        setActiveContentCanvasContextPath: PropTypes.func.isRequired,
         setEditPreviewMode: PropTypes.func.isRequired,
         siteNode: PropTypes.object,
         toggleCommandBar: PropTypes.func.isRequired,
@@ -193,6 +196,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     },
                     closeOnExecute: true,
                 },
+                recentDocument: {
+                    name: this.translate('CommandBarUiPlugin.command.recentDocuments', 'Recent documents'),
+                    description: this.translate(
+                        'CommandBarUiPlugin.command.recentDocuments.description',
+                        'Open a recently visited documents'
+                    ),
+                    icon: 'history',
+                    action: this.showRecentDocuments.bind(this),
+                },
             },
         };
 
@@ -289,6 +301,14 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         });
     }
 
+    async componentDidUpdate(prevProps: CommandBarUiPluginProps) {
+        if (prevProps.documentNode?.contextPath != this.props.documentNode?.contextPath) {
+            addRecentDocument(this.props.documentNode.contextPath).then((recentDocuments) => {
+                this.setState({ recentDocuments });
+            });
+        }
+    }
+
     buildCommandsFromHotkeys = (): HierarchicalCommandList => {
         const { hotkeyRegistry, handleHotkeyAction, config } = this.props;
         const hotkeys: NeosHotKey[] = hotkeyRegistry.getAllAsList();
@@ -328,6 +348,36 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         const { addNode, documentNode, focusedNodeContextPath, toggleCommandBar } = this.props;
         toggleCommandBar();
         addNode(focusedNodeContextPath || documentNode.contextPath, undefined, 'after');
+    };
+
+    showRecentDocuments = async function* (this: CommandBarUiPlugin): CommandGeneratorResult {
+        const { recentDocuments } = this.state;
+        const { setActiveContentCanvasContextPath, setActiveContentCanvasSrc } = this.props;
+
+        if (!recentDocuments.length) {
+            yield {
+                success: false,
+                message: this.translate('CommandBarUiPlugin.command.searchDocuments.searchFailed', 'Search failed'),
+            };
+        } else {
+            yield {
+                success: true,
+                message: this.translate('CommandBarUiPlugin.command.recentDocuments.options', 'Recent documents'),
+                options: recentDocuments.reduce((carry, { name, contextPath, uri, icon }) => {
+                    carry[contextPath] = {
+                        id: contextPath,
+                        name,
+                        icon,
+                        action: async () => {
+                            setActiveContentCanvasSrc(uri);
+                            setActiveContentCanvasContextPath(contextPath);
+                        },
+                        closeOnExecute: true,
+                    };
+                    return carry;
+                }, {} as FlatCommandList),
+            };
+        }
     };
 
     handleSearchNode = async function* (this: CommandBarUiPlugin, query: string): CommandGeneratorResult {
@@ -543,6 +593,7 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                                 recentDocuments,
                                 showBranding,
                                 addRecentCommand: PreferencesApi.addRecentCommand,
+                                addRecentDocument: PreferencesApi.addRecentDocument,
                                 setFavouriteCommands: PreferencesApi.setFavouriteCommands,
                             }}
                             translate={this.translate}
@@ -587,4 +638,5 @@ export default connect(() => ({}), {
     publishAction: actions.CR.Workspaces.publish,
     discardAction: actions.CR.Workspaces.commenceDiscard,
     setActiveContentCanvasSrc: actions.UI.ContentCanvas.setSrc,
+    setActiveContentCanvasContextPath: actions.CR.Nodes.setDocumentNode,
 })(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiPlugin)));
