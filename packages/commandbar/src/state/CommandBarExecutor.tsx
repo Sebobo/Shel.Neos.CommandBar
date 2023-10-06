@@ -38,7 +38,12 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
             // Cancel search, or selection, or close command bar
             e.stopPropagation();
             e.preventDefault();
-            if (state.selectedCommandGroup.value || state.searchWord.value || state.commandQuery.value) {
+            if (
+                state.selectedCommandGroup.value ||
+                state.searchWord.value ||
+                state.commandQuery.value ||
+                state.result.value
+            ) {
                 actions.CANCEL();
             } else {
                 // Close command bar if cancel is noop
