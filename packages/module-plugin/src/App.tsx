@@ -24,7 +24,7 @@ export default class App extends Component<
         preferences: {
             favouriteCommands: CommandId[];
             recentCommands: CommandId[];
-            recentDocuments: NodeContextPath[];
+            recentDocuments: RecentDocument[];
             showBranding: boolean;
         };
     }
@@ -201,6 +201,7 @@ export default class App extends Component<
                                     ...preferences,
                                     setFavouriteCommands: PreferencesApi.setFavouriteCommands,
                                     addRecentCommand: PreferencesApi.addRecentCommand,
+                                    addRecentDocument: PreferencesApi.addRecentDocument,
                                 }}
                                 translate={App.translate}
                             />

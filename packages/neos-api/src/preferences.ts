@@ -3,6 +3,7 @@ import { fetchData } from './fetch';
 const ENDPOINT_GET_PREFERENCES = '/neos/shel-neos-commandbar/preferences/getpreferences';
 const ENDPOINT_SET_FAVOURITE_COMMANDS = '/neos/shel-neos-commandbar/preferences/setfavourites';
 const ENDPOINT_ADD_RECENT_COMMAND = '/neos/shel-neos-commandbar/preferences/addrecentcommand';
+const ENDPOINT_ADD_RECENT_DOCUMENT = '/neos/shel-neos-commandbar/preferences/addrecentdocument';
 
 async function setPreference<T = any>(endpoint: string, data: any): Promise<T> {
     return fetchData<T>(endpoint, data, 'POST');
@@ -13,10 +14,15 @@ export async function getPreferences() {
 }
 
 export async function setFavouriteCommands(commandIds: CommandId[]) {
-    return setPreference<CommandId[]>(ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds: commandIds });
+    return setPreference<CommandId[]>(ENDPOINT_SET_FAVOURITE_COMMANDS, { commandIds });
 }
 
 export async function addRecentCommand(commandId: CommandId) {
     // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
-    return setPreference<CommandId[]>(ENDPOINT_ADD_RECENT_COMMAND, { commandId: commandId });
+    return setPreference<CommandId[]>(ENDPOINT_ADD_RECENT_COMMAND, { commandId });
+}
+
+export async function addRecentDocument(nodeContextPath: NodeContextPath) {
+    // TODO: Check if sendBeacon is a better option here to reduce the impact on the user
+    return setPreference<RecentDocument[]>(ENDPOINT_ADD_RECENT_DOCUMENT, { nodeContextPath });
 }

@@ -126,14 +126,22 @@ type EditPreviewModes = Record<string, EditPreviewMode>;
 
 type NodeContextPath = string;
 
+interface RecentDocument {
+    name: string;
+    uri: string;
+    icon: string;
+    contextPath: NodeContextPath;
+}
+
 interface UserPreferences {
     favouriteCommands: CommandId[];
     recentCommands: CommandId[];
-    recentDocuments: NodeContextPath[];
+    recentDocuments: RecentDocument[];
     showBranding: boolean;
 }
 
 interface UserPreferencesService extends UserPreferences {
-    setFavouriteCommands: (commandIds: CommandId[]) => Promise;
-    addRecentCommand: (commandId: CommandId) => Promise;
+    setFavouriteCommands: (commandIds: CommandId[]) => Promise<string[]>;
+    addRecentCommand: (commandId: CommandId) => Promise<string[]>;
+    addRecentDocument: (nodeContextPath: CommandId) => Promise<RecentDocument[]>;
 }

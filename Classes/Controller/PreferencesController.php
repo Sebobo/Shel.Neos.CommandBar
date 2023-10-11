@@ -13,22 +13,32 @@ namespace Shel\Neos\CommandBar\Controller;
  */
 
 use Doctrine\ORM\EntityManagerInterface;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
+use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\UserPreferences;
+use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Service\UserService;
+use Neos\Neos\Ui\ContentRepository\Service\NodeService;
 
 class PreferencesController extends ActionController
 {
+    use CreateContentContextTrait;
+
     protected const FAVOURITES_PREFERENCE = 'commandBar.favourites';
     protected const RECENT_COMMANDS_PREFERENCE = 'commandBar.recentCommands';
     protected const RECENT_DOCUMENTS_PREFERENCE = 'commandBar.recentDocuments';
     protected $defaultViewObjectName = JsonView::class;
     protected $supportedMediaTypes = ['application/json'];
 
-    public function __construct(protected UserService $userService, protected EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        protected UserService $userService,
+        protected EntityManagerInterface $entityManager,
+        protected NodeService $nodeService,
+        protected LinkingService $linkingService,
+    ) {
     }
 
     public function getPreferencesAction(): void
@@ -37,7 +47,7 @@ class PreferencesController extends ActionController
         $this->view->assign('value', [
             'favouriteCommands' => $preferences->get(self::FAVOURITES_PREFERENCE) ?? [],
             'recentCommands' => $preferences->get(self::RECENT_COMMANDS_PREFERENCE) ?? [],
-            'recentDocuments' => $preferences->get(self::RECENT_DOCUMENTS_PREFERENCE)?? [],
+            'recentDocuments' => $this->mapContextPathsToNodes($preferences->get(self::RECENT_DOCUMENTS_PREFERENCE) ?? []),
             'showBranding' => $this->settings['features']['showBranding'],
         ]);
     }
@@ -85,14 +95,29 @@ class PreferencesController extends ActionController
      * Updates the list of recently used documents in the user preferences
      *
      * @Flow\SkipCsrfProtection
-     * @param string[] $nodeContextPaths a list of context paths to uniquely define nodes
+     * @param string $nodeContextPath a context path to add to the recently visited documents
      */
-    public function setRecentDocumentsAction(array $nodeContextPaths): void
+    public function addRecentDocumentAction(string $nodeContextPath): void
     {
         $preferences = $this->getUserPreferences();
-        $preferences->set(self::RECENT_DOCUMENTS_PREFERENCE, $nodeContextPaths);
+
+        $recentDocuments = $preferences->get(self::RECENT_DOCUMENTS_PREFERENCE);
+        if ($recentDocuments === null) {
+            $recentDocuments = [];
+        }
+
+        // Remove the command from the list if it is already in there (to move it to the top)
+        $recentDocuments = array_filter($recentDocuments,
+            static fn($existingContextPath) => $existingContextPath !== $nodeContextPath);
+        // Add the path to the top of the list
+        array_unshift($recentDocuments, $nodeContextPath);
+        // Limit the list to 5 items
+        $recentDocuments = array_slice($recentDocuments, 0, 5);
+
+        // Save the list
+        $preferences->set(self::RECENT_DOCUMENTS_PREFERENCE, $recentDocuments);
         $this->entityManager->persist($preferences);
-        $this->view->assign('value', $nodeContextPaths);
+        $this->view->assign('value', $this->mapContextPathsToNodes($recentDocuments));
     }
 
     protected function getUserPreferences(): UserPreferences
@@ -102,6 +127,37 @@ class PreferencesController extends ActionController
             throw new \RuntimeException('No user found', 1676812156);
         }
         return $user->getPreferences();
+    }
+
+    /**
+     * @var string[] $contextPaths
+     */
+    protected function mapContextPathsToNodes(array $contextPaths): array
+    {
+        return array_reduce($contextPaths, function (array $carry, string $contextPath) {
+            $node = $this->nodeService->getNodeFromContextPath($contextPath);
+            if ($node instanceof NodeInterface) {
+                $uri = $this->getNodeUri($node);
+                if ($uri) {
+                    $carry[]= [
+                        'name' => $node->getLabel(),
+                        'icon' => $node->getNodeType()->getConfiguration('ui.icon') ?? 'question',
+                        'uri' => $this->getNodeUri($node),
+                        'contextPath' => $contextPath,
+                    ];
+                }
+            }
+            return $carry;
+        }, []);
+    }
+
+    protected function getNodeUri(NodeInterface $node): string
+    {
+        try {
+            return $this->linkingService->createNodeUri($this->controllerContext, $node, null, 'html', true);
+        } catch (\Exception $e) {
+            return '';
+        }
     }
 
 }

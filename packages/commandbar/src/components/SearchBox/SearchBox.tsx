@@ -16,6 +16,7 @@ const SearchBox: React.FC = () => {
     const { executeCommand } = useCommandExecutor();
     const { translate } = useIntl();
     const inputRef = useRef<HTMLInputElement>();
+    const activeCommand = state.commands.value[state.activeCommandId.value || state.resultCommandId.value];
 
     const handleChange = useCallback((e) => {
         if (state.status.value === STATUS.DISPLAYING_RESULT) {
@@ -67,6 +68,7 @@ const SearchBox: React.FC = () => {
                         ? translate('SearchBox.commandQuery.placeholder', 'Enter the query for the command')
                         : translate('SearchBox.placeholder', 'What do you want to do today?')
                 }
+                disabled={state.status.value === STATUS.DISPLAYING_RESULT && !activeCommand?.canHandleQueries}
                 autoFocus
                 onChange={handleChange}
                 onKeyUp={handleKeyPress}
