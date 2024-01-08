@@ -266,7 +266,9 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                 const plugin = plugins[pluginName];
                 try {
                     const pluginResult = await plugin();
-                    pluginCommands = { ...pluginCommands, ...pluginResult };
+                    if (Object.keys(pluginResult).length > 0) {
+                        pluginCommands = { ...pluginCommands, ...pluginResult };
+                    }
                 } catch (e) {
                     logger.warn(`Could not load commands from plugin ${pluginName}`, e);
                 }
