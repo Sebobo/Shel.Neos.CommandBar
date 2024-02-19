@@ -18,6 +18,7 @@ Compatible with PHP 8+ & Neos 7.3+
 * 🧭 Navigation commands
   * Jump to module
   * Jump to site
+  * Jump to recently opened documents
   * Search and open document node
   * Search and navigate to the Neos documentation (enabled in Development context)
   * Search and navigate to the Neos plugin repository (enabled in Development context)
@@ -30,6 +31,7 @@ Compatible with PHP 8+ & Neos 7.3+
   * Open the command bar from within the backend modules which have the module enabled (global inclusion possible with Neos 8.3)
 * 🪛 Extensibility
   * Add new commands via the provided ´Shel.Neos.CommandBar` registry in your plugin manifests
+  * Full compatibility with [Shel.Neos.Terminal](https://github.com/Sebobo/Shel.Neos.Terminal) -> all available commands for the current user are available
 * 🗣️ Available in English & German
 
 ## Screenshot
