@@ -84,20 +84,26 @@ class CommandsDataSource extends AbstractDataSource
                 return $carry;
             }, []);
 
-        return [
-            'sites' => [
-                'name' => $this->translate('CommandDataSource.category.sites'),
-                'description' => $this->translate('CommandDataSource.category.sites.description'),
-                'icon' => 'file',
-                'subCommands' => $sitesForMenu,
-            ],
+        $commands = [
             'modules' => [
                 'name' => $this->translate('CommandDataSource.category.modules'),
                 'description' => $this->translate('CommandDataSource.category.modules.description'),
                 'icon' => 'puzzle-piece',
                 'subCommands' => $modulesForMenu,
-            ],
+            ]
         ];
+
+        // Only show site switch command if there is more than one site
+        if (count($sitesForMenu) > 1) {
+            $commands['sites'] = [
+                'name' => $this->translate('CommandDataSource.category.sites'),
+                'description' => $this->translate('CommandDataSource.category.sites.description'),
+                'icon' => 'file',
+                'subCommands' => $sitesForMenu,
+            ];
+        }
+
+        return $commands;
     }
 
     protected function translate($id): string
