@@ -43,6 +43,10 @@
                 <source>Try a different query to find more results</source>
             </trans-unit>
 
+            <trans-unit id="CommandResultsView.waitingForResults">
+                <source>Waiting for results…</source>
+            </trans-unit>
+
             <trans-unit id="ToggleButton.label">
                 <source>Search…</source>
             </trans-unit>

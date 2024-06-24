@@ -50,6 +50,10 @@
                 <source>Try a different query to find more results</source>
                 <target>Versuchen sie eine andere Eingabe, um mehr Ergebnisse zu finden.</target>
             </trans-unit>
+            <trans-unit id="CommandResultsView.waitingForResults">
+                <source>Waiting for results…</source>
+                <target>Warten auf Ergebnisse…</target>
+            </trans-unit>
             <trans-unit id="ToggleButton.label">
                 <source>Search…</source>
                 <target>Suche…</target>
