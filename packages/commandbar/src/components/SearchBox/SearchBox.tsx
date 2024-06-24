@@ -3,9 +3,9 @@ import { useSignalEffect } from '@preact/signals';
 
 import { useCommandBarState, STATUS, useIntl, useCommandExecutor } from '../../state';
 import IconWrapper from '../IconWrapper/IconWrapper';
+import { IconPlay, IconRepeat } from '../Icons';
 
 import * as styles from './SearchBox.module.css';
-import { IconPlay } from '../Icons';
 
 // Timer helper for debouncing updates of command query results
 let updateResultsTimer = null;
@@ -96,15 +96,17 @@ const SearchBox: React.FC = () => {
                 </button>
             )}
             {state.status.value === STATUS.DISPLAYING_RESULT &&
-                state.commands.value[state.resultCommandId.value]?.executeManually && (
+                state.commands.value[state.resultCommandId.value]?.executeManually &&
+                !state.activeCommandId.value && (
                     <button
-                        className={styles.executeButton}
+                        className={[
+                            styles.executeButton,
+                            state.commandQueryDirty.value ? styles.commandQueryDirty : '',
+                        ].join(' ')}
                         onClick={() => executeCommand(state.resultCommandId.value)}
                         title={translate('SearchBox.execute.title', 'Execute the command')}
                     >
-                        <IconWrapper>
-                            <IconPlay />
-                        </IconWrapper>
+                        <IconWrapper>{state.commandQueryDirty.value ? <IconPlay /> : <IconRepeat />}</IconWrapper>
                     </button>
                 )}
         </>

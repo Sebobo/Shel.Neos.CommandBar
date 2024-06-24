@@ -68,7 +68,7 @@ export const CommandBarExecutor: React.FC<CommandInputContextProps> = ({ childre
             let commandId = state.availableCommandIds.value[state.highlightedItem.value];
             if (state.status.value === STATUS.DISPLAYING_RESULT) {
                 // If there are options the command to execute is the highlighted option
-                if (Object.values(state.result.value.options).length) {
+                if (!state.commandQueryDirty.value && Object.values(state.result.value.options).length) {
                     commandId = Object.keys(state.result.value.options)[state.highlightedOption.value];
                 } else {
                     // If there are no options we run the command which generated the result again

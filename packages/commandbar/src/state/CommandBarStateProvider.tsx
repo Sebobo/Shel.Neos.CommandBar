@@ -19,6 +19,7 @@ interface CommandBarContextValues {
         activeCommandMessage: ReadonlySignal<string>;
         availableCommandIds: ReadonlySignal<CommandId[]>;
         commandQuery: ReadonlySignal<string>;
+        commandQueryDirty: ReadonlySignal<boolean>;
         commands: ReadonlySignal<FlatCommandList>;
         expanded: ReadonlySignal<boolean>;
         favouriteCommands: ReadonlySignal<CommandId[]>;
@@ -56,6 +57,7 @@ function createAppState(initialState: CommandBarState) {
     const activeCommandMessage = computed(() => commandBarState.value.activeCommandMessage);
     const availableCommandIds = computed(() => commandBarState.value.availableCommandIds);
     const commandQuery = computed(() => commandBarState.value.commandQuery);
+    const commandQueryDirty = computed(() => commandBarState.value.commandQueryDirty);
     const commands = computed(() => commandBarState.value.commands);
     const expanded = computed(() => commandBarState.value.expanded);
     const favouriteCommands = computed(() => commandBarState.value.favouriteCommands);
@@ -75,6 +77,7 @@ function createAppState(initialState: CommandBarState) {
             activeCommandMessage,
             availableCommandIds,
             commandQuery,
+            commandQueryDirty,
             commands,
             expanded,
             favouriteCommands,
@@ -104,6 +107,7 @@ export const CommandBarStateProvider: React.FC<CommandBarContextProps> = ({
             activeCommandMessage: null,
             availableCommandIds: Object.keys(commands),
             commandQuery: '',
+            commandQueryDirty: false,
             commands: flattenCommands(commands),
             expanded: false,
             favouriteCommands: userPreferences.favouriteCommands,

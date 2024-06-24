@@ -22,6 +22,7 @@ export type CommandBarState = MachineState & {
     activeCommandMessage: string;
     availableCommandIds: CommandId[];
     commandQuery: string;
+    commandQueryDirty: boolean;
     commands: FlatCommandList;
     expanded: boolean;
     favouriteCommands: CommandId[];
@@ -89,6 +90,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
         case ACTION.SET_COMMAND_QUERY:
             assert(event.type === TRANSITION.UPDATE_COMMAND_QUERY);
             nextState.commandQuery = event.commandQuery;
+            nextState.commandQueryDirty = true;
             break;
         case ACTION.EXPAND:
             nextState.expanded = true;
@@ -113,6 +115,7 @@ function runAction(action: ACTION, nextState: CommandBarState, event: CommandBar
                 ...event.result,
             };
             nextState.resultCommandId = nextState.activeCommandId;
+            nextState.commandQueryDirty = false;
             break;
         case ACTION.RESET_OPTION_HIGHLIGHT:
             nextState.highlightedOption = 0;

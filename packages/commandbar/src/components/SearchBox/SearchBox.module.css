@@ -54,3 +54,7 @@
 .executeButton:hover svg {
     color: var(--primaryBlue);
 }
+
+.commandQueryDirty {
+    color: var(--warn);
+}
