@@ -20,3 +20,19 @@
     gap: 1rem;
     --icon-size: 0.875em;
 }
+
+.activity svg {
+    animation-name: spinner;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    transform-origin: 50% 50%;
+    display: inline-block;
+}
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
