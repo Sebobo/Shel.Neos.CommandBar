@@ -66,6 +66,12 @@
             <trans-unit id="CommandDataSource.category.modules.description">
                 <source>Open a backend module</source>
             </trans-unit>
+            <trans-unit id="CommandDataSource.command.preferredStartModule">
+                <source>Back home</source>
+            </trans-unit>
+            <trans-unit id="CommandDataSource.command.preferredStartModule.description">
+                <source>Back to the start module</source>
+            </trans-unit>
 
             <trans-unit id="CommandBarUiPlugin.command.switchEditPreviewMode">
                 <source>Switch edit/preview mode</source>

@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Neos\Controller\Backend\MenuHelper;
+use Neos\Neos\Service\BackendRedirectionService;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
 use Shel\Neos\CommandBar\Domain\Dto\CommandDto;
 use Shel\Neos\CommandBar\Helper\TranslationHelper;
@@ -28,7 +29,8 @@ class CommandsDataSource extends AbstractDataSource
     public function __construct(
         private readonly MenuHelper $menuHelper,
         private readonly UriBuilder $uriBuilder,
-        private readonly Translator $translator
+        private readonly Translator $translator,
+        private readonly BackendRedirectionService $backendRedirectionService,
     ) {
     }
 
@@ -85,6 +87,13 @@ class CommandsDataSource extends AbstractDataSource
             }, []);
 
         $commands = [
+            'preferred-start-module' => new CommandDto(
+                'preferred-start-module',
+                $this->translate('CommandDataSource.command.preferredStartModule'),
+                $this->translate('CommandDataSource.command.preferredStartModule.description'),
+                $this->backendRedirectionService->getAfterLoginRedirectionUri($this->controllerContext),
+                'home'
+            ),
             'modules' => [
                 'name' => $this->translate('CommandDataSource.category.modules'),
                 'description' => $this->translate('CommandDataSource.category.modules.description'),
