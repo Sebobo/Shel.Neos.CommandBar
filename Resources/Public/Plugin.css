@@ -56,6 +56,23 @@
     --icon-size: 0.875em;
 }
 
+.CommandBarFooter-module__activity___2GXJU svg {
+    animation-name: CommandBarFooter-module__spinner___1mRmX;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    transform-origin: 50% 50%;
+    display: inline-block;
+}
+
+@keyframes CommandBarFooter-module__spinner___1mRmX {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .SearchBox-module__searchBox___1SEtn {
     -webkit-appearance: none;
        -moz-appearance: none;
@@ -113,6 +130,10 @@
 
 .SearchBox-module__executeButton___3hg_l:hover svg {
     color: var(--primaryBlue);
+}
+
+.SearchBox-module__commandQueryDirty___s_CVX {
+    color: var(--warn);
 }
 
 .CommandBarHeader-module__commandBarHeader___3Y2hR {
@@ -258,6 +279,7 @@
 
 .CommandResultsView-module__message___NhUkR {
     font-size: 1em;
+    margin: 0 0 1em;
 }
 
 .CommandResultsView-module__results___1t6jB {
@@ -469,6 +491,8 @@
     --textOnGray: #fff;
     --textOnWhite: #252525;
     --primaryBlue: #00adee;
+    --success: #00a338;
+    --warn: #ff8700;
 }
 
 
