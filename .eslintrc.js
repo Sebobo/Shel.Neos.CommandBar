@@ -28,5 +28,6 @@ module.exports = {
         'react/prop-types': 'off',
         'prettier/prettier': ['error'],
         'react-hooks/rules-of-hooks': 'error',
+        'comma-dangle': ['error', 'only-multiline'],
     },
 };
