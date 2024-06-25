@@ -47,6 +47,22 @@ type CommandBarUiPluginProps = {
     setEditPreviewMode: (mode: string) => void;
     siteNode: CRNode;
     toggleCommandBar: () => void;
+    changeBaseWorkspaceAction: (workspace: string) => void;
+    neos: {
+        configuration: {
+            allowedTargetWorkspaces: {
+                allowedWorkspaces: Record<
+                    string,
+                    {
+                        name: string;
+                        title: string;
+                        readonly: boolean;
+                        description: string;
+                    }
+                >;
+            };
+        };
+    };
 };
 
 type CommandBarUiPluginState = {
@@ -85,9 +101,10 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         setEditPreviewMode: PropTypes.func.isRequired,
         siteNode: PropTypes.object,
         toggleCommandBar: PropTypes.func.isRequired,
+        neos: PropTypes.object.isRequired,
     };
 
-    constructor(props) {
+    constructor(props: CommandBarUiPluginProps) {
         super(props);
         this.state = {
             loaded: false,
@@ -112,6 +129,15 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     ),
                     action: this.handleSearchNode.bind(this),
                     canHandleQueries: true,
+                },
+                switchWorkspace: {
+                    name: this.translate('CommandBarUiPlugin.command.switchWorkspace', 'Switch workspace'),
+                    icon: 'exchange-alt',
+                    description: this.translate(
+                        'CommandBarUiPlugin.command.switchWorkspace.description',
+                        'Switch to another workspace'
+                    ),
+                    subCommands: this.buildCommandsFromWorkspaces(),
                 },
                 publishDiscard: {
                     name: this.translate('CommandBarUiPlugin.command.publishDiscard', 'Publish / discard'),
@@ -324,6 +350,26 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     closeOnExecute: true,
                 };
             }
+            return carry;
+        }, {} as HierarchicalCommandList);
+    };
+
+    buildCommandsFromWorkspaces = (): HierarchicalCommandList => {
+        const { allowedTargetWorkspaces } = this.props.neos.configuration;
+        return Object.keys(allowedTargetWorkspaces).reduce((carry, workspaceName) => {
+            const workspace = allowedTargetWorkspaces[workspaceName];
+            if (workspace.readonly) {
+                return carry;
+            }
+            carry[workspaceName] = {
+                name: workspace.title,
+                description: workspace.description,
+                icon: 'cube',
+                action: async () => {
+                    this.props.changeBaseWorkspaceAction(workspace.name);
+                },
+                closeOnExecute: true,
+            };
             return carry;
         }, {} as HierarchicalCommandList);
     };
@@ -641,4 +687,5 @@ export default connect(() => ({}), {
     discardAction: actions.CR.Workspaces.commenceDiscard,
     setActiveContentCanvasSrc: actions.UI.ContentCanvas.setSrc,
     setActiveContentCanvasContextPath: actions.CR.Nodes.setDocumentNode,
+    changeBaseWorkspaceAction: actions.CR.Workspaces.changeBaseWorkspace,
 })(connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(CommandBarUiPlugin)));
