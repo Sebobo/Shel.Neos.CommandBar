@@ -10,30 +10,46 @@ import * as styles from './CommandBarFooter.module.css';
 
 const CommandBarFooter: React.FC = () => {
     const {
-        state: { activeCommandId, activeCommandMessage, commands, result, selectedCommandGroup, expanded },
-        Icon,
+        state: {
+            activeCommandId,
+            resultCommandId,
+            activeCommandMessage,
+            commands,
+            result,
+            selectedCommandGroup,
+            expanded
+        },
+        Icon
     } = useCommandBarState();
 
-    const runningCommand = useComputed<Command>(() => {
-        if (!activeCommandId.value) return null;
+    const commandForContext = useComputed<Command>(() => {
+        const commandId = activeCommandId.value ?? resultCommandId.value;
+        if (!commandId) return null;
         // FIXME: This will not be correct when a command and an option in the result have the same id
-        return activeCommandId.value
-            ? commands.value[activeCommandId.value] ?? result.value.options[activeCommandId.value]
+        return commandId
+            ? commands.value[commandId] ?? result.value.options[commandId]
             : null;
     });
+
+    const isRunning = activeCommandId.value !== null;
 
     if (!expanded.value) return null;
 
     return (
         <footer className={styles.commandBarFooter}>
-            {activeCommandId.value ? (
+            {isRunning ? (
                 <span className={styles.activity}>
                     <IconWrapper>
                         <IconSpinner />
                     </IconWrapper>
                     <em>
-                        {runningCommand.value.name} ‒ {activeCommandMessage}
+                        {commandForContext.value.name}{activeCommandMessage.value ? '﹘' + activeCommandMessage.value : ''}
                     </em>
+                </span>
+            ) : commandForContext.value ? (
+                <span className={styles.breadcrumb}>
+                    <Icon icon={commandForContext.value.icon} />
+                    <small>{commandForContext.value.name}</small>
                 </span>
             ) : selectedCommandGroup.value ? (
                 <span className={styles.breadcrumb}>
