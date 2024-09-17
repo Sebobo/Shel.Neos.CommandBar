@@ -17,18 +17,16 @@ const CommandBarFooter: React.FC = () => {
             commands,
             result,
             selectedCommandGroup,
-            expanded
+            expanded,
         },
-        Icon
+        Icon,
     } = useCommandBarState();
 
     const commandForContext = useComputed<Command>(() => {
         const commandId = activeCommandId.value ?? resultCommandId.value;
         if (!commandId) return null;
         // FIXME: This will not be correct when a command and an option in the result have the same id
-        return commandId
-            ? commands.value[commandId] ?? result.value.options[commandId]
-            : null;
+        return commandId ? commands.value[commandId] ?? result.value.options[commandId] : null;
     });
 
     const isRunning = activeCommandId.value !== null;
@@ -43,7 +41,8 @@ const CommandBarFooter: React.FC = () => {
                         <IconSpinner />
                     </IconWrapper>
                     <em>
-                        {commandForContext.value.name}{activeCommandMessage.value ? '﹘' + activeCommandMessage.value : ''}
+                        {commandForContext.value.name}
+                        {activeCommandMessage.value ? '﹘' + activeCommandMessage.value : ''}
                     </em>
                 </span>
             ) : commandForContext.value ? (

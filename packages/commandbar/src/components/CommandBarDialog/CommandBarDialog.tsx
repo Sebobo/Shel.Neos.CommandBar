@@ -124,12 +124,7 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
         >
             <CommandBarExecutor toggleOpen={toggleOpen} dialogRef={dialogRef} open={open}>
                 <CommandBarHeader />
-                <div
-                    className={classnames(
-                        styles.resultsWrap,
-                        expanded.value && styles.expanded,
-                    )}
-                >
+                <div className={classnames(styles.resultsWrap, expanded.value && styles.expanded)}>
                     {expanded.value && !result.value && <CommandList />}
                     {result.value && <CommandResultsView />}
                 </div>
