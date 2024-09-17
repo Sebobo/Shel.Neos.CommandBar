@@ -29,7 +29,7 @@ const CommandResultsView: React.FC = () => {
 
     return (
         <div className={styles.commandResultsView}>
-            {message && <h6 className={styles.message}>{message}</h6>}
+            {!isLoading && message && <h6 className={styles.message}>{message}</h6>}
             {isLoading ? <div>{translate('CommandResultsView.waitingForResults', 'Waiting for results…')}</div> : ''}
             {!isLoading && view ? <div>{view}</div> : ''}
             {!isLoading && options && (
