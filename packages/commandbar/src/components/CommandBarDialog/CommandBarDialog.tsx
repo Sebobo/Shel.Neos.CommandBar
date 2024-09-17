@@ -128,10 +128,9 @@ const CommandBarDialog: React.FC<CommandBarDialogProps> = ({ onDrag, open, toggl
                     className={classnames(
                         styles.resultsWrap,
                         expanded.value && styles.expanded,
-                        result.value && styles.split
                     )}
                 >
-                    {expanded.value && <CommandList />}
+                    {expanded.value && !result.value && <CommandList />}
                     {result.value && <CommandResultsView />}
                 </div>
                 <CommandBarFooter />
