@@ -15,8 +15,8 @@
   },
   "source": "src/index.html",
   "scripts": {
-    "build": "NODE_ENV=production neos-react-scripts build",
-    "watch": "neos-react-scripts watch"
+    "build": "NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production neos-react-scripts build",
+    "watch": "NODE_OPTIONS=--openssl-legacy-provider neos-react-scripts watch"
   },
   "neos": {
     "buildTargetDirectory": "../../Resources/Public"
