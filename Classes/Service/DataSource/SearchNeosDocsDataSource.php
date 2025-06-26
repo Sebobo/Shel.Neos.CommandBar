@@ -13,7 +13,7 @@ namespace Shel\Neos\CommandBar\Service\DataSource;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
@@ -30,15 +30,15 @@ class SearchNeosDocsDataSource extends AbstractDataSource
     static protected $identifier = 'shel-neos-commandbar-search-neos-docs';
 
     /**
-     * @var {enabled: bool, endpoint: string, queryParameter: string} array
+     * @var array{enabled: bool, endpoint: string, queryParameter: string} $settings
      */
     #[Flow\InjectConfiguration('features.searchNeosDocs', 'Shel.Neos.CommandBar')]
-    protected $settings;
+    protected array $settings;
 
     /**
      * @throws Exception
      */
-    public function getData(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node = null, array $arguments = []): array
+    public function getData(Node $node = null, array $arguments = []): array
     {
         $query = $arguments['query'] ?? '';
 
@@ -52,7 +52,9 @@ class SearchNeosDocsDataSource extends AbstractDataSource
         $endpoint = new Uri($this->settings['endpoint']);
 
         try {
-            $result = $browser->request($endpoint->withQuery($this->settings['queryParameter'] . '=' . urlencode($query)));
+            $result = $browser->request(
+                $endpoint->withQuery($this->settings['queryParameter'] . '=' . urlencode($query))
+            );
         } catch (\Exception $e) {
             throw new Exception('Could not fetch search results from the Neos documentation', 1676205990, $e);
         }
@@ -61,7 +63,9 @@ class SearchNeosDocsDataSource extends AbstractDataSource
         }
 
         // TODO: Implement JSON API in Neos docs to simplify this and provide structured data
-        $searchResults = $browser->getCrawler()->filterXPath('//div[contains(@class, "search-results")]//div[contains(@class, "search-result")]');
+        $searchResults = $browser->getCrawler()->filterXPath(
+            '//div[contains(@class, "search-results")]//div[contains(@class, "search-result")]'
+        );
 
         $subCommands = [];
         $searchResults->slice(0, self::MAX_RESULTS)->each(function (Crawler $searchResult, int $i) use (

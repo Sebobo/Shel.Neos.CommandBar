@@ -16,20 +16,22 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationParameterToken;
 
 #[Flow\Proxy(false)]
-class TranslationHelper
+final class TranslationHelper
 {
-
     public static function translateByShortHandString(string $shortHandString): string
     {
         $shortHandStringParts = explode(':', $shortHandString);
         if (count($shortHandStringParts) === 3) {
             [$package, $source, $id] = $shortHandStringParts;
-            return (new TranslationParameterToken($id))
-                ->package($package)
-                ->source(str_replace('.', '/', $source))
-                ->translate();
+            try {
+                return (new TranslationParameterToken($id))
+                    ->package($package)
+                    ->source(str_replace('.', '/', $source))
+                    ->translate();
+            } catch (\Exception) {
+                return $shortHandString; // Fallback to original string if translation fails
+            }
         }
-
         return $shortHandString;
     }
 }

@@ -13,15 +13,17 @@ namespace Shel\Neos\CommandBar\Controller;
  */
 
 use Doctrine\ORM\EntityManagerInterface;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
-use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\UserPreferences;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Service\LinkingService;
 use Neos\Neos\Service\UserService;
-use Neos\Neos\Ui\ContentRepository\Service\NodeService;
 
 class PreferencesController extends ActionController
 {
@@ -30,16 +32,13 @@ class PreferencesController extends ActionController
     protected const RECENT_DOCUMENTS_PREFERENCE = 'commandBar.recentDocuments';
     protected $defaultViewObjectName = JsonView::class;
     protected $supportedMediaTypes = ['application/json'];
-    #[\Neos\Flow\Annotations\Inject]
-    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
-    #[\Neos\Flow\Annotations\Inject]
-    protected \Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     public function __construct(
         protected UserService $userService,
         protected EntityManagerInterface $entityManager,
-        protected NodeService $nodeService,
         protected LinkingService $linkingService,
+        protected ContentRepositoryRegistry $contentRepositoryRegistry,
+        protected NodeLabelGeneratorInterface $nodeLabelGenerator,
     ) {
     }
 
@@ -49,7 +48,9 @@ class PreferencesController extends ActionController
         $this->view->assign('value', [
             'favouriteCommands' => $preferences->get(self::FAVOURITES_PREFERENCE) ?? [],
             'recentCommands' => $preferences->get(self::RECENT_COMMANDS_PREFERENCE) ?? [],
-            'recentDocuments' => $this->mapContextPathsToNodes($preferences->get(self::RECENT_DOCUMENTS_PREFERENCE) ?? []),
+            'recentDocuments' => $this->mapContextPathsToNodes(
+                $preferences->get(self::RECENT_DOCUMENTS_PREFERENCE) ?? []
+            ),
             'showBranding' => $this->settings['features']['showBranding'],
         ]);
     }
@@ -96,23 +97,28 @@ class PreferencesController extends ActionController
     /**
      * Updates the list of recently used documents in the user preferences
      *
-     * @Flow\SkipCsrfProtection
-     * @param string $nodeContextPath a context path to add to the recently visited documents
+     * @param string $nodeContextPath a node to add to the recently visited documents
      */
+    #[Flow\SkipCsrfProtection]
     public function addRecentDocumentAction(string $nodeContextPath): void
     {
         $preferences = $this->getUserPreferences();
 
+        /** @var string[]|null $recentDocuments */
         $recentDocuments = $preferences->get(self::RECENT_DOCUMENTS_PREFERENCE);
         if ($recentDocuments === null) {
             $recentDocuments = [];
         }
 
         // Remove the command from the list if it is already in there (to move it to the top)
-        $recentDocuments = array_filter($recentDocuments,
-            static fn($existingContextPath) => $existingContextPath !== $nodeContextPath);
+        $recentDocuments = array_filter(
+            $recentDocuments,
+            static fn($existingContextPath) => $existingContextPath !== $nodeContextPath
+        );
+
         // Add the path to the top of the list
         array_unshift($recentDocuments, $nodeContextPath);
+
         // Limit the list to 5 items
         $recentDocuments = array_slice($recentDocuments, 0, 5);
 
@@ -132,33 +138,52 @@ class PreferencesController extends ActionController
     }
 
     /**
-     * @var string[] $contextPaths
+     * @param string[] $nodeContextPaths
      */
-    protected function mapContextPathsToNodes(array $contextPaths): array
-    {
-        return array_reduce($contextPaths, function (array $carry, string $contextPath) {
-            $node = $this->nodeService->getNodeFromContextPath($contextPath);
-            if ($node instanceof \Neos\ContentRepository\Core\Projection\ContentGraph\Node) {
-                $uri = $this->getNodeUri($node);
-                if ($uri) {
-                    $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
-                    $carry[]= [
-                        'name' => $this->nodeLabelGenerator->getLabel($node),
-                        'icon' => $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName)->getConfiguration('ui.icon') ?? 'question',
-                        'uri' => $this->getNodeUri($node),
-                        'contextPath' => $contextPath,
-                    ];
+    protected function mapContextPathsToNodes(
+        array $nodeContextPaths,
+    ): array {
+        return array_filter(
+            array_map(function (string $nodeContextPath) {
+                $nodeAddress = NodeAddress::fromJsonString($nodeContextPath);
+
+                $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
+                try {
+                    $subgraph = $contentRepository->getContentSubgraph(
+                        $nodeAddress->workspaceName,
+                        $nodeAddress->dimensionSpacePoint
+                    );
+                } catch (AccessDenied) {
+                    // If the user does not have access to the subgraph, we skip this node
+                    return null;
                 }
-            }
-            return $carry;
-        }, []);
+
+                $node = $subgraph->findNodeById($nodeAddress->aggregateId);
+                if (!$node) {
+                    return null;
+                }
+
+                $uri = $this->getNodeUri($node);
+                if (!$uri) {
+                    return null;
+                }
+
+                $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
+                return [
+                    'name' => $this->nodeLabelGenerator->getLabel($node),
+                    'icon' => $nodeType?->getConfiguration('ui.icon') ?? 'question',
+                    'uri' => $this->getNodeUri($node),
+                    'contextPath' => $nodeContextPath,
+                ];
+            }, $nodeContextPaths)
+        );
     }
 
-    protected function getNodeUri(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node): string
+    protected function getNodeUri(Node $node): string
     {
         try {
             return $this->linkingService->createNodeUri($this->controllerContext, $node, null, 'html', true);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
         }
     }
