@@ -28,7 +28,8 @@ type CommandBarUiPluginProps = {
     baseWorkspace: string;
     commandBarOpen: boolean;
     config: CommandBarConfig;
-    discardAction: (contextPaths: string[]) => void;
+    // TODO: Reimplement discardAction
+    // discardAction: (contextPaths: string[]) => void;
     documentNode: CRNode;
     editPreviewMode: string;
     editPreviewModes: EditPreviewModes;
@@ -38,7 +39,8 @@ type CommandBarUiPluginProps = {
     i18nRegistry: I18nRegistry;
     isWorkspaceReadOnly: boolean;
     plugins: Record<string, () => HierarchicalCommandList>;
-    publishAction: (contextPaths: string[], baseWorkspace: string) => void;
+    // TODO: Reimplement publishAction
+    // publishAction: (contextPaths: string[], baseWorkspace: string) => void;
     publishableNodes: CRNode[];
     publishableNodesInDocument: CRNode[];
     previewUrl: string | null;
@@ -83,7 +85,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         baseWorkspace: PropTypes.string.isRequired,
         commandBarOpen: PropTypes.bool,
         config: PropTypes.object.isRequired,
-        discardAction: PropTypes.func.isRequired,
+        // TODO: Reimplement discardAction
+        // discardAction: PropTypes.func.isRequired,
         documentNode: PropTypes.object,
         editPreviewMode: PropTypes.string.isRequired,
         editPreviewModes: PropTypes.object.isRequired,
@@ -92,7 +95,8 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         hotkeyRegistry: PropTypes.object.isRequired,
         i18nRegistry: PropTypes.object.isRequired,
         isWorkspaceReadOnly: PropTypes.bool,
-        publishAction: PropTypes.func.isRequired,
+        // TODO: Reimplement publishAction
+        // publishAction: PropTypes.func.isRequired,
         publishableNodes: PropTypes.array,
         publishableNodesInDocument: PropTypes.array,
         previewUrl: PropTypes.string,
@@ -139,52 +143,53 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
                     ),
                     subCommands: this.buildCommandsFromWorkspaces(),
                 },
-                publishDiscard: {
-                    name: this.translate('CommandBarUiPlugin.command.publishDiscard', 'Publish / discard'),
-                    description: this.translate(
-                        'CommandBarUiPlugin.command.publishDiscard.description',
-                        'Publish or discard changes'
-                    ),
-                    icon: 'check',
-                    subCommands: {
-                        publish: {
-                            name: this.translate('CommandBarUiPlugin.command.publish', 'Publish'),
-                            description: this.translate(
-                                'CommandBarUiPlugin.command.publish.description',
-                                'Publish changes in this document'
-                            ),
-                            icon: 'check',
-                            action: this.handlePublish,
-                        },
-                        publishAll: {
-                            name: this.translate('CommandBarUiPlugin.command.publishAll', 'Publish all'),
-                            description: this.translate(
-                                'CommandBarUiPlugin.command.publishAll.description',
-                                'Publish changes in all documents'
-                            ),
-                            icon: 'check-double',
-                            action: this.handlePublishAll,
-                        },
-                        discard: {
-                            name: this.translate('CommandBarUiPlugin.command.discard', 'Discard'),
-                            description: this.translate(
-                                'CommandBarUiPlugin.command.discard.description',
-                                'Discard changes in the current document'
-                            ),
-                            icon: 'ban',
-                            action: this.handleDiscard,
-                        },
-                        discardAll: {
-                            name: this.translate('CommandBarUiPlugin.command.discardAll', 'Discard all'),
-                            description: this.translate(
-                                'CommandBarUiPlugin.command.discardAll.description',
-                                'Discard changes in all documents'
-                            ),
-                            icon: 'ban',
-                            action: this.handleDiscardAll,
-                        },
-                    },
-                },
+                // TODO: Reimplement publishAction
+                // publishDiscard: {
+                //     name: this.translate('CommandBarUiPlugin.command.publishDiscard', 'Publish / discard'),
+                //     description: this.translate(
+                //         'CommandBarUiPlugin.command.publishDiscard.description',
+                //         'Publish or discard changes'
+                //     ),
+                //     icon: 'check',
+                //     subCommands: {
+                //         publish: {
+                //             name: this.translate('CommandBarUiPlugin.command.publish', 'Publish'),
+                //             description: this.translate(
+                //                 'CommandBarUiPlugin.command.publish.description',
+                //                 'Publish changes in this document'
+                //             ),
+                //             icon: 'check',
+                //             action: this.handlePublish,
+                //         },
+                //         publishAll: {
+                //             name: this.translate('CommandBarUiPlugin.command.publishAll', 'Publish all'),
+                //             description: this.translate(
+                //                 'CommandBarUiPlugin.command.publishAll.description',
+                //                 'Publish changes in all documents'
+                //             ),
+                //             icon: 'check-double',
+                //             action: this.handlePublishAll,
+                //         },
+                //         discard: {
+                //             name: this.translate('CommandBarUiPlugin.command.discard', 'Discard'),
+                //             description: this.translate(
+                //                 'CommandBarUiPlugin.command.discard.description',
+                //                 'Discard changes in the current document'
+                //             ),
+                //             icon: 'ban',
+                //             action: this.handleDiscard,
+                //         },
+                //         discardAll: {
+                //             name: this.translate('CommandBarUiPlugin.command.discardAll', 'Discard all'),
+                //             description: this.translate(
+                //                 'CommandBarUiPlugin.command.discardAll.description',
+                //                 'Discard changes in all documents'
+                //             ),
+                //             icon: 'ban',
+                //             action: this.handleDiscardAll,
+                //         },
+                //     },
+                // },
                 quickActions: {
                     name: this.translate('CommandBarUiPlugin.command.quickActions', 'Quick actions'),
                     icon: 'keyboard',
@@ -539,63 +544,65 @@ class CommandBarUiPlugin extends React.PureComponent<CommandBarUiPluginProps, Co
         }
     };
 
-    handlePublish = async (): AsyncCommandResult => {
-        const { publishableNodesInDocument, publishAction, baseWorkspace } = this.props;
-        publishAction(
-            publishableNodesInDocument.map((node) => node.contextPath),
-            baseWorkspace
-        );
-        return {
-            success: true,
-            message: this.translate(
-                'CommandBarUiPlugin.command.publish.success',
-                { count: publishableNodesInDocument.length },
-                `Published ${publishableNodesInDocument.length} changes`
-            ),
-        };
-    };
+    // TODO: Reimplement publishAction
+    // handlePublish = async (): AsyncCommandResult => {
+    //     const { publishableNodesInDocument, publishAction, baseWorkspace } = this.props;
+    //     publishAction(
+    //         publishableNodesInDocument.map((node) => node.contextPath),
+    //         baseWorkspace
+    //     );
+    //     return {
+    //         success: true,
+    //         message: this.translate(
+    //             'CommandBarUiPlugin.command.publish.success',
+    //             { count: publishableNodesInDocument.length },
+    //             `Published ${publishableNodesInDocument.length} changes`
+    //         ),
+    //     };
+    // };
+    //
+    // handlePublishAll = async (): AsyncCommandResult => {
+    //     const { publishableNodes, publishAction, baseWorkspace } = this.props;
+    //     publishAction(
+    //         publishableNodes.map((node) => node.contextPath),
+    //         baseWorkspace
+    //     );
+    //     return {
+    //         success: true,
+    //         message: this.translate(
+    //             'CommandBarUiPlugin.command.publishAll.success',
+    //             { count: publishableNodes.length },
+    //             `Published ${publishableNodes.length} changes`
+    //         ),
+    //     };
+    // };
 
-    handlePublishAll = async (): AsyncCommandResult => {
-        const { publishableNodes, publishAction, baseWorkspace } = this.props;
-        publishAction(
-            publishableNodes.map((node) => node.contextPath),
-            baseWorkspace
-        );
-        return {
-            success: true,
-            message: this.translate(
-                'CommandBarUiPlugin.command.publishAll.success',
-                { count: publishableNodes.length },
-                `Published ${publishableNodes.length} changes`
-            ),
-        };
-    };
-
-    handleDiscard = async (): AsyncCommandResult => {
-        const { publishableNodesInDocument, discardAction } = this.props;
-        discardAction(publishableNodesInDocument.map((node) => node.contextPath));
-        return {
-            success: true,
-            message: this.translate(
-                'CommandBarUiPlugin.command.discard.success',
-                { count: publishableNodesInDocument.length },
-                `Discarded ${publishableNodesInDocument.length} changes`
-            ),
-        };
-    };
-
-    handleDiscardAll = async (): AsyncCommandResult => {
-        const { publishableNodes, discardAction } = this.props;
-        discardAction(publishableNodes.map((node) => node.contextPath));
-        return {
-            success: true,
-            message: this.translate(
-                'CommandBarUiPlugin.command.discardAll.success',
-                { count: publishableNodes.length },
-                `Discarded ${publishableNodes.length} changes`
-            ),
-        };
-    };
+    // TODO: Reimplement discardAction
+    // handleDiscard = async (): AsyncCommandResult => {
+    //     const { publishableNodesInDocument, discardAction } = this.props;
+    //     discardAction(publishableNodesInDocument.map((node) => node.contextPath));
+    //     return {
+    //         success: true,
+    //         message: this.translate(
+    //             'CommandBarUiPlugin.command.discard.success',
+    //             { count: publishableNodesInDocument.length },
+    //             `Discarded ${publishableNodesInDocument.length} changes`
+    //         ),
+    //     };
+    // };
+    //
+    // handleDiscardAll = async (): AsyncCommandResult => {
+    //     const { publishableNodes, discardAction } = this.props;
+    //     discardAction(publishableNodes.map((node) => node.contextPath));
+    //     return {
+    //         success: true,
+    //         message: this.translate(
+    //             'CommandBarUiPlugin.command.discardAll.success',
+    //             { count: publishableNodes.length },
+    //             `Discarded ${publishableNodes.length} changes`
+    //         ),
+    //     };
+    // };
 
     setDragging = (dragging: boolean) => {
         this.setState({ ...this.state, dragging });
@@ -683,8 +690,10 @@ export default connect(() => ({}), {
     toggleCommandBar: commandBarActions.toggleCommandBar,
     addNode: actions.CR.Nodes.commenceCreation,
     setEditPreviewMode: actions.UI.EditPreviewMode.set,
-    publishAction: actions.CR.Workspaces.publish,
-    discardAction: actions.CR.Workspaces.commenceDiscard,
+    // TODO: Reimplement publishAction
+    // publishAction: actions.CR.Workspaces.publish,
+    // TODO: Reimplement discardAction
+    //discardAction: actions.CR.Workspaces.commenceDiscard,
     setActiveContentCanvasSrc: actions.UI.ContentCanvas.setSrc,
     setActiveContentCanvasContextPath: actions.CR.Nodes.setDocumentNode,
     changeBaseWorkspaceAction: actions.CR.Workspaces.changeBaseWorkspace,
