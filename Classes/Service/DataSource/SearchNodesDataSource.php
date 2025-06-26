@@ -22,6 +22,10 @@ class SearchNodesDataSource extends AbstractDataSource
 {
 
     static protected $identifier = 'shel-neos-commandbar-search-nodes';
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     public function __construct(
         private readonly NodeSearchServiceInterface $nodeSearchService,
@@ -29,31 +33,35 @@ class SearchNodesDataSource extends AbstractDataSource
     ) {
     }
 
-    public function getData(NodeInterface $node = null, array $arguments = []): array
+    public function getData(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node = null, array $arguments = []): array
     {
         $query = $arguments['query'] ?? '';
 
         if (!$node || !$query) {
             return [];
         }
+        // TODO 9.0 migration: This could be a suitable replacement. Please check if all your requirements are still fulfilled.
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-        $matchingNodes = $this->nodeSearchService->findByProperties($query, [
+        $matchingNodes = $subgraph->findDescendantNodes($node->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::create(nodeTypes: \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::create(\Neos\ContentRepository\Core\NodeType\NodeTypeNames::fromStringArray([
             'Neos.Neos:Document',
             'Neos.Neos:Shortcut',
-        ], $node->getContext(), $node);
+        ]), \Neos\ContentRepository\Core\NodeType\NodeTypeNames::createEmpty()), searchTerm: $query));
 
-        return array_values(array_filter(array_map(function (NodeInterface $matchingNode) {
+        return array_values(array_filter(array_map(function (\Neos\ContentRepository\Core\Projection\ContentGraph\Node $matchingNode) {
+            $contentRepository = $this->contentRepositoryRegistry->get($matchingNode->contentRepositoryId);
+            $contentRepository = $this->contentRepositoryRegistry->get($matchingNode->contentRepositoryId);
             return [
-                'name' => $matchingNode->getLabel(),
-                'nodetype' => TranslationHelper::translateByShortHandString($matchingNode->getNodeType()->getLabel()),
-                'contextPath' => $matchingNode->getContextPath(),
-                'icon' => $matchingNode->getNodeType()->getFullConfiguration()['ui']['icon'] ?? 'file',
+                'name' => $this->nodeLabelGenerator->getLabel($matchingNode),
+                'nodetype' => TranslationHelper::translateByShortHandString($contentRepository->getNodeTypeManager()->getNodeType($matchingNode->nodeTypeName)->getLabel()),
+                'contextPath' => \Neos\ContentRepository\Core\SharedModel\Node\NodeAddress::fromNode($matchingNode)->toJson(),
+                'icon' => $contentRepository->getNodeTypeManager()->getNodeType($matchingNode->nodeTypeName)->getFullConfiguration()['ui']['icon'] ?? 'file',
                 'uri' => $this->getNodeUri($matchingNode),
             ];
         }, $matchingNodes), static fn($item) => $item['uri']));
     }
 
-    protected function getNodeUri(NodeInterface $node): string
+    protected function getNodeUri(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node): string
     {
         try {
             return $this->linkingService->createNodeUri($this->controllerContext, $node, null, 'html', true);

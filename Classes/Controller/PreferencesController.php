@@ -25,13 +25,15 @@ use Neos\Neos\Ui\ContentRepository\Service\NodeService;
 
 class PreferencesController extends ActionController
 {
-    use CreateContentContextTrait;
-
     protected const FAVOURITES_PREFERENCE = 'commandBar.favourites';
     protected const RECENT_COMMANDS_PREFERENCE = 'commandBar.recentCommands';
     protected const RECENT_DOCUMENTS_PREFERENCE = 'commandBar.recentDocuments';
     protected $defaultViewObjectName = JsonView::class;
     protected $supportedMediaTypes = ['application/json'];
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface $nodeLabelGenerator;
 
     public function __construct(
         protected UserService $userService,
@@ -136,12 +138,13 @@ class PreferencesController extends ActionController
     {
         return array_reduce($contextPaths, function (array $carry, string $contextPath) {
             $node = $this->nodeService->getNodeFromContextPath($contextPath);
-            if ($node instanceof NodeInterface) {
+            if ($node instanceof \Neos\ContentRepository\Core\Projection\ContentGraph\Node) {
                 $uri = $this->getNodeUri($node);
                 if ($uri) {
+                    $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
                     $carry[]= [
-                        'name' => $node->getLabel(),
-                        'icon' => $node->getNodeType()->getConfiguration('ui.icon') ?? 'question',
+                        'name' => $this->nodeLabelGenerator->getLabel($node),
+                        'icon' => $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName)->getConfiguration('ui.icon') ?? 'question',
                         'uri' => $this->getNodeUri($node),
                         'contextPath' => $contextPath,
                     ];
@@ -151,7 +154,7 @@ class PreferencesController extends ActionController
         }, []);
     }
 
-    protected function getNodeUri(NodeInterface $node): string
+    protected function getNodeUri(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node): string
     {
         try {
             return $this->linkingService->createNodeUri($this->controllerContext, $node, null, 'html', true);

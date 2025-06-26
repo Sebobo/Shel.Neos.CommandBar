@@ -34,7 +34,7 @@ class CommandsDataSource extends AbstractDataSource
     ) {
     }
 
-    public function getData(NodeInterface $node = null, array $arguments = []): array
+    public function getData(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node = null, array $arguments = []): array
     {
         $this->uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
 

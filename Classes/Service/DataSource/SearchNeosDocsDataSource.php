@@ -38,7 +38,7 @@ class SearchNeosDocsDataSource extends AbstractDataSource
     /**
      * @throws Exception
      */
-    public function getData(NodeInterface $node = null, array $arguments = []): array
+    public function getData(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node = null, array $arguments = []): array
     {
         $query = $arguments['query'] ?? '';
 
