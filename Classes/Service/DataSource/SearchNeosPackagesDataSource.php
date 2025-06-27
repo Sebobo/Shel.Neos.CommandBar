@@ -13,32 +13,28 @@ namespace Shel\Neos\CommandBar\Service\DataSource;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
 use Shel\Neos\CommandBar\Domain\Dto\CommandDto;
 use Shel\Neos\CommandBar\Exception;
-use Symfony\Component\DomCrawler\Crawler;
 
 class SearchNeosPackagesDataSource extends AbstractDataSource
 {
-
-    protected const MAX_RESULTS = 10;
-
     static protected $identifier = 'shel-neos-commandbar-search-neos-packages';
 
     /**
-     * @var {enabled: bool, endpoint: string, queryParameter: string} array
+     * @var array{enabled: bool, endpoint: string, queryParameter: string} $settings
      */
     #[Flow\InjectConfiguration('features.searchNeosPackages', 'Shel.Neos.CommandBar')]
-    protected $settings;
+    protected array $settings = [];
 
     /**
      * @throws Exception
      */
-    public function getData(NodeInterface $node = null, array $arguments = []): array
+    public function getData(Node $node = null, array $arguments = []): array
     {
         $query = $arguments['query'] ?? '';
 
@@ -62,7 +58,7 @@ class SearchNeosPackagesDataSource extends AbstractDataSource
 
         try {
             $data = json_decode($result->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new Exception('Could not decode search results from the Neos package repository', 1682681305);
         }
 

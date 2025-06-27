@@ -15,16 +15,16 @@ namespace Shel\Neos\CommandBar\Domain\Dto;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class CommandDto implements \JsonSerializable
+readonly class CommandDto implements \JsonSerializable
 {
 
     public function __construct(
-        public readonly string $id,
-        public readonly string $name,
-        public readonly string $description,
-        public readonly string $action,
-        public readonly string $icon,
-        public readonly string $category = '',
+        public string $id,
+        public string $name,
+        public string $description,
+        public string $action,
+        public string $icon,
+        public string $category = '',
     ) {
     }
 
