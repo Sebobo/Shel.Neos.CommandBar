@@ -98,8 +98,8 @@ class PreferencesController extends ActionController
      * Updates the list of recently used documents in the user preferences
      *
      * @param string $nodeContextPath a node to add to the recently visited documents
+     * @Flow\SkipCsrfProtection
      */
-    #[Flow\SkipCsrfProtection]
     public function addRecentDocumentAction(string $nodeContextPath): void
     {
         $preferences = $this->getUserPreferences();
@@ -116,11 +116,18 @@ class PreferencesController extends ActionController
             static fn($existingContextPath) => $existingContextPath !== $nodeContextPath
         );
 
-        // Add the path to the top of the list
-        array_unshift($recentDocuments, $nodeContextPath);
+        try {
+            // Try to create a NodeAddress from the context path
+            NodeAddress::fromJsonString($nodeContextPath);
 
-        // Limit the list to 5 items
-        $recentDocuments = array_slice($recentDocuments, 0, 5);
+            // Add the path to the top of the list
+            array_unshift($recentDocuments, $nodeContextPath);
+
+            // Limit the list to 5 items
+            $recentDocuments = array_slice($recentDocuments, 0, 5);
+        } catch (\InvalidArgumentException $e) {
+            // If the context path is not a valid NodeAddress, we skip this action
+        }
 
         // Save the list
         $preferences->set(self::RECENT_DOCUMENTS_PREFERENCE, $recentDocuments);
@@ -145,7 +152,12 @@ class PreferencesController extends ActionController
     ): array {
         return array_filter(
             array_map(function (string $nodeContextPath) {
-                $nodeAddress = NodeAddress::fromJsonString($nodeContextPath);
+                try {
+                    $nodeAddress = NodeAddress::fromJsonString($nodeContextPath);
+                } catch (\InvalidArgumentException) {
+                    // If the context path is not a valid NodeAddress, we skip this node
+                    return null;
+                }
 
                 $contentRepository = $this->contentRepositoryRegistry->get($nodeAddress->contentRepositoryId);
                 try {
