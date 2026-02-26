@@ -44,7 +44,7 @@ class CommandsDataSource extends AbstractDataSource
      * @throws IllegalObjectTypeException
      */
     public function getData(
-        Node $node = null,
+        ?Node $node = null,
         array $arguments = []
     ): array {
         $this->uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());

@@ -38,7 +38,7 @@ class SearchNeosDocsDataSource extends AbstractDataSource
     /**
      * @throws Exception
      */
-    public function getData(Node $node = null, array $arguments = []): array
+    public function getData(?Node $node = null, array $arguments = []): array
     {
         $query = $arguments['query'] ?? '';
 
